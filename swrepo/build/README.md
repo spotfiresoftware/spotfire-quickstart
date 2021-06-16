@@ -1,0 +1,1 @@
+By default, the Spotfire quickstart Ansible playbooks expect your TIBCO Spotfire software in this location.
