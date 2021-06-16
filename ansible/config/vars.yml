@@ -1,0 +1,48 @@
+# initial install
+
+# Create Spotfire DB table schemas
+#TODO: make create_db idempotent
+create_db: true
+# If we are using cloud service database (currently only tested with Azure database for PostgreSQL)
+use_cloud_db: true
+# If we want to bootstrap the tss server (required for initial install or when adding new tss servers)
+tss_bootstrap: true
+
+# tss version
+tss_version: 11.3.0
+tss_home: "/opt/tibco/tss/{{ tss_version }}"
+
+# location of Spotfire software packages
+spotfire_local_sw_repo: ../swrepo/build/{{ tss_version }}
+# NOTE: the ending / is relevant for the behavior of the ansible copy module
+spotfire_remote_sw_repo: /var/local/spotfire/swrepo/
+
+## Spotfire DB
+db_type: postgres
+db_host: suances-postgresql-server.postgres.database.azure.com
+db_port: 5432
+
+## Spotfire DB Admin user and password
+db_admin_user: dbadmin@suances-postgresql-server
+db_admin_password: 'ch4ng3Th1sP4ssw0rd!'
+
+# Spotfire Database name, username and password for the Spotfire database.
+db_name: suances-spotfire-db
+# NOTE: For Azure, we use the same user&password for the spotfiredb than for the dbserver
+db_user: '{{ db_admin_user }}'
+db_password: '{{ db_admin_password }}'
+
+# Spotfire Config tool password
+config_tool_password: 'ch4ng3Th1sP4ssw0rd!'
+
+# Spotfire Admin GUI user and password
+spotfire_ui_admin_user: admin
+spotfire_ui_admin_password: 'ch4ng3Th1sP4ssw0rd!'
+
+## Spotfire Server credentials
+tss_user: 'spotfire'
+tss_password: 'ch4ng3Th1sP4ssw0rd!'
+
+# Web Player credentials
+wp_user: 'spotfire'
+wp_password: 'ch4ng3Th1sP4ssw0rd!'

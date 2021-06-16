@@ -1,0 +1,34 @@
+---
+- hosts: tss_servers
+  remote_user: '{{ tss_user }}'
+  become: true
+  roles:
+    - common
+    - env
+    - { role: tssdb_createdb, run_once: true }
+    - tss_install
+    - tss_bootstrap # NOTE: We throttle this, it bootstraps one tss at a time
+    - tss_service
+    - { role: tss_deploy_sdn, run_once: true }
+    - { role: tss_autotrust, run_once: true }
+#    - tss_service_reload
+  environment:
+#    TSS_HOME: "{{ tss_home }}"
+    TSS_VERSION: '{{ tss_version }}'
+    SPOTFIRE_DB_TYPE: '{{ db_type }}'
+    SPOTFIRE_DB_HOST: '{{ db_host }}'
+    SPOTFIRE_DB_NAME: '{{ db_name }}'
+    SPOTFIRE_DB_ADMIN_USER: '{{ db_admin_user }}'
+    SPOTFIRE_DB_ADMIN_PASSWORD: '{{ db_admin_password }}'
+    SPOTFIRE_CONFIG_TOOL_PASSWORD: '{{ config_tool_password }}'
+    SPOTFIRE_UI_ADMIN_USER: '{{ spotfire_ui_admin_user }}'
+    SPOTFIRE_UI_ADMIN_PASSWORD=: '{{ spotfire_ui_admin_password }}'
+
+- hosts: wp_servers
+  remote_user: '{{ wp_user }}'
+  roles:
+    - common
+    - tsnm_firewall
+    - tsnm_install
+    - tsnm_wp
+    - tsnm_service

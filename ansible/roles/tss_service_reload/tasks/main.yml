@@ -1,0 +1,20 @@
+---
+#----------------------------------------
+# Spotfire Server service
+# - https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/starting_or_stopping_spotfire_server_(linux).html
+#----------------------------------------
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/systemd_module.html
+- name: Restart Spotfire Server (tss) service to apply config changes
+  systemd:
+    name: tss-{{ tss_version }}
+    enabled: yes
+    state: restarted
+  tags: tss_service
+
+#- debug:
+#    msg: Restarting Spotfire Server (tss) service {{ inventory_hostname }} to apply config changes
+#  notify: restart tss
+
+#- name: Flush handlers
+#  meta: flush_handlers

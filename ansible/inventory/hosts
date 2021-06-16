@@ -1,0 +1,8 @@
+[jumphost_servers]
+santander-jumphost-0-vm ansible_host=10.10.10.10 ansible_connection=ssh ansible_user=spotfire
+
+[tss_servers]
+santander-tss-0-vm ansible_connection=ssh ansible_user=spotfire
+
+[wp_servers]
+santander-wp-0-vm ansible_connection=ssh ansible_user=spotfire

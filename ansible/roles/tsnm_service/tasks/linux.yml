@@ -1,0 +1,11 @@
+---
+#----------------------------------------
+# Web Player (Linux) service
+#----------------------------------------
+
+- name: Linux | Start the Node manager (tsnm) service and set to automatic start on boot
+  systemd:
+    name: tsnm-{{ tss_version }}
+    enabled: yes
+    state: restarted
+  become: true

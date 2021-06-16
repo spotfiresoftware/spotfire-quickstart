@@ -1,0 +1,5 @@
+# Include OS specific tasks
+- include: linux.yml
+  when: ansible_distribution_file_variety is defined and (ansible_distribution_file_variety == "RedHat" or ansible_distribution_file_variety == "SUSE")
+- include: windows.yml
+  when: ansible_os_family == "Windows"

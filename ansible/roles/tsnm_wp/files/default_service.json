@@ -1,0 +1,14 @@
+{
+  "services": [
+    {
+      "capability": "WEB_PLAYER",
+      "deploymentArea": "Production",
+      "configuration": "Web Player Configuration",
+      "customPrefix": "Prefix",
+      "resourcePool": "Pool A",
+      "instances": 2,
+      "port": 9501
+    }
+  ],
+  "strict": "false"
+}

@@ -1,0 +1,22 @@
+---
+#----------------------------------------
+# Spotfire Server package install
+# - https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/installing_the_spotfire_server_files_(rpm_linux).html
+#----------------------------------------
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/copy_module.html
+- name: Copy Spotfire Server (tss) package
+  copy:
+    src: "{{ spotfire_local_sw_repo }}/tss-{{ tss_version }}.x86_64.rpm"
+    dest: "{{ spotfire_remote_sw_repo }}"
+    owner: spotfire
+    group: spotfire
+    mode: '0644'
+  tags: tss_install
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/yum_module.html
+- name: Install Spotfire Server (tss) package
+  yum:
+    name: "{{ spotfire_remote_sw_repo }}/tss-{{ tss_version }}.x86_64.rpm"
+    state: present
+  tags: tss_install

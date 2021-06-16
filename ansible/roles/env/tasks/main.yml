@@ -1,0 +1,14 @@
+---
+#----------------------------------------
+# Environment variables
+#----------------------------------------
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/template_module.html
+- name: Copy Spotfire config.env in profile.d
+  template:
+    src: templates/config.env
+    dest: /etc/profile.d/spotfire.env
+    owner: spotfire
+    group: spotfire
+    mode: '0600'
+  tags: profile
