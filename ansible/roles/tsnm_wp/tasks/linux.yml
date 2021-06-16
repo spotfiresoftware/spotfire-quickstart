@@ -1,0 +1,84 @@
+---
+#----------------------------------------
+# Node manager Web Player (Linux) service template
+# - https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/service_configuration_files.html
+# - https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/manually_editing_the_service_configuration_files.html
+# - https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/automatically_installing_services_and_instances.html
+#----------------------------------------
+
+# https://docs.ansible.com/ansible/2.10/collections/ansible/builtin/stat_module.html
+- name: Linux | Check local 'default.json' file checksum (service template)
+  stat:
+    path: "{{ role_path }}/files/default_service.json"
+    checksum_algorithm: sha1
+  delegate_to: localhost
+  register: local_service_definition
+
+- name: Linux | Check remote 'default.bak' file exists and its checksum (the service has been installed)
+  stat:
+    path: 'C:\tibco\tsnm\{{ tss_version }}\nm\config\default.bak'
+    checksum_algorithm: sha1
+#  failed_when: remote_files.stat.checksum != item.stat.checksum
+  register: remote_service_file_backup
+
+#- name: Linux | Adding Web Player service from a template (only if no service has been installed or service definition cksum differs)
+#  copy:
+#    src: files/default_service.json
+#    dest: '/opt/tibco/tsnm/{{ tss_version }}/nm/config/default.conf'
+#  when: remote_service_file_backup.stat.exists == false or remote_service_file_backup.stat.checksum != local_service_definition.stat.checksum
+
+# ---- ONLY for RedHat family ----
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/yum_module.html
+# https://docs.microsoft.com/en-us/dotnet/core/install/linux-centos
+- name: Linux | RedHat | Install EPEL (required for libgdiplus)
+  yum:
+    name:
+      - epel-release
+    state: present
+  become: true
+  when: ansible_distribution_file_variety == "RedHat"
+
+- name: Linux | RedHat | Install dotnet-5 and dependencies
+  yum:
+    name:
+#      - dotnet-sdk-5.0
+#      - dotnet-runtime-5.0
+      - aspnetcore-runtime-5.0
+      - libgdiplus
+    state: present
+  become: true
+  when: ansible_distribution_file_variety == "RedHat"
+
+# ---- ONLY for SUSE family ----
+# https://docs.ansible.com/ansible/latest/collections/community/general/zypper_module.html
+# https://docs.microsoft.com/en-us/dotnet/core/install/linux-sles
+- name: Linux | SUSE | Install Microsoft package repository (required for dotnet)
+  zypper:
+    name:
+      - https://packages.microsoft.com/config/sles/{{ ansible_distribution_major_version }}/packages-microsoft-prod.rpm
+    state: present
+    disable_gpg_check: yes
+  become: true
+  when: ansible_distribution_file_variety == "SUSE"
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_module.html
+- name: Linux | SUSE | Fix Microsoft package repository (create repo link)
+  file:
+    src: '/etc/yum.repos.d/microsoft-prod.repo'
+    dest: '/etc/zypp/repos.d/microsoft-prod.repo'
+    state: link
+  become: true
+  when: ansible_distribution_file_variety == "SUSE"
+
+- name: Linux | SUSE | Install dotnet-5 and dependencies
+  zypper:
+    name:
+#      - dotnet-sdk-5.0
+#      - dotnet-runtime-5.0
+      - aspnetcore-runtime-5.0
+      - libgdiplus0
+    state: present
+    disable_gpg_check: yes
+    update_cache: yes
+  become: true
+  when: ansible_distribution_file_variety == "SUSE"

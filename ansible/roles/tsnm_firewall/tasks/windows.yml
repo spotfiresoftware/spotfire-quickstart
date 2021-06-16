@@ -1,0 +1,48 @@
+---
+#----------------------------------------
+# Node manager (Windows) firewall
+# https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_and_environment_security/servsecurity/topics/ports.html
+#----------------------------------------
+
+# https://docs.ansible.com/ansible/latest/collections/community/windows/win_firewall_rule_module.html
+# This plugin is part of the community.windows collection (version 1.3.0).
+# To install it use: ansible-galaxy collection install community.windows
+- name: Windows | Adding Windows Firewall rule to allow Back-end registration and communication ports (inbound 9080,9433)
+  community.windows.win_firewall_rule:
+    name: Back-end registration and communication ports (inbound)
+    localport: 9080,9443
+    action: allow
+    direction: in
+    protocol: tcp
+    state: present
+    enabled: yes
+
+- name: Windows | Adding Windows Firewall rule to allow Back-end registration and communication ports (outbound 9080,9433)
+  community.windows.win_firewall_rule:
+    name: Back-end registration and communication ports (outbound)
+    localport: 9080,9443
+    action: allow
+    direction: out
+    protocol: tcp
+    state: present
+    enabled: yes
+
+- name: Windows | Adding Windows Firewall rule to allow Spotfire services communication ports (inbound 9501-9503)
+  community.windows.win_firewall_rule:
+    name: Spotfire services communication ports (inbound)
+    localport: 9501-9503
+    action: allow
+    direction: in
+    protocol: tcp
+    state: present
+    enabled: yes
+
+- name: Windows | Adding Windows Firewall rule to allow Spotfire services communication ports (inbound 9501-9503)
+  community.windows.win_firewall_rule:
+    name: Spotfire services communication ports (outbound)
+    localport: 9501-9503
+    action: allow
+    direction: out
+    protocol: tcp
+    state: present
+    enabled: yes

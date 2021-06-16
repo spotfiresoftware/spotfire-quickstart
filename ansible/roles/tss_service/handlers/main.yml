@@ -1,0 +1,11 @@
+---
+#----------------------------------------
+# Spotfire Server service
+# - https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/starting_or_stopping_spotfire_server_(linux).html
+#----------------------------------------
+
+- name: Restart Spotfire Server (tss) service
+  systemd:
+    name: tss-{{ tss_version }}
+    state: restarted
+  listen: "restart tss"

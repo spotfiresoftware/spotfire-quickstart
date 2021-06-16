@@ -1,0 +1,32 @@
+---
+#----------------------------------------
+# Deploy client packages to Spotfire Server
+# - https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/update-deployment.html
+#----------------------------------------
+
+- name: Verify if already deployed client packages (Spotfire.Dxp.sdn) to Spotfire Server
+  shell:
+    chdir: /opt/tibco/tss/{{ tss_version }}/tomcat/spotfire-bin/
+    cmd: ./config.sh show-deployment --tool-password="${SPOTFIRE_CONFIG_TOOL_PASSWORD}" -a Production | grep -i Version | grep {{ tss_version }} | wc -l
+  register: sdn_installed
+  changed_when: false # this is just a check, not showing changes here
+  ignore_errors: yes
+
+- name: Debug SDN status
+  debug:
+    msg: "Is Spotfire.Dxp.sdn already deployed? '{{ sdn_installed.stdout }}'"
+
+- name: Copy client packages (Spotfire.Dxp.sdn) to Spotfire Server
+  copy:
+    src: "{{ spotfire_local_sw_repo }}/Spotfire.Dxp.sdn"
+    dest: "{{ spotfire_remote_sw_repo }}"
+    owner: spotfire
+    group: spotfire
+    mode: '0644'
+  when: sdn_installed.stdout == '0'
+
+- name: Deploying client packages (Spotfire.Dxp.sdn) to Spotfire Server
+  shell:
+    chdir: /opt/tibco/tss/{{ tss_version }}/tomcat/spotfire-bin/
+    cmd: ./config.sh update-deployment --tool-password="${SPOTFIRE_CONFIG_TOOL_PASSWORD}" -a Production "{{ spotfire_remote_sw_repo }}/Spotfire.Dxp.sdn"
+  when: sdn_installed.stdout == '0'

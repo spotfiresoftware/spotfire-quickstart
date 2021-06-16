@@ -1,0 +1,10 @@
+ansible_user: '{{ tss_user }}'
+#ansible_password: '{{ tss_password }}'
+#ansible_ssh_private_key_file: '~/.ssh/id_rsa'
+
+ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentitiesOnly=yes'
+
+#jumphost_ip: "{{ hostvars[groups['jumphost_servers'][0]]['ansible_default_ipv4']['address'] }}"
+jumphost_host: "{{ hostvars[groups['jumphost_servers'][0]]['ansible_host'] }}"
+
+tss_host: "{{ hostvars[groups['tss_servers'][0]]['ansible_host'] }}"

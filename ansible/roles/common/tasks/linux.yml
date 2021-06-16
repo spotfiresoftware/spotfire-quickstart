@@ -1,0 +1,43 @@
+---
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/group_module.html
+- name: Create group "spotfire"
+  group:
+    name: spotfire
+    state: present
+    gid: 1010
+  become: true
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/user_module.html
+#- name: Create user 'spotfire'
+#  user:
+#    name: spotfire
+#    comment: Spotfire user
+#    uid: 1010
+#    group: spotfire
+#    shell: /bin/bash
+#    state: present
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_module.html
+- name: Create directory for software repo
+  file:
+    #path: /var/local/spotfire/swrepo
+    path: "{{ spotfire_remote_sw_repo }}"
+    owner: spotfire
+    group: spotfire
+    recurse: yes
+    state: directory
+  tags: swrepo
+  become: true
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/copy_module.html
+#- name: Copy install packages
+#  copy:
+##    src: "{{ spotfire_local_sw_repo }}/*.rpm"
+#    src: "{{ item }}"
+#    dest: "{{ spotfire_remote_sw_repo }}"
+#    owner: spotfire
+#    group: spotfire
+#    mode: '0644'
+#  with_fileglob: "{{ spotfire_local_sw_repo }}/*"
+#  tags: swrepo
+#  when: false

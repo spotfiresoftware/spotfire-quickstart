@@ -1,0 +1,55 @@
+---
+#----------------------------------------
+# Create Spotfire DB table schemas
+#----------------------------------------
+
+- name: Install postgresql tools
+  yum:
+    name: postgresql
+    state: present
+  tags: spotfire_db
+  when: create_db
+
+- name: Copy postgres_install scripts
+  copy:
+    src: "{{ spotfire_local_sw_repo }}/scripts/postgres_install/"
+    dest: /opt/tibco/tssdb/postgres_install/
+    owner: spotfire
+    group: spotfire
+    mode: '0755'
+    directory_mode: '0755'
+  tags: spotfire_db
+  when: create_db
+
+- name: On-premises | Create Spotfire database with the create_databases.sh script
+  command:
+    cmd: /opt/tibco/tssdb/postgres_install/create_databases.sh
+    chdir: /opt/tibco/tssdb/postgres_install/
+#  debugger: on_failed
+  register: create_databases
+  tags: spotfire_db
+  when: create_db and not use_cloud_db
+
+- name: Azure | Copy postgres_install custom cloud (Azure) scripts
+  copy:
+    src: files/postgres_install/create_databases_cloud.sh
+    dest: /opt/tibco/tssdb/postgres_install/
+    owner: spotfire
+    group: spotfire
+    mode: '0755'
+    directory_mode: '0755'
+  tags: spotfire_db
+  when: create_db and use_cloud_db
+
+- name: Azure | Create Spotfire database with the create_databases.sh script
+  command:
+    cmd: /opt/tibco/tssdb/postgres_install/create_databases_cloud.sh
+    chdir: /opt/tibco/tssdb/postgres_install/
+#  debugger: on_failed
+  register: create_databases
+  tags: spotfire_db
+  when: create_db and use_cloud_db
+
+- debug: var=create_databases.stdout_lines
+  tags: spotfire_db
+  when: create_db
