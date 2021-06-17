@@ -1,0 +1,34 @@
+all:
+  children:
+
+    jumphost_servers:
+      hosts:
+%{~ for index,jumphost_hostname in jumphost_hostnames }
+        ${jumphost_hostname}:
+          host:               "${ jumphost_public_ips[index] }"
+          ansible_connection: "ssh"
+          ansible_user:       "${username}"
+%{~ endfor }
+
+    tss_servers:
+      hosts:
+%{~ for index,tss_hostname in tss_hostnames }
+        ${tss_hostname}:
+          ansible_connection: "ssh"
+          ansible_user:       "${username}"
+%{~ endfor }
+
+    wp_servers:
+      hosts:
+%{~ for wp_hostname in wp_hostnames }
+        ${wp_hostname}:
+          ansible_connection: "ssh"
+          ansible_user:       "${username}"
+%{~ endfor }
+
+    # Localhost provisioning
+    local:
+      hosts:
+        localhost:
+          ansible_connection: "local"
+          ansible_user:       "azureadm"
