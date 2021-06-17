@@ -1,0 +1,4 @@
+build/
+tmp/*
+ignore-this/
+notes/
