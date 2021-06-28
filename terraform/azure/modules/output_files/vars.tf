@@ -4,6 +4,8 @@ variable "resource_group_name" {
   description = "Specify the resource group name"
 }
 
+variable "workspace_dir" { default = "./terraform.tfstate.d" }
+
 // credentials
 variable "vm_admin_username" {}
 variable "vm_admin_password" {}

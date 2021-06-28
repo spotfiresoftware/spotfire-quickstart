@@ -8,7 +8,7 @@ resource "local_file" "ansible-inventory-azurerm" {
     resource_group_name = var.resource_group_name
     }
   )
-  filename             = "terraform.tfstate.d/${terraform.workspace}/ansible_config/host_groups_azure_rm.yml"
+  filename             = "${var.workspace_dir}/${terraform.workspace}/ansible_config/host_groups_azure_rm.yml"
   file_permission      = "0770"
   directory_permission = "0770"
 }
@@ -23,7 +23,7 @@ resource "local_file" "ansible-inventory" {
     wp_hostnames        = local.wp_hostnames
     }
   )
-  filename             = "terraform.tfstate.d/${terraform.workspace}/ansible_config/hosts"
+  filename             = "${var.workspace_dir}/${terraform.workspace}/ansible_config/hosts"
   file_permission      = "0660"
   directory_permission = "0770"
 }
@@ -39,7 +39,7 @@ resource "local_file" "ansible-inventory-yml" {
     wp_hostnames        = local.wp_hostnames
     }
   )
-  filename             = "terraform.tfstate.d/${terraform.workspace}/ansible_config/hosts.yml"
+  filename             = "${var.workspace_dir}/${terraform.workspace}/ansible_config/hosts.yml"
   file_permission      = "0660"
   directory_permission = "0770"
 }
@@ -61,7 +61,7 @@ resource "local_file" "ansible-config-infra" {
     ui_admin_password   = var.spotfire_ui_admin_password
     }
   )
-  filename             = "terraform.tfstate.d/${terraform.workspace}/ansible_config/infra.yml"
+  filename             = "${var.workspace_dir}/${terraform.workspace}/ansible_config/infra.yml"
   file_permission      = "0660"
   directory_permission = "0770"
 }

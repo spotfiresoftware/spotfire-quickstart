@@ -121,7 +121,8 @@ variable "spotfire_db_admin_username" {
   default = "dbadmin"
 }
 variable "spotfire_db_admin_password" {
-//  default = "d3f4ult!"
+  default = "d3f4ult!"
+  sensitive = true
 }
 
 variable "spotfire_db_server_name" {
@@ -136,7 +137,8 @@ variable "spotfire_ui_admin_username" {
   default = "admin"
 }
 variable "spotfire_ui_admin_password" {
-  //  default = "d3f4ult!"
+  default = "d3f4ult!"
+  sensitive = true
 }
 
 #----------------------------------------
@@ -155,7 +157,8 @@ variable "vm_admin_username" {
 //    4) Contains a special character
 //    5) Control characters are not allowed" Target="adminPassword"
 variable "vm_admin_password" {
-//  default = "d3f4ult!"
+  default = "d3f4ult!"
+  sensitive = true
 }
 
 # ssh key file
@@ -249,5 +252,6 @@ variable "wp_admin_username" {
 //    4) Contains a special character
 //    5) Control characters are not allowed" Target="adminPassword"
 variable "wp_admin_password" {
-//  default = "d3f4ult!"
+  default = "d3f4ult!"
+  sensitive = true
 }
