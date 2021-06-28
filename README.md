@@ -1,10 +1,10 @@
-# Automatic Deployment of Spotfire Platform
+# Automatic Deployment of Spotfire platform
 
 ## Introduction
 
-The purpose of this repo is to share diverse examples showing how to automatically deploy the Spotfire Platform using different   common configuration management tools.
+The purpose of this repo is to share diverse examples showing how to automatically deploy the TIBCO Spotfire® platform using different common configuration management tools.
 
-This repository does not include any TIBCO Spotfire software or any other third party software. This repository contains mainly quick guides, templates, configuration examples and scripts. 
+This repository does not include any Spotfire® software or any other third party software. This repository contains mainly quick guides, templates, configuration examples and scripts. 
 
 The purpose of the quickstart examples is to provide a starting point for automatic deployment of Spotfire in any environment. The quickstart examples can be easily extended and customized.
 

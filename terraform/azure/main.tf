@@ -255,6 +255,9 @@ module "output_files" {
   # dependencies
   resource_group_name = module.base.rg_name
 
+  # specific
+  workspace_dir =  "./terraform.tfstate.d/"
+
   jumphost_public_ips = module.jumphost.vm_public_ips
   jumphost_hostnames = module.jumphost.vm_hostnames
 
