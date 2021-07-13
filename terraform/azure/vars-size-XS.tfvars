@@ -1,10 +1,10 @@
 #----------------------------------------
 # control resources creation
 #----------------------------------------
-create_spotfire_db = true
-create_appgw = false
+create_spotfire_db   = true
+create_appgw         = false
 tss_create_public_ip = true
-create_bastion = false
+create_bastion       = false
 
 #----------------------------------------
 # instances number

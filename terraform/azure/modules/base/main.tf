@@ -8,14 +8,14 @@ resource "azurerm_resource_group" "this" {
   location = var.location
 
   tags = var.tags
- }
+}
 
 # Create an availability set
 resource "azurerm_availability_set" "this" {
   name                = "${var.prefix}-spotfire-avset"
   location            = azurerm_resource_group.this.location
   resource_group_name = azurerm_resource_group.this.name
-  managed = "true"
+  managed             = "true"
 
   tags = var.tags
 }

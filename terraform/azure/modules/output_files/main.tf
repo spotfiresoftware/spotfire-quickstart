@@ -16,7 +16,7 @@ resource "local_file" "ansible-inventory-azurerm" {
 # Generates the Ansible Inventory file
 resource "local_file" "ansible-inventory" {
   content = templatefile("${path.module}/ansible_inventory.tmpl", {
-    username            = var.vm_admin_username,
+    username            = var.jumphost_admin_username,
     jumphost_public_ips = local.jumphost_public_ips,
     jumphost_hostnames  = local.jumphost_hostnames,
     tss_hostnames       = local.tss_hostnames,
@@ -31,7 +31,7 @@ resource "local_file" "ansible-inventory" {
 # Generates the Ansible Inventory file
 resource "local_file" "ansible-inventory-yml" {
   content = templatefile("${path.module}/ansible_inventory.yml.tmpl", {
-    username            = var.vm_admin_username,
+    username            = var.jumphost_admin_username,
     jumphost_public_ips = local.jumphost_public_ips,
     jumphost_hostnames  = local.jumphost_hostnames,
     tss_public_ips      = var.tss_public_ips,
@@ -47,18 +47,19 @@ resource "local_file" "ansible-inventory-yml" {
 # Generates the Ansible Config file (credentials)
 resource "local_file" "ansible-config-infra" {
   content = templatefile("${path.module}/ansible_config.tmpl", {
-    vm_user             = var.vm_admin_username,
-    vm_password         = var.vm_admin_password,
-    tss_user            = var.tss_admin_username,
-    tss_password        = var.tss_admin_password,
-    wp_user             = var.wp_admin_username,
-    wp_password         = var.wp_admin_password,
-    db_admin_user       = var.spotfire_db_admin_username,
-    db_admin_password   = var.spotfire_db_admin_password,
-    db_server           = var.spotfire_db_server_name,
-    db_name             = var.spotfire_db_name,
-    ui_admin_user       = var.spotfire_ui_admin_username,
-    ui_admin_password   = var.spotfire_ui_admin_password
+    ssh_priv_key_file = var.ssh_private_key_file
+    jumphost_user     = var.jumphost_admin_username,
+    jumphost_password = var.jumphost_admin_password,
+    tss_user          = var.tss_admin_username,
+    tss_password      = var.tss_admin_password,
+    wp_user           = var.wp_admin_username,
+    wp_password       = var.wp_admin_password,
+    db_admin_user     = var.spotfire_db_admin_username,
+    db_admin_password = var.spotfire_db_admin_password,
+    db_server         = var.spotfire_db_server_name,
+    db_name           = var.spotfire_db_name,
+    ui_admin_user     = var.spotfire_ui_admin_username,
+    ui_admin_password = var.spotfire_ui_admin_password
     }
   )
   filename             = "${var.workspace_dir}/${terraform.workspace}/ansible_config/infra.yml"

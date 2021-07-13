@@ -89,7 +89,7 @@ If you chose to follow the instructions to [install the Configuration Management
 
 ```
 cd <this_repo_root>/terraform/azure
-alias tsa="cd $PWD && make"
+alias tsa="make --directory $PWD"
 ```
 
 #### Prepare your launcher server
@@ -100,7 +100,7 @@ alias tsa="cd $PWD && make"
    tsa init
    ~~~
 
-2. If not already done, sign in into Azure with the Azure cli. See the Azure CLI instructions within [Install the applications](docs/Setup.md)  for more details.
+2. If not already done, sign in into Azure with the Azure cli. See the Azure CLI instructions within [Install the applications](docs/Setup.md) for more details.
 
    ~~~
    tsa azlogin
@@ -108,7 +108,7 @@ alias tsa="cd $PWD && make"
 
 #### Configure the environment
 
-1. You can customize the **deployment environment** by editing the file `terraform.env`.  
+1. You can customize the **deployment environment** by editing the file `terraform.env`.
 
    Note: You need to use a different `TF_WORKSPACE` in `terraform.env` for applying different environments for the same repo.
 
@@ -160,6 +160,12 @@ Note: This step may take 15-30 minutes depending on the sizing.
    tsa deploy
    ~~~
    
+   Note: You can use similar command as previous to just deploy a specific type of servers for example if you just increased the number of instances of that type of server with the Terraform command (e.g. Web Player servers), using standard Ansible syntax.
+
+   ~~~
+   tsa deploy ANSIBLE_EXTRA_ARGS="--limit wp_servers"
+   ~~~
+
 8. Remember to destroy the environment when you are not going to use it to avoid unneeded costs.
 
    ~~~
@@ -184,7 +190,7 @@ Note: This step may take 15-30 minutes depending on the sizing.
 There are multiple ways to customize this setup:
 
 - Enable SSL connection
-- Add other Spotfire services  
+- Add other Spotfire services
 - Use multiple Azure regions
 - etc.
 

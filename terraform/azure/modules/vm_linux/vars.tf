@@ -67,9 +67,9 @@ variable "vm_admin_username" {
   default = "spotfire"
 }
 variable "vm_admin_password" {
-//  default = "d3f4ult!"
+  //  default = "d3f4ult!"
 }
-variable "ssh_pub_key_file" {
+variable "ssh_public_key_file" {
   default = "~/.ssh/id_rsa.pub"
 }
 variable "create_public_ip" {

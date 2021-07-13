@@ -49,6 +49,8 @@
   register: create_databases
   tags: spotfire_db
   when: create_db and use_cloud_db
+#  become: yes
+#  become_user: spotfire
 
 - debug: var=create_databases.stdout_lines
   tags: spotfire_db

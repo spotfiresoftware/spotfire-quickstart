@@ -46,5 +46,5 @@ variable "spotfire_db_admin_username" {
 }
 
 variable "spotfire_db_admin_password" {
-//  default = "d3f4ult!"
+  //  default = "d3f4ult!"
 }

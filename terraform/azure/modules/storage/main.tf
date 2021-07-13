@@ -4,10 +4,10 @@
 #----------------------------------------
 
 # https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string
-resource "random_string" "storage_account" {
 # WARN: The Storage account name you choose must be unique across Azure,
 #       can only consist of lowercase letters and numbers,
 #       and must be between 3 and 24 characters long
+resource "random_string" "storage_account" {
   length  = 24
   upper   = false
   number  = true
@@ -16,13 +16,13 @@ resource "random_string" "storage_account" {
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account
 resource "azurerm_storage_account" "this" {
-  name                     = "${random_string.storage_account.result}"
-  resource_group_name      = var.resource_group_name
-  location                 = var.location
-  account_tier             = "Standard"
-  account_kind             = "StorageV2" // required to connect the storage account to a private endpoint
+  name                = random_string.storage_account.result
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  account_tier        = "Standard"
+  account_kind        = "StorageV2" // required to connect the storage account to a private endpoint
 
-//  account_replication_type = "GRS" // Geo-redundant storage (GRS)
+  //  account_replication_type = "GRS" // Geo-redundant storage (GRS)
   account_replication_type = "LRS" // Locally redundant storage (LRS)
 
   tags = var.tags

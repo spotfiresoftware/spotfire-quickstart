@@ -31,5 +31,5 @@ variable "vnet_name" {
 # specific (this: bastion)
 variable "bastion_subnet_address_prefixes" {
   description = "Specify bastion subnet addresses"
-  default = ["10.0.0.0/30"]
+  default     = ["10.0.0.0/30"]
 }

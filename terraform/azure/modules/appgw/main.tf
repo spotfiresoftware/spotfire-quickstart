@@ -23,10 +23,10 @@ resource "azurerm_subnet" "agw_subnet" {
 }
 
 resource "azurerm_public_ip" "appgw_pip" {
-  name                         = "${var.prefix}-spotfire-pip"
-  location                     = var.location
-  resource_group_name          = var.resource_group_name
-  allocation_method            = "Dynamic"
+  name                = "${var.prefix}-spotfire-pip"
+  location            = var.location
+  resource_group_name = var.resource_group_name
+  allocation_method   = "Dynamic"
 
   tags = var.tags
 }
@@ -37,14 +37,14 @@ resource "azurerm_application_gateway" "network" {
   location            = var.location
   resource_group_name = var.resource_group_name
 
-  enable_http2        = true
+  enable_http2 = true
 
   tags = var.tags
 
   sku {
-    name           = "Standard_Small"
-    tier           = "Standard"
-    capacity       = 2
+    name     = "Standard_Small"
+    tier     = "Standard"
+    capacity = 2
   }
   gateway_ip_configuration {
     name      = "my-gateway-ip-configuration"
@@ -52,23 +52,23 @@ resource "azurerm_application_gateway" "network" {
   }
   frontend_port {
     name = local.frontend_port_name
-    port         = 80
+    port = 80
   }
   frontend_ip_configuration {
     name                 = local.frontend_ip_configuration_name
     public_ip_address_id = azurerm_public_ip.appgw_pip.id
   }
   backend_address_pool {
-    name = local.backend_address_pool_name
+    name         = local.backend_address_pool_name
     ip_addresses = var.vm_nic_ip_addresses
   }
   backend_http_settings {
     name                  = local.http_setting_name
     cookie_based_affinity = "Disabled"
-//    path                  = "/path1/"
-    port                  = 8080
-    protocol              = "Http"
-    request_timeout       = 60
+    //    path                  = "/path1/"
+    port            = 8080
+    protocol        = "Http"
+    request_timeout = 60
   }
   http_listener {
     name                           = local.listener_name

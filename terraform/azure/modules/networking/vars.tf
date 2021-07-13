@@ -30,27 +30,27 @@ variable "resource_group_name" {
 # specific (this: networking)
 variable "vnet_address_space" {
   description = "Specify VirtualNetwork address space"
-  default = "10.0.0.0/16"
+  default     = "10.0.0.0/16"
 }
 
 variable "public_subnet_address_prefixes" {
   description = "Define subnet address block here"
-//  default = "${cidrsubnet("${var.vnet_address_space}",4,1)}"
-//  default     = [cidrsubnet(var.vnet_address_space,14,1)]
+  //  default = "${cidrsubnet("${var.vnet_address_space}",4,1)}"
+  //  default     = [cidrsubnet(var.vnet_address_space,14,1)]
 }
 
 variable "private_subnet_address_prefixes" {
   description = "Define subnet address block here"
-//  default = "${cidrsubnet("${var.vnet_address_space}",4,1)}"
-//  default     = [cidrsubnet(var.vnet_address_space,8,2)]
+  //  default = "${cidrsubnet("${var.vnet_address_space}",4,1)}"
+  //  default     = [cidrsubnet(var.vnet_address_space,8,2)]
 }
 
 variable "inbound_ports_to_allow" {
-    description = "Firewall/SecurityGroup ports to allow for inbound traffic. By default ssh is allowed"
-    default = [22,80,433]
+  description = "Firewall/Security Group ports to allow for inbound traffic. By default ssh is allowed"
+  default     = [22, 80, 433]
 }
 
-variable "source_address_prefix" {
+variable "admin_address_prefix" {
   description = "CIDR or source IP range allowed for remote access"
-  default = "85.0.0.0/8"
+  default     = "43.21.0.0/16"
 }

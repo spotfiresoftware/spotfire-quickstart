@@ -7,8 +7,9 @@ variable "resource_group_name" {
 variable "workspace_dir" { default = "./terraform.tfstate.d" }
 
 // credentials
-variable "vm_admin_username" {}
-variable "vm_admin_password" {}
+variable "ssh_private_key_file" {}
+variable "jumphost_admin_username" {}
+variable "jumphost_admin_password" {}
 variable "tss_admin_username" {}
 variable "tss_admin_password" {}
 variable "wp_admin_username" {}
@@ -33,10 +34,10 @@ variable "jumphost_public_ips" { default = "" }
 variable "jumphost_hostnames" { default = "" }
 
 locals {
-//  public-ips-jumpboxes-linux   = var.public-ips-jumpboxes-linux[*].ip_address
+  //  public-ips-jumpboxes-linux   = var.public-ips-jumpboxes-linux[*].ip_address
   jumphost_public_ips = [for key, value in var.jumphost_public_ips : value]
   jumphost_hostnames  = [for key, value in var.jumphost_hostnames : value]
-//  tss_public_ips      = var.tss_public_ips[*].ip_address
-  tss_hostnames       = [for key, value in var.tss_hostnames : value]
-  wp_hostnames        = [for key, value in var.wp_hostnames : value]
+  //  tss_public_ips      = var.tss_public_ips[*].ip_address
+  tss_hostnames = [for key, value in var.tss_hostnames : value]
+  wp_hostnames  = [for key, value in var.wp_hostnames : value]
 }

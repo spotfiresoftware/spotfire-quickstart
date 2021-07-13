@@ -9,7 +9,7 @@ plugin: azure.azcollection.azure_rm
 
 # fetches VMs from an explicit list of resource groups instead of default all (- '*')
 include_vm_resource_groups:
-  - santander-spotfire-rg
+  - sandbox-spotfire-rg
 # - '*'
 
 # fetches VMs from VMSSs in all resource groups (defaults to no VMSS fetch)

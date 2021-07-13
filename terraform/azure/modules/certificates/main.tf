@@ -6,18 +6,18 @@
 data "azurerm_client_config" "this" {}
 
 resource "azurerm_key_vault" "this" {
-  name                        = "spotfire-key-vault"
-  location                    = var.location
-  resource_group_name         = var.resource_group_name
+  name                = "spotfire-key-vault"
+  location            = var.location
+  resource_group_name = var.resource_group_name
 
   tags = var.tags
 
-  enabled_for_deployment      = true
+  enabled_for_deployment          = true
   enabled_for_template_deployment = true
-  enabled_for_disk_encryption = true
-  tenant_id                   = data.azurerm_client_config.this.tenant_id
-  soft_delete_retention_days  = 7
-  purge_protection_enabled    = false
+  enabled_for_disk_encryption     = true
+  tenant_id                       = data.azurerm_client_config.this.tenant_id
+  soft_delete_retention_days      = 7
+  purge_protection_enabled        = false
 
   sku_name = "standard"
 
