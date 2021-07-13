@@ -59,7 +59,7 @@ For your convenience, these are the steps:
    ```
    ansible-galaxy collection install community.windows
    ```
-4. Using the Azure Resource Manager modules requires having specific Azure SDK modules installed on the host running Ansible. For more details, see the [Ansible Azure guide](https://docs.ansible.com/ansible/latest/scenario_guides/guide_azure.html) and .
+4. Using the Azure Resource Manager modules requires having specific Azure SDK modules installed on the host running Ansible. For more details, see the [Ansible Azure guide](https://docs.ansible.com/ansible/latest/scenario_guides/guide_azure.html).
    ```
    curl https://raw.githubusercontent.com/ansible-collections/azure/dev/requirements-azure.txt > /tmp/requirements-azure.txt
    python3 -m pip install -r /tmp/requirements-azure.txt

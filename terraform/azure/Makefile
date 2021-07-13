@@ -2,6 +2,8 @@
 # Simple Terraform+Ansible Makefile.
 # --------------------------------------------------------------------
 
+# Change Makefile default shell is /bin/sh which does not implement source
+#SHELL := /bin/bash
 # import terraform.env vars
 # You can change the default config with `make cfg="terraform.env" build`
 cfg ?= ./terraform.env
@@ -15,6 +17,17 @@ PWD ?= pwd_unknown
 ## export any other extra variables
 #MY_VARIABLE=my_value
 
+# predefined Spotfire environment size
+SPOTFIRE_SIZE=XS
+export SPOTFIRE_SIZE
+
+# ansible inventory file location
+INVENTORY_FILE=../terraform/azure/terraform.tfstate.d/${TF_WORKSPACE}/ansible_config/host_groups_azure_rm.yml
+export INVENTORY_FILE
+
+# ansible environment configuration
+INFRA_EXTRA_VARS=@../terraform/azure/terraform.tfstate.d/${TF_WORKSPACE}/ansible_config/infra.yml
+export INFRA_EXTRA_VARS
 # all our targets are phony (no files to check)
 .PHONY: help init plan apply destroy reapply deploy
 
@@ -56,38 +69,41 @@ show-myip: ## Show my ip address
 show-inventory: ## List hosts inventory (sw deployment targets) using Ansible (short)
 	cd ../../ansible && \
 		ansible-inventory \
-		    -i ../terraform/azure/terraform.tfstate.d/${TF_WORKSPACE}/ansible_config/host_groups_azure_rm.yml \
+		    -i ${INVENTORY_FILE} \
 			--graph
 
 show-inventory-list: ## List hosts inventory (sw deployment targets) using Ansible (long)
 	cd ../../ansible && \
 		ansible-inventory \
-		    -i ../terraform/azure/terraform.tfstate.d/${TF_WORKSPACE}/ansible_config/host_groups_azure_rm.yml \
+		    -i ${INVENTORY_FILE} \
 			--list
 
 show-os: ## List hosts distributions (sw deployment targets) using Ansible facts
 	cd ../../ansible && \
 		ANSIBLE_HOST_KEY_CHECKING=False ansible \
-		    -i ../terraform/azure/terraform.tfstate.d/${TF_WORKSPACE}/ansible_config/host_groups_azure_rm.yml \
-		 	--extra-vars @../terraform/azure/terraform.tfstate.d/${TF_WORKSPACE}/ansible_config/infra.yml \
+		    -i ${INVENTORY_FILE} \
+		 	--extra-vars ${INFRA_EXTRA_VARS} \
 			all -m ansible.builtin.setup \
+			$(ANSIBLE_EXTRA_ARGS) \
 			-a "filter=ansible_distribution*"
 
 show-facts: ## Show hosts inventory facts using Ansible facts
 	cd ../../ansible && \
 		ANSIBLE_HOST_KEY_CHECKING=False ansible \
-			-i ../terraform/azure/terraform.tfstate.d/${TF_WORKSPACE}/ansible_config/host_groups_azure_rm.yml \
-		 	--extra-vars @../terraform/azure/terraform.tfstate.d/${TF_WORKSPACE}/ansible_config/infra.yml \
+		    -i ${INVENTORY_FILE} \
+		 	--extra-vars ${INFRA_EXTRA_VARS} \
 			all -m ansible.builtin.setup \
+	  		$(ANSIBLE_EXTRA_ARGS) \
 			--tree build/facts
 
 deploy: ## Install and configure Spotfire software on infra hosts using Ansible playbooks
 	cd ../../ansible && \
 		ANSIBLE_DISPLAY_SKIPPED_HOSTS=false ANSIBLE_HOST_KEY_CHECKING=False ANSIBLE_SSH_ARGS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
 			ansible-playbook \
-		    -i ../terraform/azure/terraform.tfstate.d/${TF_WORKSPACE}/ansible_config/host_groups_azure_rm.yml \
+		    -i ${INVENTORY_FILE} \
 		 	--extra-vars @config/vars.yml \
-		 	--extra-vars @../terraform/azure/terraform.tfstate.d/${TF_WORKSPACE}/ansible_config/infra.yml \
+		 	--extra-vars ${INFRA_EXTRA_VARS} \
+	  		$(ANSIBLE_EXTRA_ARGS) \
 	  		site.yml
 #  			--limit wp_servers \
 #	  		 -vvv

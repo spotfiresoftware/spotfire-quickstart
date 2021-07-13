@@ -39,13 +39,13 @@ output "tss_hostnames" {
 
 // wp
 output "wp_ip_addresses" {
-//  value = module.wp.vm_nic_ip_addresses
+  //  value = module.wp.vm_nic_ip_addresses
   value = var.create_wp_linux ? module.wp.vm_nic_ip_addresses : module.wp_windows.vm_nic_ip_addresses
 }
 
 output "wp_hostnames" {
-//  value = module.wp.vm_hostnames
-  value  = var.create_wp_linux ? module.wp.vm_hostnames : module.wp_windows.vm_hostnames
+  //  value = module.wp.vm_hostnames
+  value = var.create_wp_linux ? module.wp.vm_hostnames : module.wp_windows.vm_hostnames
 }
 
 // db

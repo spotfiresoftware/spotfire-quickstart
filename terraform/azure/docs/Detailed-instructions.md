@@ -78,7 +78,7 @@ If you do not want to know about the details, jump to the "Easy peasy instructio
 
     Note: The variables in `config/vars.yml` are used as defaults and may be override by previous configuration files.
 
-11. Deploy the Spotfire software.
+11. Deploy the Spotfire software with the predefined Ansible playbooks for Spotfire.
 
     ~~~
     ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook \
@@ -88,9 +88,28 @@ If you do not want to know about the details, jump to the "Easy peasy instructio
        site.yml
     ~~~
 
+# Modify the environment 
+
+13. At any time you can modify the configuration and reapply the Terraform planned changes to remove/create/modify the infrastructure.
+
+   ~~~
+   terraform apply -var-file="variables.tfvars" -var-file="vars-size-XS.tfvars" --auto-approve
+   ~~~
+ 
+14. You can use similar command as previous to just deploy a specific type of servers for example if you just increased the number of instances of that type of server with the Terraform command (e.g. Web Player servers).
+
+    ~~~
+    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook \
+       -i ../terraform/azure/terraform.tfstate.d/${TF_WORKSPACE}/ansible_config/host_groups_azure_rm.yml \
+       --extra-vars @config/vars.yml \
+       --extra-vars @../terraform/azure/terraform.tfstate.d/${TF_WORKSPACE}/ansible_config_files/infra.yml \
+       site.yml \
+       --limit wp_servers
+    ~~~
+    
 ### Destroy the environment
 
-12. Remember to destroy your environment when you are not going to use it to avoid unneeded costs.
+15. Remember to destroy your environment when you are not going to use it to avoid unneeded costs.
 
     ~~~
     terraform destroy

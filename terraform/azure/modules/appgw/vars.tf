@@ -29,7 +29,7 @@ variable "vnet_name" {
 
 variable "agw_private_subnet_address_prefixes" {
   description = "Specify Application Gateway's SubNetwork address space"
-  default = "10.0.3.0/30"
+  default     = "10.0.3.0/30"
 }
 
 variable "vm_nic_ip_addresses" {

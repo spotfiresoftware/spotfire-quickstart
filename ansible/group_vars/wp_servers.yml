@@ -2,11 +2,11 @@
 # SSH connection
 ansible_user: '{{ wp_user }}'
 ansible_password: '{{ wp_password }}'
-#ansible_ssh_private_key_file: '~/.ssh/id_rsa'
+#ansible_ssh_private_key_file: '{{ ssh_private_key_file }}'
 ansible_sudo_pass: '{{ wp_password }}'
 
-#ansible_ssh_common_args: '-o "ProxyCommand ssh -W %h:%p {{ tss_user }}@{{ jumphost_host }}" -i ~/.ssh/id_rsa {{ ssh_common_args }}'
-ansible_ssh_common_args: '-o "ProxyCommand ssh -W %h:%p {{ tss_user }}@{{ jumphost_host }} {{ ssh_common_args }}"'
+#ansible_ssh_common_args: '-o "ProxyCommand ssh -W %h:%p {{ jumphost_user }}@{{ jumphost_host }}" -i ~/.ssh/id_rsa {{ ssh_common_args }}'
+ansible_ssh_common_args: '{{ ssh_common_args }} -o "ProxyCommand ssh -W %h:%p {{ jumphost_user }}@{{ jumphost_host }} {{ ssh_common_args }}"'
 
 # Note: Required ONLY For Windows servers, by default shell
 #ansible_shell_type: cmd
