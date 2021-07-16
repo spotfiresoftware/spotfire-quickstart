@@ -189,12 +189,14 @@ variable "jumphost_instances" {
   description = "Number of jumphost instances"
   default     = 1
 }
+
 # VM size
 # https://docs.microsoft.com/en-us/azure/virtual-machines/sizes
 variable "jumphost_vm_size" {
   description = "Jumphost VM size"
   default     = "Standard_A1_v2"
 }
+
 # VM login credentials
 variable "jumphost_admin_username" {
   description = "Spotfire VM admin username"

@@ -74,7 +74,6 @@ resource "azurerm_windows_virtual_machine" "this" {
       url   = var.cert_secret_id
     }
   }
-
 }
 
 # https://docs.microsoft.com/en-us/azure/virtual-machines/extensions/custom-script-windows

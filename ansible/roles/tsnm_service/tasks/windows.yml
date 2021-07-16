@@ -9,10 +9,10 @@
 #  $ ansible-galaxy collection install ansible.windows
 - name: Windows | Set the Node manager service to automatic start on boot
   win_service:
-    name: TIBCO Spotfire Node Manager {{ tss_version }}
+    name: "{{ tnm_service_name_win }}"
     start_mode: auto
 
 - name: Windows | Start the Node manager service
   win_service:
-    name: TIBCO Spotfire Node Manager {{ tss_version }}
+    name: "{{ tnm_service_name_win }}"
     state: restarted

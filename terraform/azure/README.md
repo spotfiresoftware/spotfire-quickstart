@@ -44,7 +44,7 @@ Note: In this example we use a Debian/Ubuntu host to run Terraform and Ansible, 
 1. Clone this repo into a folder in your launcher.
 
    ```
-   git clone https://got-gitlab01.emea.tibco.com/mdiez/sandbox/
+   git clone https://github.com/<location>/spotfire-quickstart
    ```
 
 2. Download the Spotfire software and copy the files into `<this_repo_root>/swrepo/build`
