@@ -1,0 +1,18 @@
+# For AWS
+- name: Set fact tss_hostname (AWS)
+  set_fact:
+    tss_hostname: "{{ hostvars[groups['tss_servers'][0]]['private_dns_name'] }}"
+  when: target_environment == 'AWS'
+
+- name: Set fact tsnm_hostname (AWS)
+  set_fact:
+    tsnm_hostname: "{{ private_dns_name }}"
+  when: target_environment == 'AWS'
+
+- name: Show tss_hostname
+  debug:
+    msg: "{{ tss_hostname }}"
+
+- name: Show tsnm_hostname
+  debug:
+    msg: "{{ tsnm_hostname }}"

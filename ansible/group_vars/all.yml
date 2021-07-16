@@ -2,7 +2,7 @@ ansible_user: '{{ jumphost_user }}'
 #ansible_password: '{{ jumphost_password }}'
 #ansible_ssh_private_key_file: '{{ ssh_private_key_file }}'
 
-ssh_common_args: '-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentitiesOnly=yes -o ConnectTimeout=60'
+ssh_common_args: '-i {{ ssh_private_key_file }} -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o IdentitiesOnly=yes -o ConnectTimeout=60'
 
 #jumphost_ip: "{{ hostvars[groups['jumphost_servers'][0]]['ansible_default_ipv4']['address'] }}"
 jumphost_host: "{{ hostvars[groups['jumphost_servers'][0]]['ansible_host'] }}"

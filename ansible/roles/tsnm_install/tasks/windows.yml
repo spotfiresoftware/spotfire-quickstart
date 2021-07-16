@@ -1,30 +1,28 @@
 ---
 #----------------------------------------
 # Web Player (Windows) package install
+# https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/installing_a_node_manager_(silently_on_windows).html
 #----------------------------------------
 # Requires ansible.windows collection
 # Install:
 #  $ ansible-galaxy collection install ansible.windows
 #
 
-#- name: Get first tss server hostname
+#- name: Show tss first server
 #  debug:
-#    msg: "{{ hostvars[groups['tss_servers'][0]]['name'] | regex_replace('^(.*)-vm$', '\\1') }}"
-#  register: tss_hostname
-#
+#    msg: "{{ hostvars[groups['tss_servers'][0]] |  to_nice_yaml }}"
 
-- set_fact:
-    tss_hostname: "{{ hostvars[groups['tss_servers'][0]]['name'] | regex_replace('^(.*)-vm$', '\\1') }}"
+- include: hosts_azure.yml
+  when: target_environment == 'Azure'
 
-- name: Show tss_hostname
-  debug:
-    msg: "{{ tss_hostname }}"
+- include: hosts_aws.yml
+  when: target_environment == 'AWS'
 
 # https://docs.ansible.com/ansible/latest/collections/ansible/windows/win_service_module.html
 # Making install idempotent
 - name: Windows | Check if the Spotfire node manager service is installed
   win_service:
-    name: TIBCO Spotfire Node Manager {{ tss_version }}
+    name: "{{ tnm_service_name_win }}"
     state: started
   register: nm_service
   changed_when: false # this is just a check, not showing changes here
@@ -34,7 +32,7 @@
     msg: "Windows | Is the Spotfire node manager service already installed? '{{ nm_service.exists }}'"
 
 # https://docs.ansible.com/ansible/latest/collections/ansible/windows/win_copy_module.html
-- name: Windows | Copy Spotfire node manager windows package (nm.exe)
+- name: Windows | Copy Spotfire node manager windows package (nm-setup.exe)
   win_copy:
     src: "{{ spotfire_local_sw_repo }}/nm-setup.exe"
     dest: C:\Users\{{ wp_user }}\nm-setup.exe
@@ -42,8 +40,18 @@
   when: nm_service.exists is false
 
 # https://docs.ansible.com/ansible/latest/collections/ansible/windows/win_command_module.html
-- name: Windows | Install Spotfire node manager windows package (nm.exe)
-  win_command: nm-setup.exe SERVER_NAME={{ tss_hostname }} -silent -log "C:\Users\{{ wp_user }}\nm-setup.log"
+#- name: Windows | Uninstall Spotfire node manager windows package (nm-setup.exe)
+#  win_command: nm-setup.exe -uninstall -silent -log "C:\Users\{{ wp_user }}\nm-setup.uninstall.log"
+#  args:
+#    chdir: C:\Users\{{ wp_user }}\
+#  tags: uninstall_package
+##  when: nm_service.exists is true
+#  changed_when: false # this is just a check, not showing changes here
+#  ignore_errors: yes
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/windows/win_command_module.html
+- name: Windows | Install Spotfire node manager windows package (nm-setup.exe)
+  win_command: nm-setup.exe SERVER_NAME={{ tss_hostname }} NODEMANAGER_HOST={{ tsnm_hostname }} NODEMANAGER_HOST_NAMES={{ tsnm_hostname }} -silent -log "C:\Users\{{ wp_user }}\nm-setup.log"
 #    NODEMANAGER_REGISTRATION_PORT=9080
 #    NODEMANAGER_COMMUNICATION_PORT=9443
 #    SERVER_NAME={{ tss_host }}

@@ -95,6 +95,7 @@ tss_instances = 2
 tss_vm_size = "Standard_A2_v2" // 2cores, 4GiB, 20 GB SSD, 500Mbps
 //tss_vm_size = "Standard_A4_v2" // 4cores, 8GiB, 40 GB SSD, 4000/80/40, 8/8x500	4	1000
 //tss_vm_size = "Standard_D2_v4" // 2	8	Remote Storage Only	4	2	1000
+
 # VM login credentials
 # NOTE: cannot be admin/root in Azure
 tss_admin_username = "spotfire"

@@ -11,7 +11,7 @@
     - tss_service
     - { role: tss_deploy_sdn, run_once: true }
     - { role: tss_autotrust, run_once: true }
-#    - tss_service_reload
+    - tss_service_reload
   environment:
 #    TSS_HOME: "{{ tss_home }}"
     TSS_VERSION: '{{ tss_version }}'

@@ -4,6 +4,7 @@
 
 # Change Makefile default shell is /bin/sh which does not implement source
 #SHELL := /bin/bash
+
 # import terraform.env vars
 # You can change the default config with `make cfg="terraform.env" build`
 cfg ?= ./terraform.env
@@ -28,6 +29,7 @@ export INVENTORY_FILE
 # ansible environment configuration
 INFRA_EXTRA_VARS=@../terraform/azure/terraform.tfstate.d/${TF_WORKSPACE}/ansible_config/infra.yml
 export INFRA_EXTRA_VARS
+
 # all our targets are phony (no files to check)
 .PHONY: help init plan apply destroy reapply deploy
 
@@ -38,7 +40,6 @@ help: ## show help
 .DEFAULT_GOAL := help
 
 #### specific #####
-
 azlogin: ## login into Azure using Azure cli
 	az login
 

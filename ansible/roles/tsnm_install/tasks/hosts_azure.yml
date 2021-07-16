@@ -1,0 +1,24 @@
+# For Azure
+#- name: Get first tss server hostname (Azure)
+#  debug:
+#    msg: "{{ hostvars[groups['tss_servers'][0]]['name'] | regex_replace('^(.*)-vm$', '\\1') }}"
+#  register: tss_hostname
+#  when: target_environment == 'Azure'
+
+- name: Set fact tss_hostname (Azure)
+  set_fact:
+    tss_hostname: "{{ hostvars[groups['tss_servers'][0]]['name'] | regex_replace('^(.*)-vm$', '\\1') }}"
+  when: target_environment == 'Azure'
+
+- name: Set fact tss_hostname (Azure)
+  set_fact:
+    tsnm_hostname: "{{ ansible_hostname }}"
+  when: target_environment == 'Azure'
+
+- name: Show tss_hostname
+  debug:
+    msg: "{{ tss_hostname }}"
+
+- name: Show tsnm_hostname
+  debug:
+    msg: "{{ tsnm_hostname }}"
