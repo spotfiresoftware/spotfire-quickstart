@@ -11,7 +11,7 @@ variable "create_appgw" {
   default     = true
 }
 
-variable "tss_create_public_ip" {
+variable "create_tss_public_ip" {
   description = "Create Public IP for direct access to TIBCO Spotfire Server instances (only for testing)"
   default     = false
 }
@@ -42,6 +42,7 @@ variable "tags" {
     infra_version = "0.1"
   }
 }
+
 variable "prefix" {
   default = "sandbox"
 }
@@ -60,16 +61,21 @@ variable "region" {
 #----------------------------------------
 # Networking
 #----------------------------------------
-variable "admin_address_prefix" {
+variable "admin_address_prefixes" {
   description = "CIDR or source IP range allowed for remote access"
-  default     = "43.21.0.0/16"
+  default     = ["43.21.0.0/16"]
 }
 
-variable "open_tcp_ports" {
-  description = "Open ports for remote access"
-  type        = list(string)
-  default     = [22, 8080, 80, 443]
+variable "web_address_prefixes" {
+  description = "CIDR or source IP range allowed for remote access for Spotfire application"
+  default     = ["43.0.0.0/8"]
 }
+
+//variable "admin_open_tcp_ports" {
+//  description = "Open ports for remote access"
+//  type        = list(string)
+//  default     = [22, 8080, 80, 443]
+//}
 
 variable "vnet_address_space" {
   description = "Virtual Network address space"
@@ -104,11 +110,18 @@ variable "agw_subnet_address_prefixes" {
 # Spotfire Database (tssdb)
 #----------------------------------------
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_server
-# https://docs.microsoft.com/en-us/rest/api/postgresql/servers/create#StorageProfile
+# https://docs.microsoft.com/en-us/azure/postgresql/
 
 variable "postgresql_db_version" {
   description = "PostgreSQL data server version"
-  default     = "11"
+  # https://docs.microsoft.com/en-us/azure/postgresql/concepts-supported-versions
+  default = "11"
+}
+
+variable "spotfire_db_instance_class" {
+  description = "Spotfire database instance class"
+  # Name of the pricing tier and compute configuration. Follow the convention {pricing tier}{compute generation}{vCores}
+  default = "GP_Gen5_2"
 }
 
 variable "spotfire_db_size" {
@@ -137,7 +150,9 @@ variable "spotfire_db_name" {
   default     = "spotfiredb"
 }
 
-# Admin UI login credentials
+#----------------------------------------
+# Spotfire Admin UI login credentials
+#----------------------------------------
 variable "spotfire_ui_admin_username" {
   description = "Spotfire web UI admin username"
   default     = "admin"

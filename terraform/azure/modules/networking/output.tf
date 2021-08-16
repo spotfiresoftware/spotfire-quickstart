@@ -3,13 +3,10 @@ output "vnet_name" {
 }
 
 output "public_subnet_id" {
-  value = azurerm_subnet.public_subnet.id
+  value = azurerm_subnet.public.id
 }
 
 output "private_subnet_id" {
-  value = azurerm_subnet.private_subnet.id
+  value = azurerm_subnet.private.id
 }
 
-output "nsg_id" {
-  value = azurerm_network_security_group.this.id
-}

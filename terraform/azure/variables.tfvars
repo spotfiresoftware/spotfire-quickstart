@@ -1,7 +1,7 @@
 #----------------------------------------
 # Resources prefix
 #----------------------------------------
-prefix = "santander"
+prefix = "sandbox"
 
 #----------------------------------------
 # Azure location and region
@@ -12,9 +12,10 @@ region   = "Norway East"
 #----------------------------------------
 # Networking
 #----------------------------------------
-# you may want to limit the traffic from your
-admin_address_prefix = "85.0.0.0/8"
-open_tcp_ports       = [22, 8080, 80, 443]
+# You may want to limit the allowed addresses to reach your environment for
+# admin (ssh jumphost) and web access (application)
+admin_address_prefixes = ["12.34.0.0/16"]
+web_address_prefixes   = ["12.0.0.0/8"]
 
 #----------------------------------------
 # Spotfire Database (tssdb)

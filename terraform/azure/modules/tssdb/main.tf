@@ -4,7 +4,7 @@
 
 # https://docs.microsoft.com/en-us/rest/api/postgresql/
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_server
-resource "azurerm_postgresql_server" "postgresql_server" {
+resource "azurerm_postgresql_server" "this" {
   name                = "${var.prefix}-spotfire-dbserver"
   location            = var.location
   resource_group_name = var.resource_group_name
@@ -13,7 +13,7 @@ resource "azurerm_postgresql_server" "postgresql_server" {
   administrator_login_password = var.spotfire_db_admin_password
 
   //  sku_name   = "GP_Gen5_4"
-  sku_name   = "GP_Gen5_2"
+  sku_name   = var.spotfire_db_instance_class
   version    = var.postgresql_db_version
   storage_mb = var.spotfire_db_size
 
@@ -30,19 +30,19 @@ resource "azurerm_postgresql_server" "postgresql_server" {
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_virtual_network_rule
-resource "azurerm_postgresql_virtual_network_rule" "vnet_rule" {
+resource "azurerm_postgresql_virtual_network_rule" "rds" {
   name                                 = "${var.prefix}-postgresql-vnet-rule"
   resource_group_name                  = var.resource_group_name
-  server_name                          = azurerm_postgresql_server.postgresql_server.name
+  server_name                          = azurerm_postgresql_server.this.name
   subnet_id                            = var.subnet_id
   ignore_missing_vnet_service_endpoint = true
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_database
-resource "azurerm_postgresql_database" "postgresql_database" {
+resource "azurerm_postgresql_database" "this" {
   name                = "${var.prefix}-spotfire-db"
   resource_group_name = var.resource_group_name
-  server_name         = azurerm_postgresql_server.postgresql_server.name
+  server_name         = azurerm_postgresql_server.this.name
   charset             = "UTF8"
   collation           = "English_United States.1252"
 }

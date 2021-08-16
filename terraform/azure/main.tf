@@ -21,11 +21,12 @@ module "networking" {
   resource_group_name = module.base.rg_name
 
   # specific
-  inbound_ports_to_allow          = var.open_tcp_ports
-  admin_address_prefix            = var.admin_address_prefix
+  admin_address_prefixes          = var.admin_address_prefixes
+  web_address_prefixes            = var.web_address_prefixes
   vnet_address_space              = var.vnet_address_space
   public_subnet_address_prefixes  = var.public_subnet_address_prefixes
   private_subnet_address_prefixes = var.private_subnet_address_prefixes
+  jumphost_public_ips             = module.jumphost.vm_public_ips
 }
 
 # Setup storage
@@ -145,7 +146,7 @@ module "tss" {
   vm_admin_password   = var.tss_admin_password
   ssh_public_key_file = var.ssh_public_key_file
 
-  create_public_ip = var.tss_create_public_ip
+  create_public_ip = var.create_tss_public_ip
 
   # dependencies
   resource_group_name = module.base.rg_name

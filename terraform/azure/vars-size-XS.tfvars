@@ -2,21 +2,21 @@
 # control resources creation
 #----------------------------------------
 create_spotfire_db   = true
-create_appgw         = false
-tss_create_public_ip = true
+create_appgw         = true
+create_tss_public_ip = false
 create_bastion       = false
 
 #----------------------------------------
 # instances number
 #----------------------------------------
-# VM instances number
+# Jumphost instances number
 jumphost_instances = 1
 
-# VM instances number
-tss_instances = 1
+# TIBCO Spotfire Server instances number
+tss_instances = 2
 
-# VM instances number
-wp_instances = 1
+# TIBCO Spotfire Web Player instances number
+wp_instances = 2
 
 #----------------------------------------
 # instances size
@@ -47,21 +47,3 @@ wp_vm_size = "Standard_A2_v2" // 2cores, 4GiB, 20 GB SSD, 500Mbps
 //wp_vm_size = "Standard_A4_v2" // 4cores, 8GiB, 40 GB SSD, 4000/80/40, 8/8x500	4	1000
 //wp_vm_size = "Standard_D2_v4" // 2	8	Remote Storage Only	4	2	1000
 
-# VM Operating System
-//# CentOS 8.2
-//wp_os_publisher = "OpenLogic"
-//wp_os_offer = "Centos"
-//wp_os_sku = "8_2"
-//wp_os_version = "8.2.2020111800"
-
-//# SUSE
-//wp_os_publisher = "SUSE"
-//wp_os_offer = "SLES"
-//wp_os_sku = "12-sp4-gen2"
-//wp_os_version = "latest"
-
-//# OpenSUSE
-//wp_os_publisher = "SUSE"
-//wp_os_offer = "openSUSE-Leap"
-//wp_os_sku = "15-2"
-//wp_os_version = "latest"

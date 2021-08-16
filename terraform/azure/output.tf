@@ -52,3 +52,4 @@ output "wp_hostnames" {
 output "db_server_name" {
   value = var.create_spotfire_db ? module.tssdb[0].db_server.name : var.spotfire_db_name
 }
+

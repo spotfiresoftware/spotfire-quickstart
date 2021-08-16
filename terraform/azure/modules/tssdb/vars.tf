@@ -35,6 +35,10 @@ variable "postgresql_db_version" {
   default = "11"
 }
 
+variable "spotfire_db_instance_class" {
+  default = "GP_Gen5_2"
+}
+
 variable "spotfire_db_size" {
   # between 5120 MB(5GB) and 16777216 MB(16TB) for General Purpose/Memory Optimized SKUs
   default = "5120"

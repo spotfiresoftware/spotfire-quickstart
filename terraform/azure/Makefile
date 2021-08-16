@@ -99,12 +99,14 @@ show-facts: ## Show hosts inventory facts using Ansible facts
 
 deploy: ## Install and configure Spotfire software on infra hosts using Ansible playbooks
 	cd ../../ansible && \
-		ANSIBLE_DISPLAY_SKIPPED_HOSTS=false ANSIBLE_HOST_KEY_CHECKING=False ANSIBLE_SSH_ARGS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null" \
+#		export ANSIBLE_CONFIG=./ansible.cfg && \
+#		ANSIBLE_SSH_ARGS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=120" \
+		ANSIBLE_PERSISTENT_COMMAND_TIMEOUT=120 ANSIBLE_TIMEOUT=120 ANSIBLE_DISPLAY_SKIPPED_HOSTS=false ANSIBLE_HOST_KEY_CHECKING=False \
 			ansible-playbook \
 		    -i ${INVENTORY_FILE} \
 		 	--extra-vars @config/vars.yml \
 		 	--extra-vars ${INFRA_EXTRA_VARS} \
-	  		$(ANSIBLE_EXTRA_ARGS) \
+			$(ANSIBLE_EXTRA_ARGS) \
 	  		site.yml
 #  			--limit wp_servers \
 #	  		 -vvv

@@ -26,6 +26,8 @@ variable "resource_group_name" {
 //  default = ""
 //}
 
+variable "jumphost_public_ips" {}
+
 #----------------------------------------
 # specific (this: networking)
 variable "vnet_address_space" {
@@ -45,12 +47,17 @@ variable "private_subnet_address_prefixes" {
   //  default     = [cidrsubnet(var.vnet_address_space,8,2)]
 }
 
-variable "inbound_ports_to_allow" {
-  description = "Firewall/Security Group ports to allow for inbound traffic. By default ssh is allowed"
-  default     = [22, 80, 433]
+//variable "admin_open_tcp_ports" {
+//  description = "Firewall/Security Group ports to allow for inbound traffic. By default ssh is allowed"
+//  default     = [22, 80, 433]
+//}
+
+variable "admin_address_prefixes" {
+  description = "CIDR or source IP range allowed for remote access"
+  default     = ["43.21.0.0/16"]
 }
 
-variable "admin_address_prefix" {
-  description = "CIDR or source IP range allowed for remote access"
-  default     = "43.21.0.0/16"
+variable "web_address_prefixes" {
+  description = "CIDR or source IP range allowed for remote access for Spotfire application"
+  default     = ["43.0.0.0/8"]
 }
