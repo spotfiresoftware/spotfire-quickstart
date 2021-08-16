@@ -13,10 +13,8 @@ Note: This quickstart example has been verified with Spotfire 11.x series, but i
 
 ### Which kind of Spotfire deployment is deployed by this quickstart example?
 
-This example follows the [Basic installation process for Spotfire]
-(https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/basic_installation_process_for_spotfire.html) 
-from the [TIBCO Spotfire® Server and Environment - Installation and Administration]
-(https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/getting_started.html).
+This example follows the [Basic installation process for Spotfire](https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/basic_installation_process_for_spotfire.html) 
+from the [TIBCO Spotfire® Server and Environment - Installation and Administration](https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/getting_started.html).
 
 This basic installation will deploy the following components:
 - TIBCO Spotfire Server(s) (using Azure Linux virtual machine(s)).
@@ -63,10 +61,11 @@ See the corresponding vendor instructions for using other operating systems.
 
 2. Download the Spotfire software and copy the files into `<this_repo_root>/swrepo/build`
 
-   - tss-<version>.x86_64.rpm
-   - nm-setup.exe
-   - Spotfire.Dxp.sdn
-   - scripts/
+   - `tss-<version>.x86_64.rpm`
+   - `nm-setup.exe`
+   - `Spotfire.Dxp.sdn`
+   - `scripts/`
+
 
 3. You need to install the required configuration management applications. 
    
