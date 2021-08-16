@@ -33,7 +33,7 @@ This basic installation will deploy the following components:
 1. Clone this repo into a folder in your launcher.
 
    ```
-   git clone https://github.com/<location>/spotfire-quickstart
+   git clone https://github.com/TIBCOSoftware/spotfire-quickstart
    ```
 
 2. Download the Spotfire software and copy the files into `<this_repo_root>/swrepo/build`

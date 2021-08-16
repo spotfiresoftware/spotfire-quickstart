@@ -1,7 +1,6 @@
 # initial install
 
 # Create Spotfire DB table schemas
-#TODO: make create_db idempotent
 create_db: true
 # If we are using cloud service database (currently only tested with Azure database for PostgreSQL)
 use_cloud_db: true
@@ -9,10 +8,14 @@ use_cloud_db: true
 tss_bootstrap: true
 
 # tss version
-tss_version: 11.4.0
-tss_home: "/opt/tibco/tss/{{ tss_version }}"
-# Note: Windows service name
-tnm_service_name_win: "TIBCO Spotfire Node Manager {{ tss_version }} LTS"
+tss_version: '11.4.0'
+tss_home: '/opt/tibco/tss/{{ tss_version }}'
+
+# NOTE: This is an internal fix for getting the Windows service name (variable) using lookup.ini based on the {{ tss_version }}
+regex: "[`'\"]"
+replace: ""
+LTS: "{{ lookup('ini', '{{ tss_version }} section=tnm_service_name_win file=config/lookup.ini default=') }}"
+tnm_service_name_win: "TIBCO Spotfire Node Manager {{ tss_version }}{{ LTS|regex_replace(regex, replace) }}"
 
 # location of Spotfire software packages
 spotfire_local_sw_repo: ../swrepo/build/{{ tss_version }}
