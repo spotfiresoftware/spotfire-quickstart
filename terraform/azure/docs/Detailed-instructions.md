@@ -8,7 +8,7 @@ If you do not want to know about the details, jump to the "Easy peasy instructio
 
 ## Procedure
 
-### Prepare the environment
+### Prepare your launcher host
 
 1. Move to the Azure Terraform templates folder
 
@@ -22,27 +22,28 @@ If you do not want to know about the details, jump to the "Easy peasy instructio
    terraform init --upgrade
    ~~~
 
-### Configure the environment
+### Configure the target environment
 
-3. You can customize some **Terraform environment** by editing the file `terraform.env`. Apply those variables.
+3. You can customize the (terraform) **deployment environment** by editing the file `terraform.env`. 
+   Apply those variables with:
 
    ~~~
    . ./terraform.env
    ~~~
    
    Note: You need to use a different `TF_WORKSPACE` for applying different environments for the same location.
-   
+
 4. Edit the file `variables.tfvars` to configure your deployment location, operating system, credentials, etc.
 
    Note: You need to use a different `prefix` in `variables.tfvars` for applying multiple environments using the same account.
 
    Note: You need to modify the `source_address_prefix` variable, so you can access the environment from your ip address or subnet (you can find your public ip address for example in https://whatismyipaddress.com/).
 
-   Note: By default, we do not create an Azure Application Gateway or an Azure Bastion (they take some more time to spin up in Azure and are not very interesting for small test environments). Check in `vars-size-XS.tfvars` the variables that control *resource creation and sizing*. 
-
 5. Edit the file `vars-size-XS.tfvars` to configure your deployment optional resources creation and sizing (type and number of instances)
 
    Note: The `vars-size-XS.tfvars` settings overrides `variables.tfvars` settings.
+
+   Note: By default, we do not create an Azure Application Gateway, or an Azure Bastion (they take some more time to spin up in Azure and are not very interesting for small test environments). Check in `vars-size-XS.tfvars` the variables that control *resource creation and sizing*.
 
 6. Select a Terraform workspace. For example, a workspace named `spotfire-dev`.
 
@@ -50,7 +51,7 @@ If you do not want to know about the details, jump to the "Easy peasy instructio
    terraform spotfire-dev 
    ~~~
 
-7. Prepare the Terraform plan. This step helps to verify the changes before applying them.
+7. Verify the planed infrastructure changes before applying them.
 
    ~~~
    terraform plan -var-file="variables.tfvars" -var-file="vars-size-XS.tfvars"
@@ -76,30 +77,29 @@ If you do not want to know about the details, jump to the "Easy peasy instructio
 
 10. Configure the Spotfire deployment by editing the file `config/vars.yml`.
 
-    Note: The variables in `config/vars.yml` are used as defaults and may be override by previous configuration files.
+    Note: The variables in `config/vars.yml` are used as defaults and may be overridden by previous configuration files.
 
 11. Deploy the Spotfire software with the predefined Ansible playbooks for Spotfire.
 
     ~~~
-    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook \
+    ANSIBLE_PERSISTENT_COMMAND_TIMEOUT=120 ANSIBLE_TIMEOUT=120 ANSIBLE_DISPLAY_SKIPPED_HOSTS=false ANSIBLE_HOST_KEY_CHECKING=False \
+	   ansible-playbook \
        -i ../terraform/azure/terraform.tfstate.d/${TF_WORKSPACE}/ansible_config/host_groups_azure_rm.yml \
        --extra-vars @config/vars.yml \
        --extra-vars @../terraform/azure/terraform.tfstate.d/${TF_WORKSPACE}/ansible_config_files/infra.yml \
        site.yml
     ~~~
 
-# Modify the environment 
+### Resize or reconfigure the created environment
 
-13. At any time you can modify the configuration and reapply the Terraform planned changes to remove/create/modify the infrastructure.
+12. You can resize or change your system's configuration by editing again the named configuration files and repeating steps 4-11.
 
-   ~~~
-   terraform apply -var-file="variables.tfvars" -var-file="vars-size-XS.tfvars" --auto-approve
-   ~~~
- 
-14. You can use similar command as previous to just deploy a specific type of servers for example if you just increased the number of instances of that type of server with the Terraform command (e.g. Web Player servers).
+    Note: You can use similar deploy command as previous to limit the deployment to a specific type of server. 
+    For example if you increased the number of VM instances for the Web Player servers you can just deploy those with:
 
     ~~~
-    ANSIBLE_HOST_KEY_CHECKING=False ansible-playbook \
+    ANSIBLE_PERSISTENT_COMMAND_TIMEOUT=120 ANSIBLE_TIMEOUT=120 ANSIBLE_DISPLAY_SKIPPED_HOSTS=false ANSIBLE_HOST_KEY_CHECKING=False \
+		ansible-playbook \
        -i ../terraform/azure/terraform.tfstate.d/${TF_WORKSPACE}/ansible_config/host_groups_azure_rm.yml \
        --extra-vars @config/vars.yml \
        --extra-vars @../terraform/azure/terraform.tfstate.d/${TF_WORKSPACE}/ansible_config_files/infra.yml \
@@ -107,9 +107,9 @@ If you do not want to know about the details, jump to the "Easy peasy instructio
        --limit wp_servers
     ~~~
     
-### Destroy the environment
+### Destroy the created environment
 
-15. Remember to destroy your environment when you are not going to use it to avoid unneeded costs.
+13. Remember to destroy your environment when you are not going to use it to avoid unneeded costs.
 
     ~~~
     terraform destroy

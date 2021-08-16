@@ -2,13 +2,14 @@
 
 ## Overview
 
-Follow this instructions if you want to install the following applications in your server:
+Follow these instructions if you want to install the following applications in your server:
 
 * Terraform
 * Ansible
 * Azure CLI
 
-For easy reference, the official vendor procedures for a Debian/Ubuntu distribution are compiled in this page. For other operating systems, please check the specific vendor documentation.
+For easy reference, the official vendor procedures for a Debian/Ubuntu distribution are compiled in this page. 
+For other operating systems, please check the specific vendor documentation.
 
 ## Install common tools
 
@@ -20,7 +21,8 @@ apt-get install -y gnupg software-properties-common curl
 
 ## Install Terraform
 
-For installing Terraform, we follow Terraform's official procedure: [Hashicorp Terrafom Debian/Ubuntu install](https://www.terraform.io/docs/cli/install/apt.html). See also [Install Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli) for instructions for other OS.
+For installing Terraform, we follow Terraform official procedure: [Hashicorp Terraform Debian/Ubuntu install](https://www.terraform.io/docs/cli/install/apt.html). 
+See also [Install Terraform](https://learn.hashicorp.com/tutorials/terraform/install-cli) for instructions for other OS.
 
 For your convenience, these are the steps:
 
@@ -51,7 +53,8 @@ For your convenience, these are the steps:
    ```
    python3 -m pip install --upgrade pip setuptools wheel
    ```
-2. Install Ansible. Note you need at least Ansible 2.8 version for running Ansible Galaxy. Check your version with `ansible --version`.
+2. Install Ansible. Note you need at least Ansible 2.8 version for running Ansible Galaxy. 
+   Check your version with `ansible --version`.
    ```
    python3 -m pip install 'ansible==2.10.7'
    ```
@@ -59,7 +62,8 @@ For your convenience, these are the steps:
    ```
    ansible-galaxy collection install community.windows
    ```
-4. Using the Azure Resource Manager modules requires having specific Azure SDK modules installed on the host running Ansible. For more details, see the [Ansible Azure guide](https://docs.ansible.com/ansible/latest/scenario_guides/guide_azure.html).
+4. Using the Azure Resource Manager modules requires having specific Azure SDK modules installed on the host running Ansible. 
+   For more details, see the [Ansible Azure guide](https://docs.ansible.com/ansible/latest/scenario_guides/guide_azure.html).
    ```
    curl https://raw.githubusercontent.com/ansible-collections/azure/dev/requirements-azure.txt > /tmp/requirements-azure.txt
    python3 -m pip install -r /tmp/requirements-azure.txt
@@ -86,16 +90,17 @@ For installing Azure CLI, we follow Azure's official procedure: [Install the Azu
 
 ### Terraform Configuration
 
-To provide Terraform with the Azure credentials information, you can copy your Azure's subscription ID and tenant ID into the `provider.tf` file respective fields.
+To provide Terraform with the Azure credentials information, you can copy your Azure's subscription details into the `provider.tf` file respective fields.
 
-Nevertheless, we'd recommend not defining these variables into the `provider.tf` file since they could easily be checked into Source Control.
+Nevertheless, we recommend not defining these variables into the `provider.tf` file since they could easily be checked into your version control system by mistake.
 
-The recommended alternative is to pass these credentials as Environment Variables, for example:
+The recommended method is to pass these credentials as environment variables.
 ```
 export ARM_SUBSCRIPTION_ID="00000000-0000-0000-0000-000000000000"
 export ARM_TENANT_ID="00000000-0000-0000-0000-000000000000"
 ```
-As an alternative, you can store these variables in a secure file location and import them before using Terraform. For example:
+Note you could also store these variables in a secure file location and import them before using Terraform.
+For example:
 ```
 . ~/.azure/creds.env
 ```
