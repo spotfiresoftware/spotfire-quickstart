@@ -1,0 +1,55 @@
+#
+# This plugin is part of the amazon.aws collection (version 1.5.0).
+# To install it use: ansible-galaxy collection install amazon.aws
+#                    sudo pip3 install --user boto3
+#
+# https://docs.ansible.com/ansible/latest/collections/amazon/aws/aws_ec2_inventory.html
+# https://docs.ansible.com/ansible/latest/plugins/inventory.html#inventory-plugins
+# https://aws.amazon.com/blogs/apn/getting-started-with-ansible-and-dynamic-amazon-ec2-inventory-management/
+#
+plugin: amazon.aws.aws_ec2
+
+regions:
+  - ${ region }
+
+filters:
+  # All instances with their `Environment` tag set to `dev`
+  #tag:environment: dev
+  # All dev and QA hosts
+  tag:prefix:
+    - ${ prefix }
+
+# keyed_groups may be used to create custom groups
+strict: False
+
+keyed_groups:
+#  # Create security_groups_sg_abcd1234 group for each SG
+#  - key: 'security_groups|json_query("[].group_id")'
+#    prefix: 'security_groups'
+  # Create a group for each value of the role tag
+  - key: tags['role']
+    separator: ''
+
+hostnames:
+  - tag:Name=Name  # Return specific hosts only
+#  - tag:CustomDNSName
+  - dns-name
+#  - name: 'tag:Name=Tag1,Name=Tag2'
+#  - name: 'private-ip-address'
+  - private-dns-name
+
+compose:
+  # Use the private IP address to connect to the host
+  # (note: this does not modify inventory_hostname, which is set via I(hostnames))
+#  ansible_host: public_ipv4addresses|default(private_ipv_addresses, true) | first
+  ansible_host: public_dns_name
+
+# For setting credentials,
+# either export them as environment variables:
+#export AWS_PROFILE='SpotfirePMRole'
+#export AWS_ACCESS_KEY_ID='ABCDEFGHIJKLMNOPQRST'
+#export AWS_SECRET_ACCESS_KEY='ABCabcDEFdefGHIghiJKLjklMNOmnoPQRpqrSTUs'
+# or add them in this file:
+#aws_access_key: 'ABCDEFGHIJKLMNOPQRST'
+#aws_secret_key: 'ABCabcDEFdefGHIghiJKLjklMNOmnoPQRpqrSTUs'
+#iam_role_arn: "arn:aws:iam::123456789012:role/SpotfirePowerUser"

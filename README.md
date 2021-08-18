@@ -15,5 +15,6 @@ Have fun !!!
 
 Quickstarts:
 * [Quickstart for TIBCO Spotfire® on Azure using Terraform and Ansible](terraform/azure/README.md)
+* [Quickstart for TIBCO Spotfire® on AWS using Terraform and Ansible](terraform/aws/README.md)
 
 (stay tuned, more quickstarts coming soon)

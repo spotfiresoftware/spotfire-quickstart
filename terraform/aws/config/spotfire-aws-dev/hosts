@@ -1,0 +1,7 @@
+[jumphost_servers]
+santander-jumphost-0-vm ansible_host=13.51.234.45 ansible_connection=ssh ansible_user=ec2-user
+
+[tss_servers]
+santander-tss-0-vm ansible_host=10.0.11.102 ansible_connection=ssh ansible_user=ec2-user
+
+[wp_servers]
