@@ -105,7 +105,7 @@ module "jumphost" {
   role = "jumphost"
 
   vm_instances = var.jumphost_instances
-  vm_size      = var.jumphost_vm_size
+  vm_size      = var.jumphost_size
 
   os_publisher = var.os_publisher
   os_distro    = var.os_distro
@@ -135,7 +135,7 @@ module "tss" {
   role = "tss"
 
   vm_instances = var.tss_instances
-  vm_size      = var.tss_vm_size
+  vm_size      = lookup(var.tss_instance_types, var.tss_size)
 
   os_publisher = var.os_publisher
   os_distro    = var.os_distro
@@ -169,7 +169,7 @@ module "wp" {
 
   //  vm_instances      = var.wp_instances
   vm_instances = var.create_wp_linux ? var.wp_instances : 0
-  vm_size      = var.wp_vm_size
+  vm_size      = lookup(var.wp_instance_types, var.wp_size)
 
   os_publisher = var.wp_os_publisher
   os_distro    = var.wp_os_offer
@@ -203,7 +203,7 @@ module "wp_windows" {
 
   //  vm_instances = var.wp_instances
   vm_instances = var.create_wp_linux ? 0 : var.wp_instances
-  vm_size      = var.wp_vm_size
+  vm_size      = lookup(var.wp_instance_types, var.wp_size)
 
   os_publisher = var.wp_os_publisher
   os_offer     = var.wp_os_offer

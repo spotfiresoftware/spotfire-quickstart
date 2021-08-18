@@ -18,7 +18,7 @@ admin_address_prefixes = ["12.34.0.0/16"]
 web_address_prefixes   = ["12.0.0.0/8"]
 
 #----------------------------------------
-# Spotfire Database (tssdb)
+# TIBCO Spotfire Database (tssdb)
 #----------------------------------------
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_server
 # https://docs.microsoft.com/en-us/azure/postgresql/
@@ -41,8 +41,8 @@ spotfire_ui_admin_password = "s3cr3t0!"
 #----------------------------------------
 
 # ssh key file
-ssh_public_key_file  = "~/.ssh/id_rsa.pub"
-ssh_private_key_file = "~/.ssh/id_rsa"
+//ssh_public_key_file  = "~/.ssh/id_rsa.pub"
+//ssh_private_key_file = "~/.ssh/id_rsa"
 
 # VM Operating System
 os_publisher = "OpenLogic"
@@ -54,24 +54,9 @@ os_version   = "8.2.2020111800"
 # jumphost
 #----------------------------------------
 # VM instances number
-jumphost_instances = 1
-
+//jumphost_instances = 1
 # VM size
-# https://docs.microsoft.com/en-us/azure/virtual-machines/sizes
-#    Size	vCore	Memory: GiB	Temp storage (SSD) GiB	Max temp storage throughput: IOPS/Read MBps/Write MBps	Max data disks/throughput: IOPS	Max NICs	Expected network bandwidth (Mbps)
-#    Standard_A1_v2	1	2	10	1000/20/10	2/2x500	2	250
-#    Standard_A2_v2	2	4	20	2000/40/20	4/4x500	2	500
-#    Standard_A4_v2	4	8	40	4000/80/40	8/8x500	4	1000
-#    Standard_A8_v2	8	16	80	8000/160/80	16/16x500	8	2000
-#    ...
-#    Standard_D2_v4	2	8	Remote Storage Only	4	2	1000
-#    Standard_D4_v4	4	16	Remote Storage Only	8	2	2000
-#    Standard_D8_v4	8	32	Remote Storage Only	16	4	4000
-#    Standard_D16_v4	16	64	Remote Storage Only	32	8	8000
-#    Standard_D32_v4	32	128	Remote Storage Only	32	8	16000
-#    ...
-jumphost_vm_size = "Standard_A1_v2" // 1cores, 2GiB, 10 GB SSD, 250Mbps
-
+//jumphost_vm_size = "XS"
 # VM login credentials
 # NOTE: cannot be admin/root in Azure
 jumphost_admin_username = "spotfire"
@@ -86,17 +71,12 @@ jumphost_admin_username = "spotfire"
 jumphost_admin_password = "s3cr3t0!"
 
 #----------------------------------------
-# Spotfire Server (tss)
+# TIBCO Spotfire Server (tss)
 #----------------------------------------
 # VM instances number
-tss_instances = 2
-
+//tss_instances = 2
 # VM size
-# https://docs.microsoft.com/en-us/azure/virtual-machines/sizes
-tss_vm_size = "Standard_A2_v2" // 2cores, 4GiB, 20 GB SSD, 500Mbps
-//tss_vm_size = "Standard_A4_v2" // 4cores, 8GiB, 40 GB SSD, 4000/80/40, 8/8x500	4	1000
-//tss_vm_size = "Standard_D2_v4" // 2	8	Remote Storage Only	4	2	1000
-
+//tss_vm_size = "XS"
 # VM login credentials
 # NOTE: cannot be admin/root in Azure
 tss_admin_username = "spotfire"
@@ -111,17 +91,12 @@ tss_admin_username = "spotfire"
 tss_admin_password = "s3cr3t0!"
 
 #----------------------------------------
-# Web Player (wp) - Windows
+# TIBCO Spotfire Web Player (wp) - Windows
 #----------------------------------------
 # VM instances number
-wp_instances = 2
-
+//wp_instances = 2
 # VM size
-# https://docs.microsoft.com/en-us/azure/virtual-machines/sizes
-wp_vm_size = "Standard_A2_v2" // 2cores, 4GiB, 20 GB SSD, 500Mbps
-#wp_vm_size = "Standard_A4_v2" // 4cores, 8GiB, 40 GB SSD, 4000/80/40, 8/8x500	4	1000
-//wp_vm_size = "Standard_D2_v4" // 2	8	Remote Storage Only	4	2	1000
-
+//wp_vm_size = "XS"
 # VM Operating System
 wp_os_publisher = "MicrosoftWindowsServer"
 wp_os_offer     = "WindowsServer"

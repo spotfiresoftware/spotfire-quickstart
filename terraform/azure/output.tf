@@ -1,15 +1,11 @@
-//output "bastion_pip" {
-//  value = module.bastion.bastion_pip
-//}
+output "prefix" {
+  value = var.prefix
+}
 
 output "appgw_pip" {
   // show only if created
   value = var.create_appgw ? module.appgw[0].appgw_pip : null
 }
-
-//output "prefix" {
-//  value = var.prefix
-//}
 
 // jumphost
 output "jumphost_pip_addresses" {

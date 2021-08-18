@@ -63,7 +63,9 @@ reapply: destroy apply
 show-hosts: ## List hosts inventory (sw deployment targets) using az cli
 # https://docs.microsoft.com/en-us/cli/azure/vm?view=azure-cli-latest
 	$(eval SPOTFIRE_RG=$(shell grep ^prefix variables.tfvars | sed "s/[ \"]//g" | cut -d'=' -f2)-spotfire-rg)
-	az vm list-ip-addresses --resource-group ${SPOTFIRE_RG} --output table
+	az vm list-ip-addresses \
+		--resource-group ${SPOTFIRE_RG} \
+		--output table
 
 show-lb: ## List Load Balancer (Azure Application Gateway) IP address and DNS name using az cli
 # https://docs.microsoft.com/en-us/cli/azure/network/application-gateway?view=azure-cli-latest

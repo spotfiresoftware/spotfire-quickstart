@@ -16,26 +16,26 @@ variable "create_tss_public_ip" {
   default     = false
 }
 
-variable "create_bastion" {
-  description = "Create Bastion host for easier management of Windows VMs (not required)"
-  default     = false
-}
-
 # WARN: WP on Linux is not currently supported, just for testing future support
 variable "create_wp_linux" {
   description = "Use Linux for Web Player services (experimental, the default is Windows)"
   default     = false
 }
 
+variable "create_bastion" {
+  description = "Create Bastion host for easier management of Windows VMs (not required)"
+  default     = false
+}
+
 #----------------------------------------
-# Resources prefix
+# Resources prefix & tags
 #----------------------------------------
 variable "tags" {
   type = map(string)
 
   default = {
     # specific tags
-    name          = "Spotfire basic install"
+    description   = "Spotfire quickstart: basic install"
     app           = "Spotfire"
     app_version   = "11.4"
     environment   = "dev"
@@ -62,7 +62,8 @@ variable "region" {
 # Networking
 #----------------------------------------
 variable "admin_address_prefixes" {
-  description = "CIDR or source IP range allowed for remote access"
+  # Recommended to use more strict than /9 mask
+  description = "CIDR or source IP range allowed for environment administration"
   default     = ["43.21.0.0/16"]
 }
 
@@ -178,6 +179,10 @@ variable "ssh_private_key_file" {
   default     = "~/.ssh/id_rsa"
 }
 
+#----------------------------------------
+# VM Operating System
+#----------------------------------------
+
 # VM Operating System
 variable "os_publisher" {
   description = "Spotfire VM operating system publisher"
@@ -199,19 +204,6 @@ variable "os_version" {
 #----------------------------------------
 # jumphost
 #----------------------------------------
-# VM instances number
-variable "jumphost_instances" {
-  description = "Number of jumphost instances"
-  default     = 1
-}
-
-# VM size
-# https://docs.microsoft.com/en-us/azure/virtual-machines/sizes
-variable "jumphost_vm_size" {
-  description = "Jumphost VM size"
-  default     = "Standard_A1_v2"
-}
-
 # VM login credentials
 variable "jumphost_admin_username" {
   description = "Spotfire VM admin username"
@@ -234,20 +226,6 @@ variable "jumphost_admin_password" {
 #----------------------------------------
 # Spotfire Server (tss)
 #----------------------------------------
-# VM instances number
-variable "tss_instances" {
-  description = "Number of TIBCO Spotfire Server instances"
-  default     = 2
-}
-
-# VM size
-# https://docs.microsoft.com/en-us/azure/virtual-machines/sizes
-variable "tss_vm_size" {
-  description = "TIBCO Spotfire Server VM size"
-  //  default = "Standard_A1_v2" // 1cores, 2GiB, 10 GB SSD, 250Mbps
-  default = "Standard_A2_v2" // 2cores, 4GiB, 20 GB SSD, 500Mbps
-}
-
 # VM login credentials
 variable "tss_admin_username" {
   description = "TIBCO Spotfire Server VM admin username"
@@ -270,20 +248,6 @@ variable "tss_admin_password" {
 #----------------------------------------
 # Web Player (wp)
 #----------------------------------------
-# VM instances number
-variable "wp_instances" {
-  description = "Number of TIBCO Spotfire Web Player instances"
-  default     = 2
-}
-
-# VM size
-# https://docs.microsoft.com/en-us/azure/virtual-machines/sizes
-variable "wp_vm_size" {
-  description = "TIBCO Spotfire Web Player VM size"
-  //  default = "Standard_A2_v2" // 2cores, 4GiB, 20 GB SSD, 500Mbps
-  default = "Standard_A4_v2" // 4cores, 8GiB, 40 GB SSD, 1000Mbps
-}
-
 # VM Operating System
 variable "wp_os_publisher" {
   description = "TIBCO Spotfire Web Player VM operating system publisher"
@@ -319,4 +283,20 @@ variable "wp_admin_password" {
   description = "TIBCO Spotfire Web Player VM admin password"
   default     = "d3f4ult!"
   sensitive   = true
+}
+
+#----------------------------------------
+# VM instances number
+#----------------------------------------
+variable "jumphost_instances" {
+  description = "Number of jumphost instances"
+  default     = 1
+}
+variable "tss_instances" {
+  description = "Number of TIBCO Spotfire Server instances"
+  default     = 2
+}
+variable "wp_instances" {
+  description = "Number of TIBCO Spotfire Web Player instances"
+  default     = 2
 }
