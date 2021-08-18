@@ -36,7 +36,7 @@ spotfire_ui_admin_password = "s3cr3t0!"
 
 #----------------------------------------
 # generic VM (Linux)
-#-------------------------------------
+#----------------------------------------
 
 # ssh key file
 //ssh_public_key_file  = "~/.ssh/id_rsa.pub"
@@ -55,10 +55,10 @@ jumphost_vm_os = "CentOS"
 jumphost_admin_username = "centos"
 
 #----------------------------------------
-# Spotfire Server (tss)
+# TIBCO Spotfire Server (tss)
 #----------------------------------------
 # VM instances number
-//tss_instances = 1
+//tss_instances = 2
 # VM size
 //tss_vm_size = "XS"
 # VM OS (CentOS|openSUSE)
@@ -67,10 +67,10 @@ tss_vm_os = "CentOS"
 tss_admin_username = "centos"
 
 #----------------------------------------
-#  Web Player (wp)
+# TIBCO Spotfire Web Player (wp) - Windows
 #----------------------------------------
 # VM instances number
-//wp_instances = 1
+//wp_instances = 2
 # VM size
 //wp_vm_size = "XS"
 # VM OS (Windows2019)

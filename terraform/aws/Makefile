@@ -68,7 +68,8 @@ reapply: destroy apply
 
 show-hosts: ## List hosts inventory (sw deployment targets) using AWS cli
 # https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-instances.html
-	@echo "Name\t\tPrivateIpAddress PublicIpAddress PublicDnsName"
+	@echo "Name\t\tPrivateIpAddres\tPublicIpAddress\tPublicDnsName"
+	@echo "---------------\t---------------\t---------------\t---------------"
 	@aws ec2 describe-instances  \
 		--query "Reservations[*].Instances[*].[Tags[?Key=='Name'].Value|[0], PrivateIpAddress, PublicIpAddress, PublicDnsName]" \
 		--output=text \

@@ -23,7 +23,7 @@ variable "create_wp_linux" {
 }
 
 #----------------------------------------
-# Resources prefix
+# Resources prefix & tags
 #----------------------------------------
 variable "tags" {
   type = map(string)
@@ -42,82 +42,24 @@ variable "prefix" {
   default = "sandbox"
 }
 
-variable "environment" {
-  default = "dev"
-}
+//variable "environment" {
+//  default = "dev"
+//}
 
+#----------------------------------------
+# AWS region
+#----------------------------------------
 variable "region" {
   default = "eu-north-1"
-}
-
-variable "application" {
-  default = "Spotfire"
-  type    = string
-}
-
-variable "key_name" {
-  default = "ec2key"
-  type    = string
-}
-
-# https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html
-# https://eu-north-1.console.aws.amazon.com/ec2/v2/home?region=eu-north-1
-# https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-images.html
-variable "aws_amis" {
-  default = {
-    # all images in eu-north
-    #
-    # openSUSE Leap 15.3
-    # https://aws.amazon.com/marketplace/server/configuration?productId=5e60433b-bd08-44d8-be9e-2b774638fa6c&ref_=psb_cfg_continue
-    "openSUSE" = "ami-04460796ff54dee3b"
-    # CentOS 8 (x86_64) - with Updates HVM
-    # https://aws.amazon.com/marketplace/server/configuration?productId=471d022d-974f-4f9c-8e39-b00d9b583833&ref_=psb_cfg_continue
-    "CentOS" = "ami-0966447150c11d877"
-    # RHEL_HA-8.4.0_HVM-20210504-x86_64-2-Hourly2-GP2
-    "RHEL" = "ami-0baa9e2e64f3c00db"
-    # Windows
-    # https://aws.amazon.com/marketplace/server/configuration?productId=ef297a90-3ad0-4674-83b4-7f0ec07c39bb&ref_=psb_cfg_continue
-    "Windows2019" = "ami-0de5cf558e1cb5cf9"
-  }
-}
-
-variable "jumphost_vm_os" {
-  default = "CentOS"
-}
-variable "tss_vm_os" {
-  default = "CentOS"
-}
-variable "wp_vm_os" {
-  default = "Windows2019"
-}
-
-# https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/managing-users.html
-#
-# Usernames:
-# - For Amazon Linux 2 or the Amazon Linux AMI, the user name is ec2-user.
-# - For a CentOS AMI, the user name is centos.
-# - For a Debian AMI, the user name is admin.
-# - For a Fedora AMI, the user name is ec2-user or fedora.
-# - For a RHEL AMI, the user name is ec2-user or root.
-# - For a SUSE AMI, the user name is ec2-user or root.
-# - For an Ubuntu AMI, the user name is ubuntu.
-variable "aws_ami_user" {
-  default = {
-    "CentOS"      = "centos"
-    "Debian"      = "admin"
-    "openSUSE"    = "ec2-user"
-    "RHEL"        = "ec2-user"
-    "SUSE"        = "ec2-user"
-    "Windows2019" = "spotfire"
-  }
 }
 
 #----------------------------------------
 # Networking
 #----------------------------------------
 variable "admin_address_prefixes" {
-  description = "CIDR or source IP range allowed for remote access for environment administration"
-  default     = ["43.21.0.0/16"] # Recommended to use more strict than /9 mask
+  # Recommended to use more strict than /9 mask
+  description = "CIDR or source IP range allowed for environment administration"
+  default     = ["43.21.0.0/16"]
 }
 
 variable "web_address_prefixes" {
@@ -182,79 +124,13 @@ variable "spotfire_ui_admin_password" {
 }
 
 #----------------------------------------
-# VMs type & size
-#----------------------------------------
-# https://aws.amazon.com/ec2/instance-types/
-#
-# Instance	vCPU*	Mem (GiB) Storage	Bandwidth (Mbps) Network Performance
-# -----------------------------------------------------------------------------------------
-# general purpose:
-# m3.large    2     7.5       -                                     0.133
-# m4.large	  2	    8	      EBS-only	  450	        Moderate    0.1
-# m4.xlarge	  4	    16	      EBS-only	  750	        High
-# compute optimized:
-# c4.large	  2	    3.75      EBS-Only	  500	        Moderate    0.1
-# c4.xlarge	  4	    7.5	      EBS-Only	  750	        High
-# c4.2xlarge  8	    15	      EBS-Only	  1,000	        High
-# c4.4xlarge  16	30	      EBS-Only	  2,000	        High
-# c4.8xlarge  36	60	      EBS-Only	  4,000	        10 Gigabit
-
-# m5.large    2     8                                               0.096
-
-variable "jumphost_instance_type" {
-  description = "Number of jumphost instances"
-  default     = "t3.large"
-}
-
-variable "tss_intance_types" {
-  type        = map(string)
-  description = "TIBCO Spotfire Server VM predefined sizes"
-  default = {
-    "XS" = "t3.large"
-    "S"  = "m4.xlarge"
-    "M"  = "c4.2xlarge"
-    "L"  = "c4.4xlarge"
-    "XL" = "c4.8xlarge"
-  }
-}
-variable "tss_size" {
-  description = "TIBCO Spotfire Server VM size"
-  default     = "XS"
-}
-
-variable "wp_instance_types" {
-  type        = map(string)
-  description = "TIBCO Spotfire Web Player VM predefined sizes"
-  default = {
-    "XS" = "t3.large"
-    "S"  = "m4.xlarge"
-    "M"  = "c4.2xlarge"
-    "L"  = "c4.4xlarge"
-    "XL" = "c4.8xlarge"
-  }
-}
-variable "wp_size" {
-  description = "TIBCO Spotfire Web Player VM size"
-  default     = "XS"
-}
-
-# VM instances number
-variable "jumphost_instances" {
-  description = "Number of jumphost instances"
-  default     = 1
-}
-variable "tss_instances" {
-  description = "Number of TIBCO Spotfire Server instances"
-  default     = 2
-}
-variable "wp_instances" {
-  description = "Number of TIBCO Spotfire Web Player instances"
-  default     = 2
-}
-
-#----------------------------------------
 # generic VM (Linux)
 #----------------------------------------
+
+variable "key_name" {
+  default = "ec2key"
+  type    = string
+}
 
 # ssh key file
 variable "ssh_public_key_file" {
@@ -268,13 +144,68 @@ variable "ssh_private_key_file" {
 }
 
 #----------------------------------------
+# VM Operating System
+#----------------------------------------
+
+# https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/finding-an-ami.html
+# https://eu-north-1.console.aws.amazon.com/ec2/v2/home?region=eu-north-1
+# https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-images.html
+variable "aws_amis" {
+  default = {
+    # all images in eu-north
+    #
+    # openSUSE Leap 15.3
+    # https://aws.amazon.com/marketplace/server/configuration?productId=5e60433b-bd08-44d8-be9e-2b774638fa6c&ref_=psb_cfg_continue
+    "openSUSE" = "ami-04460796ff54dee3b"
+    # CentOS 8 (x86_64) - with Updates HVM
+    # https://aws.amazon.com/marketplace/server/configuration?productId=471d022d-974f-4f9c-8e39-b00d9b583833&ref_=psb_cfg_continue
+    "CentOS" = "ami-0966447150c11d877"
+    # RHEL_HA-8.4.0_HVM-20210504-x86_64-2-Hourly2-GP2
+    "RHEL" = "ami-0baa9e2e64f3c00db"
+    # Windows
+    # https://aws.amazon.com/marketplace/server/configuration?productId=ef297a90-3ad0-4674-83b4-7f0ec07c39bb&ref_=psb_cfg_continue
+    "Windows2019" = "ami-0de5cf558e1cb5cf9"
+  }
+}
+
+variable "jumphost_vm_os" {
+  default = "CentOS"
+}
+variable "tss_vm_os" {
+  default = "CentOS"
+}
+variable "wp_vm_os" {
+  default = "Windows2019"
+}
+
+# https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/managing-users.html
+#
+# Usernames:
+# - For Amazon Linux 2 or the Amazon Linux AMI, the user name is ec2-user.
+# - For a CentOS AMI, the user name is centos.
+# - For a Debian AMI, the user name is admin.
+# - For a Fedora AMI, the user name is ec2-user or fedora.
+# - For a RHEL AMI, the user name is ec2-user or root.
+# - For a SUSE AMI, the user name is ec2-user or root.
+# - For an Ubuntu AMI, the user name is ubuntu.
+variable "aws_ami_user" {
+  default = {
+    "CentOS"      = "centos"
+    "Debian"      = "admin"
+    "openSUSE"    = "ec2-user"
+    "RHEL"        = "ec2-user"
+    "SUSE"        = "ec2-user"
+    "Windows2019" = "spotfire"
+  }
+}
+
+#----------------------------------------
 # jumphost
 #----------------------------------------
 # VM login credentials
 variable "jumphost_admin_username" {
   description = "Jumphost Server VM admin username"
-  # WARN: cannot be admin/root in Azure
-  default = "spotfire"
+  default     = "spotfire"
 }
 
 #----------------------------------------
@@ -283,8 +214,7 @@ variable "jumphost_admin_username" {
 # VM login credentials
 variable "tss_admin_username" {
   description = "TIBCO Spotfire Server VM admin username"
-  # WARN: cannot be admin/root in Azure
-  default = "spotfire"
+  default     = "spotfire"
 }
 
 #----------------------------------------
@@ -293,11 +223,26 @@ variable "tss_admin_username" {
 # VM login credentials
 variable "wp_admin_username" {
   description = "TIBCO Spotfire Web Player VM admin username"
-  # WARN: cannot be admin/root in Azure
-  default = "spotfire"
+  default     = "spotfire"
 }
 variable "wp_admin_password" {
   description = "TIBCO Spotfire Web Player VM admin password"
   default     = "d3f4ult!"
   sensitive   = true
+}
+
+#----------------------------------------
+# VM instances number
+#----------------------------------------
+variable "jumphost_instances" {
+  description = "Number of jumphost instances"
+  default     = 1
+}
+variable "tss_instances" {
+  description = "Number of TIBCO Spotfire Server instances"
+  default     = 2
+}
+variable "wp_instances" {
+  description = "Number of TIBCO Spotfire Web Player instances"
+  default     = 2
 }

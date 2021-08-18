@@ -128,8 +128,8 @@ For information on AWS IAM roles, see [IAM roles
 
 #### Method 1: Exporting assumed role profile
 
-Plus: Simpler method
-Minus: Slower method (implies ~5-7 secs extra on each call)
+- Plus: Simpler method
+- Minus: Slower method (implies ~5-7 secs extra on each call)
 
 To use your the federated account as an assigned role, you can just export the profile name in your environment: 
 ```
@@ -138,8 +138,8 @@ export AWS_PROFILE=SpotfirePMRole
 
 #### Method 2: Exporting assumed role credentials
 
-Plus: Faster
-Minus: Needs to be done from time to time due session token timeout
+- Plus: Faster
+- Minus: Needs to be done from time to time due session token timeout
 
 To use your the federated account as an assigned role, you need to fetch the temporal credentials and export them into your environment. 
 This can be done in one command with:

@@ -1,3 +1,6 @@
+output "prefix" {
+  value = var.prefix
+}
 
 // jumphost
 output "jumphost_pip_addresses" {

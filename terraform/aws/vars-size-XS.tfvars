@@ -3,7 +3,7 @@
 #----------------------------------------
 create_spotfire_db = true
 //create_alb           = true
-create_tss_public_ip = false
+//create_tss_public_ip = false // only for troubleshooting
 
 #----------------------------------------
 # instances number

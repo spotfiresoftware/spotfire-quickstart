@@ -73,7 +73,7 @@ resource "aws_instance" "tss" {
   count = var.tss_instances
 
   ami           = lookup(var.aws_amis, var.tss_vm_os)
-  instance_type = lookup(var.tss_intance_types, var.tss_size)
+  instance_type = lookup(var.tss_instance_types, var.tss_size)
 
   subnet_id = element(aws_subnet.private.*.id, count.index)
   vpc_security_group_ids = [aws_security_group.mgt.id, aws_security_group.tss-web.id,
