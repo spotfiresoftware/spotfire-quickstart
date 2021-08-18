@@ -78,6 +78,7 @@ For installing Azure CLI, we follow Azure's official procedure: [Install the Azu
     ```
     curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
     ```
+   
 2. Sign in to Azure with the Azure CLI
     ```
     az login
@@ -88,21 +89,21 @@ For installing Azure CLI, we follow Azure's official procedure: [Install the Azu
 
 3. After successfully login, the Azure subscription information is displayed in the terminal. Note your Azure's subscription ID and tenant ID.
 
-### Terraform Configuration
+### Alternative method: Exporting credentials as environment variables (Terraform) 
 
-To provide Terraform with the Azure credentials information, you can copy your Azure's subscription details into the `provider.tf` file respective fields.
-
-Nevertheless, we recommend not defining these variables into the `provider.tf` file since they could easily be checked into your version control system by mistake.
-
-The recommended method is to pass these credentials as environment variables.
+You can pass the credentials as environment variables.
 ```
 export ARM_SUBSCRIPTION_ID="00000000-0000-0000-0000-000000000000"
 export ARM_TENANT_ID="00000000-0000-0000-0000-000000000000"
 ```
-Note you could also store these variables in a secure file location and import them before using Terraform.
+
+Another way is to store these variables in a secure file location and import them before using Terraform.
 For example:
 ```
 . ~/.azure/creds.env
 ```
 
 See [Azure Provider: Authenticating using a Service Principal with a Client Secret](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/guides/service_principal_client_secret) for more detailed information.
+
+Note: To provide Terraform with the credentials' information, you can copy your subscription details into the `provider.tf` file respective fields.
+Nevertheless, we recommend not defining these variables into the `provider.tf` file since they could easily be checked into your version control system by mistake.

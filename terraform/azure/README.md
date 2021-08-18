@@ -17,15 +17,15 @@ This example follows the [Basic installation process for Spotfire](https://docs.
 from the [TIBCO Spotfire® Server and Environment - Installation and Administration](https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/getting_started.html).
 
 This basic installation will deploy the following components:
-- TIBCO Spotfire Server(s) (using Azure Linux virtual machine(s)).
-- TIBCO Spotfire Web Player(s) (using Azure Windows Linux virtual machine(s)).
+- TIBCO Spotfire Server(s) (using Azure Linux Virtual Machine(s)).
+- TIBCO Spotfire Web Player(s) (using Azure Windows Virtual Machine(s)).
 - TIBCO Spotfire database (using Azure Database for PostgreSQL).
-- jumphost server(s) to manage application VMs.
+- jumphost server(s) for administration of the application VMs.
 - Load balancer (using Azure Application Gateway) (optional *).
 - Azure Bastion host to manage Windows servers (optional **).
 
 Note(*): For quick testing purposes you may want to avoid creating an Azure Application Gateway,
-since it requires some time (~30 min) to be created in Azure. 
+since it requires some time (~20 min) to be created in Azure. 
 In that case, you need to enable creation of tss public ip address to access the application directly (more details below).
 
 Note(**): You can [connect to a Windows host with RDP using a jumphost](docs/Connect-with-RDP-using-jumphost.md), without the need of a dedicated Azure Bastion host.
@@ -66,13 +66,14 @@ See the corresponding vendor instructions for using other operating systems.
    - `Spotfire.Dxp.sdn`
    - `scripts/`
 
+   Note: See the [Spotfire software repository](../../swrepo/build/README.md) for more information.
 
-3. You need to install the required configuration management applications. 
+3. You need to install the required configuration management applications.
    
    There are two main alternatives for running the quickstart:
 
-   - **Using a VM (or WSL)**: 
-   Follow the [Install the Configuration Management applications](docs/Setup.md) instructions to manually install and configure Azure CLI, Terraform and Ansible in your launcher.
+   - **Using a bare-metal server, VM or WSL: 
+     Follow the [Install the Configuration Management applications](docs/Setup.md) instructions to manually install and configure Azure CLI, Terraform and Ansible in your launcher.
    
      For your convenience, there is a `Makefile` that enables you to use Terraform and Ansible commands via the `make` command from the Terraform templates folder (`<this_repo_root>/terraform/azure`).
      This way, you do not need to memorize the syntax, and the commands are much simpler.
@@ -84,10 +85,10 @@ See the corresponding vendor instructions for using other operating systems.
      ```
 
      Note: If you want to know about the details and understand what is going under the hood,
-you can check the [Detailed instructions](docs/Detailed-instructions.md).
+     you can check the [Detailed instructions](docs/Detailed-instructions.md).
 
    - **Using containers** (experimental): 
-   Follow the [Build spotfire-autodeploy container](../../autodeploy/dockers/spotfire-autodeploy-buster-slim/README.md) instructions to build an "all-in-one" container including Azure CLI, Terraform and Ansible configuration management applications.
+     Follow the [Build spotfire-autodeploy container](../../autodeploy/dockers/spotfire-autodeploy-buster-slim/README.md) instructions to build an "all-in-one" container including Azure CLI, Terraform and Ansible configuration management applications.
 
 4. Generate SSH keys (if you do not have them already).
 
@@ -101,10 +102,9 @@ The deployment life cycle consists of these steps:
 
 1. Prepare your launcher host
 2. Configure the target environment
-3. Review the planned changes 
-4. Create the required infrastructure (with Terraform)
-5. Deploy the Spotfire software (with Ansible)
-6. Destroy the created environment
+3. Create the required infrastructure (with Terraform)
+4. Deploy the Spotfire software (with Ansible)
+5. Destroy the created environment
 
 ### Prepare your launcher host
 
@@ -136,15 +136,19 @@ The deployment life cycle consists of these steps:
    so you allow infra admin and end user access to the environment from your respective selected address blocks 
    (you can find your public ip address for example in https://whatismyipaddress.com/).
 
-   Note: We may decide to not create an Azure Application Gateway, or an Azure Bastion (it takes some time, money and it is not very interesting for small test environments). 
+   Note: We may decide to not create an Azure Application Gateway, or an Azure Bastion,
+   since it takes some time, money, and it may not be very interesting for very small test environments (like 1tss+1tswp).
    Check in `vars-size-XS.tfvars` the variables that control *resource creation and sizing*. 
-   Note: If you choose to not creating an Azure Application Gateway, you need to choose to create public ip addresses for yor tss hosts.
+
+   Note: If you choose to not creating an Azure Application Gateway, you need to choose to create public ip addresses for your tss hosts.
 
    Note: The `vars-size-XS.tfvars` settings overrides `variables.tfvars` settings.
 
 5. If you want to change **Spotfire application settings** (like the Spotfire version, config-tool and web admin credentials,...), review and edit the file `ansible/config/vars.yml`.
 
    Note: The variables in `ansible/config/vars.yml` are used as defaults and may be overriden by previous configuration files.
+
+### Create the required infrastructure (Terraform)
 
 6. Verify the planed infrastructure changes before applying them.
 
@@ -191,9 +195,12 @@ The deployment life cycle consists of these steps:
 
 10. Remember to destroy the environment when you are not going to use it to avoid unneeded costs.
 
-   ~~~
-   tsa destroy
-   ~~~
+    ~~~
+    tsa destroy
+    ~~~
+   
+    Note: You may need to execute this command a couple of times to destroy all the resources. 
+    This sometimes happens if the resources is being access.
 
 ## Use your environment
 
@@ -201,6 +208,7 @@ The deployment life cycle consists of these steps:
 
    ~~~
    tsa show-hosts
+   tsa show-lb
    ~~~
 
    There are more `show-*` command aliases preconfigured to retrieve basic information on your system.

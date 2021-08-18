@@ -43,8 +43,6 @@ If you do not want to know about the details, jump to the "Easy peasy instructio
 
    Note: The `vars-size-XS.tfvars` settings overrides `variables.tfvars` settings.
 
-   Note: By default, we do not create an Azure Application Gateway, or an Azure Bastion (they take some more time to spin up in Azure and are not very interesting for small test environments). Check in `vars-size-XS.tfvars` the variables that control *resource creation and sizing*.
-
 6. Select a Terraform workspace. For example, a workspace named `spotfire-dev`.
 
    ~~~
@@ -106,7 +104,7 @@ If you do not want to know about the details, jump to the "Easy peasy instructio
        site.yml \
        --limit wp_servers
     ~~~
-    
+
 ### Destroy the created environment
 
 13. Remember to destroy your environment when you are not going to use it to avoid unneeded costs.

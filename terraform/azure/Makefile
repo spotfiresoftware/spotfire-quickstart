@@ -61,8 +61,22 @@ destroy: ## Destroy the Terraform managed infrastructure
 reapply: destroy apply
 
 show-hosts: ## List hosts inventory (sw deployment targets) using az cli
+# https://docs.microsoft.com/en-us/cli/azure/vm?view=azure-cli-latest
 	$(eval SPOTFIRE_RG=$(shell grep ^prefix variables.tfvars | sed "s/[ \"]//g" | cut -d'=' -f2)-spotfire-rg)
 	az vm list-ip-addresses --resource-group ${SPOTFIRE_RG} --output table
+
+show-lb: ## List Load Balancer (Azure Application Gateway) IP address and DNS name using az cli
+# https://docs.microsoft.com/en-us/cli/azure/network/application-gateway?view=azure-cli-latest
+# https://docs.microsoft.com/en-us/cli/azure/network/public-ip?view=azure-cli-latest#az_network_public_ip_show
+	$(eval SPOTFIRE_PREFIX=$(shell grep ^prefix variables.tfvars | sed "s/[ \"]//g" | cut -d'=' -f2))
+	$(eval SPOTFIRE_APPGW_PIP_ID=$(shell az network application-gateway list \
+		--resource-group ${SPOTFIRE_RG} \
+		--query "[].frontendIpConfigurations[].publicIpAddress.id" \
+		--output table \
+		| grep ${SPOTFIRE_RG}))
+	az network public-ip show --ids ${SPOTFIRE_APPGW_PIP_ID} \
+		--query '[ipAddress, dnsSettings.fqdn]' \
+		--output table
 
 show-myip: ## Show my ip address
 	dig +short myip.opendns.com @resolver1.opendns.com
