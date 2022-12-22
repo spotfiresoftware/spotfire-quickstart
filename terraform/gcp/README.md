@@ -1,8 +1,6 @@
 
 # Automatic Deployment of Spotfire Platform on GCP using Terraform + Ansible
 
-[[_TOC_]]
-
 ## Overview
 
 This **Spotfire QuickStart** example shows how to automatically deploy the Spotfire Platform on GCP
