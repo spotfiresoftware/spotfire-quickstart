@@ -47,6 +47,10 @@ variable "private_subnet_address_prefixes" {
   //  default     = [cidrsubnet(var.vnet_address_space,8,2)]
 }
 
+variable "appgw_subnet_address_prefixes" {
+  description = "Define subnet address block here"
+}
+
 //variable "admin_open_tcp_ports" {
 //  description = "Firewall/Security Group ports to allow for inbound traffic. By default ssh is allowed"
 //  default     = [22, 80, 433]

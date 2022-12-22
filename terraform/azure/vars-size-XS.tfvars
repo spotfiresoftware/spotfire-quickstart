@@ -1,10 +1,10 @@
 #----------------------------------------
 # control resources creation
 #----------------------------------------
-create_spotfire_db   = true
-create_appgw         = true
-//create_tss_public_ip = false // only for troubleshooting
-//create_bastion       = false // only for troubleshooting
+#create_spotfire_db   = true
+#create_appgw         = true
+#create_tss_public_ip = false
+#create_bastion       = false
 
 #----------------------------------------
 # instances number
@@ -13,10 +13,10 @@ create_appgw         = true
 jumphost_instances = 1
 
 # TIBCO Spotfire Server instances number
-tss_instances = 2
+tss_instances = 3
 
 # TIBCO Spotfire Web Player instances number
-wp_instances = 2
+wp_instances = 3
 
 #----------------------------------------
 # instances size

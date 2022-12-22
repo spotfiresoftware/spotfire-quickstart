@@ -16,10 +16,10 @@ variable "create_tss_public_ip" {
   default     = false
 }
 
-# WARN: WP on Linux is not currently supported, just for testing future support
+# NOTE: See documentation for differences when running Web Player on Linux
 variable "create_wp_linux" {
-  description = "Use Linux for Web Player services (experimental, the default is Windows)"
-  default     = false
+  description = "Use Linux for Web Player services"
+  default     = true
 }
 
 variable "create_bastion" {
@@ -37,21 +37,31 @@ variable "tags" {
     # specific tags
     description   = "Spotfire quickstart: basic install"
     app           = "Spotfire"
-    app_version   = "11.4"
+    app_version   = "12.0.0"
     environment   = "dev"
-    infra_version = "0.1"
+    infra_version = "0.2"
+
+    # PM account common automatic tags
+    "Business Unit"  = "Products & Technology"
+    "Cost Center"    = "63615"
+    "Department"     = "Spotfire Development Platform"
+    "Classification" = "Non-Production"
   }
 }
 
 variable "prefix" {
-  default = "sandbox"
+  default     = "sandbox-codename"
+  description = "Prefix for resources"
 }
+
+#variable "environment" {
+#  default = "dev"
+#}
 
 #----------------------------------------
 # Azure location and region
 #----------------------------------------
 variable "location" {
-  //  default = "North Europe"
   default = "northeurope"
 }
 variable "region" {
@@ -72,11 +82,11 @@ variable "web_address_prefixes" {
   default     = ["43.0.0.0/8"]
 }
 
-//variable "admin_open_tcp_ports" {
-//  description = "Open ports for remote access"
-//  type        = list(string)
-//  default     = [22, 8080, 80, 443]
-//}
+#variable "admin_open_tcp_ports" {
+#  description = "Open ports for remote access"
+#  type        = list(string)
+#  default     = [22, 8080, 80, 443]
+#}
 
 variable "vnet_address_space" {
   description = "Virtual Network address space"
@@ -101,9 +111,10 @@ variable "bastion_subnet_address_prefixes" {
   //  default = [cidrsubnet(var.vnet_address_space,30,2)]
 }
 
-variable "agw_subnet_address_prefixes" {
+variable "appgw_subnet_address_prefixes" {
   description = "Azure Application Gateway's SubNetwork address space"
-  default     = ["10.0.3.0/24"]
+  #default     = ["10.0.3.0/24"]
+  default     = ["10.1.0.0/16"]
   //  default = [cidrsubnet(var.vnet_address_space,30,1)]
 }
 
@@ -171,12 +182,12 @@ variable "spotfire_ui_admin_password" {
 # ssh key file
 variable "ssh_public_key_file" {
   description = "Spotfire VM SSH public key file location (local)"
-  default     = "~/.ssh/id_rsa.pub"
+  default     = "~/.ssh/id_rsa_azure.pub"
 }
 
 variable "ssh_private_key_file" {
   description = "Spotfire VM SSH private key file location (local)"
-  default     = "~/.ssh/id_rsa"
+  default     = "~/.ssh/id_rsa_azure"
 }
 
 #----------------------------------------
@@ -188,7 +199,7 @@ variable "os_publisher" {
   description = "Spotfire VM operating system publisher"
   default     = "OpenLogic"
 }
-variable "os_distro" {
+variable "os_offer" {
   description = "Spotfire VM operating system distribution"
   default     = "Centos"
 }
@@ -210,13 +221,13 @@ variable "jumphost_admin_username" {
   # WARN: cannot be admin/root in Azure
   default = "spotfire"
 }
-// NOTE: The supplied password must be between 8-123 characters long
-// and must satisfy at least 3 of password complexity requirements from the following:
-//    1) Contains an uppercase character
-//    2) Contains a lowercase character
-//    3) Contains a numeric digit
-//    4) Contains a special character
-//    5) Control characters are not allowed" Target="adminPassword"
+# NOTE: The supplied password must be between 8-123 characters long
+# and must satisfy at least 3 of password complexity requirements from the following:
+#    1) Contains an uppercase character
+#    2) Contains a lowercase character
+#    3) Contains a numeric digit
+#    4) Contains a special character
+#    5) Control characters are not allowed" Target="adminPassword"
 variable "jumphost_admin_password" {
   description = "Spotfire VM admin password"
   default     = "d3f4ult!"
@@ -232,13 +243,13 @@ variable "tss_admin_username" {
   # WARN: cannot be admin/root in Azure
   default = "spotfire"
 }
-// NOTE: The supplied password must be between 8-123 characters long
-// and must satisfy at least 3 of password complexity requirements from the following:
-//    1) Contains an uppercase character
-//    2) Contains a lowercase character
-//    3) Contains a numeric digit
-//    4) Contains a special character
-//    5) Control characters are not allowed" Target="adminPassword"
+# NOTE: The supplied password must be between 8-123 characters long
+# and must satisfy at least 3 of password complexity requirements from the following:
+#    1) Contains an uppercase character
+#    2) Contains a lowercase character
+#    3) Contains a numeric digit
+#    4) Contains a special character
+#    5) Control characters are not allowed" Target="adminPassword"
 variable "tss_admin_password" {
   description = "TIBCO Spotfire Server VM admin password"
   default     = "d3f4ult!"
@@ -272,13 +283,13 @@ variable "wp_admin_username" {
   # WARN: cannot be admin/root in Azure
   default = "spotfire"
 }
-// NOTE: The supplied password must be between 8-123 characters long
-// and must satisfy at least 3 of password complexity requirements from the following:
-//    1) Contains an uppercase character
-//    2) Contains a lowercase character
-//    3) Contains a numeric digit
-//    4) Contains a special character
-//    5) Control characters are not allowed" Target="adminPassword"
+# NOTE: The supplied password must be between 8-123 characters long
+# and must satisfy at least 3 of password complexity requirements from the following:
+#    1) Contains an uppercase character
+#    2) Contains a lowercase character
+#    3) Contains a numeric digit
+#    4) Contains a special character
+#    5) Control characters are not allowed" Target="adminPassword"
 variable "wp_admin_password" {
   description = "TIBCO Spotfire Web Player VM admin password"
   default     = "d3f4ult!"

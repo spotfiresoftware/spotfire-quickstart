@@ -10,7 +10,7 @@
 resource "random_string" "storage_account" {
   length  = 24
   upper   = false
-  number  = true
+  numeric = true
   special = false
 }
 

@@ -26,6 +26,7 @@ module "networking" {
   vnet_address_space              = var.vnet_address_space
   public_subnet_address_prefixes  = var.public_subnet_address_prefixes
   private_subnet_address_prefixes = var.private_subnet_address_prefixes
+  appgw_subnet_address_prefixes   = var.appgw_subnet_address_prefixes
   jumphost_public_ips             = module.jumphost.vm_public_ips
 }
 
@@ -108,7 +109,7 @@ module "jumphost" {
   vm_size      = var.jumphost_size
 
   os_publisher = var.os_publisher
-  os_distro    = var.os_distro
+  os_offer     = var.os_offer
   os_sku       = var.os_sku
   os_version   = var.os_version
 
@@ -138,7 +139,7 @@ module "tss" {
   vm_size      = lookup(var.tss_instance_types, var.tss_size)
 
   os_publisher = var.os_publisher
-  os_distro    = var.os_distro
+  os_offer     = var.os_offer
   os_sku       = var.os_sku
   os_version   = var.os_version
 
@@ -172,7 +173,7 @@ module "wp" {
   vm_size      = lookup(var.wp_instance_types, var.wp_size)
 
   os_publisher = var.wp_os_publisher
-  os_distro    = var.wp_os_offer
+  os_offer     = var.wp_os_offer
   os_sku       = var.wp_os_sku
   os_version   = var.wp_os_version
 
@@ -237,6 +238,7 @@ module "appgw" {
   location = var.location
   prefix   = var.prefix
   tags     = var.tags
+  appgw_subnet_address_prefixes  = var.appgw_subnet_address_prefixes
 
   # dependencies
   resource_group_name = module.base.rg_name
@@ -286,4 +288,6 @@ module "output_files" {
   // conditional output (must indicate the first and only item from the count list)
   spotfire_db_server_name = var.create_spotfire_db ? module.tssdb[0].db_server.name : var.spotfire_db_server_name
   spotfire_db_name        = var.create_spotfire_db ? module.tssdb[0].db_name : var.spotfire_db_name
+  ssh-timeout             = ""
+  sshkey                  = ""
 }

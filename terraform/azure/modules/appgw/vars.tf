@@ -27,7 +27,7 @@ variable "resource_group_name" {
 variable "vnet_name" {
 }
 
-variable "agw_private_subnet_address_prefixes" {
+variable "appgw_subnet_address_prefixes" {
   description = "Specify Application Gateway's SubNetwork address space"
   default     = "10.0.3.0/30"
 }

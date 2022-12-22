@@ -65,14 +65,14 @@ resource "azurerm_linux_virtual_machine" "this" {
     name                 = "${var.prefix}-${var.role}-${count.index}-disk"
     caching              = "ReadWrite"
     storage_account_type = "Standard_LRS"
-    //    disk_size_gb = "100Gb" // optional, only if bigger than VM size
+#    disk_size_gb = "100Gb" # optional, only if bigger than VM size
   }
 
-  #https://docs.microsoft.com/en-us/azure/virtual-machines/linux/endorsed-distros
-  #https://docs.microsoft.com/en-us/azure/virtual-machines/linux/cli-ps-findimage
+  # https://docs.microsoft.com/en-us/azure/virtual-machines/linux/endorsed-distros
+  # https://docs.microsoft.com/en-us/azure/virtual-machines/linux/cli-ps-findimage
   source_image_reference {
     publisher = var.os_publisher
-    offer     = var.os_distro
+    offer     = var.os_offer
     sku       = var.os_sku
     version   = var.os_version
   }

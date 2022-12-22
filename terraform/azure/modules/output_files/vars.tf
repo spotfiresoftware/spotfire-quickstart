@@ -6,6 +6,11 @@ variable "resource_group_name" {
 
 variable "workspace_dir" { default = "./terraform.tfstate.d" }
 
+# Generates the Ansible Config file (credentials)
+variable "tss_version" {
+  default = "12.0.0"
+}
+
 // credentials
 variable "ssh_private_key_file" {}
 variable "jumphost_admin_username" {}

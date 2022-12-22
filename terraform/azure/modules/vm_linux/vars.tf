@@ -51,7 +51,7 @@ variable "vm_size" {
 variable "os_publisher" {
   default = "OpenLogic"
 }
-variable "os_distro" {
+variable "os_offer" {
   default = "Centos"
 }
 variable "os_sku" {

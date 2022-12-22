@@ -19,11 +19,12 @@ resource "azurerm_subnet" "public" {
   name                 = "${var.prefix}-spotfire-public-subnet"
   resource_group_name  = var.resource_group_name
   virtual_network_name = azurerm_virtual_network.this.name
-  //    address_prefixes     = [cidrsubnet(var.vnet_address_space,8,1)]
+  //address_prefixes     = [cidrsubnet(var.vnet_address_space,8,1)]
   address_prefixes = var.public_subnet_address_prefixes
 
-  //    service_endpoints    = ["Microsoft.Sql"] //, "Microsoft.Storage"]
-  enforce_private_link_endpoint_network_policies = false
+  //service_endpoints    = ["Microsoft.Sql"] //, "Microsoft.Storage"]
+  //enforce_private_link_endpoint_network_policies = false
+  private_endpoint_network_policies_enabled = false
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet
@@ -35,7 +36,8 @@ resource "azurerm_subnet" "private" {
   address_prefixes = var.private_subnet_address_prefixes
 
   service_endpoints                              = ["Microsoft.Sql"] //, "Microsoft.Storage"]
-  enforce_private_link_endpoint_network_policies = false
+  //enforce_private_link_endpoint_network_policies = false
+  private_endpoint_network_policies_enabled = false
 }
 
 # Create Network Security Group and SSH rule for public subnet
@@ -120,6 +122,17 @@ resource "azurerm_network_security_group" "private" {
     source_port_range          = "*"
     destination_port_ranges    = [8080, 8433]
     source_address_prefixes    = var.admin_address_prefixes
+    destination_address_prefix = "*"
+  }
+  security_rule {
+    name                       = "Allow web access (8080, 8433) from appgw IPs"
+    priority                   = 112
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Tcp"
+    source_port_range          = "*"
+    destination_port_ranges    = [8080, 8433]
+    source_address_prefixes    = var.appgw_subnet_address_prefixes
     destination_address_prefix = "*"
   }
   tags = var.tags

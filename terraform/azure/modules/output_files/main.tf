@@ -14,7 +14,7 @@ resource "local_file" "ansible-inventory-azurerm" {
 }
 
 # Generates the Ansible Inventory file
-resource "local_file" "ansible-inventory" {
+resource "local_file" "ansible-inventory-tmpl-file" {
   content = templatefile("${path.module}/ansible_inventory.tmpl", {
     username            = var.jumphost_admin_username,
     jumphost_public_ips = local.jumphost_public_ips,
@@ -29,7 +29,7 @@ resource "local_file" "ansible-inventory" {
 }
 
 # Generates the Ansible Inventory file
-resource "local_file" "ansible-inventory-yml" {
+resource "local_file" "ansible-inventory-tmpl-yml-file" {
   content = templatefile("${path.module}/ansible_inventory.yml.tmpl", {
     username            = var.jumphost_admin_username,
     jumphost_public_ips = local.jumphost_public_ips,
@@ -44,7 +44,6 @@ resource "local_file" "ansible-inventory-yml" {
   directory_permission = "0770"
 }
 
-# Generates the Ansible Config file (credentials)
 resource "local_file" "ansible-config-infra" {
   content = templatefile("${path.module}/ansible_config.tmpl", {
     ssh_priv_key_file = var.ssh_private_key_file
@@ -58,6 +57,7 @@ resource "local_file" "ansible-config-infra" {
     db_admin_password = var.spotfire_db_admin_password,
     db_server         = var.spotfire_db_server_name,
     db_name           = var.spotfire_db_name,
+    tss_version       = var.tss_version,
     ui_admin_user     = var.spotfire_ui_admin_username,
     ui_admin_password = var.spotfire_ui_admin_password
     }

@@ -1,7 +1,7 @@
 #----------------------------------------
 # Resources prefix
 #----------------------------------------
-prefix = "sandbox"
+prefix = "sandbox-luigi"
 
 #----------------------------------------
 # Azure location and region
@@ -41,24 +41,24 @@ spotfire_ui_admin_password = "s3cr3t0!"
 #----------------------------------------
 
 # ssh key file
-//ssh_public_key_file  = "~/.ssh/id_rsa.pub"
-//ssh_private_key_file = "~/.ssh/id_rsa"
+ssh_public_key_file  = "~/.ssh/id_rsa_azure.pub"
+ssh_private_key_file = "~/.ssh/id_rsa_azure"
 
-# VM Operating System
-os_publisher = "OpenLogic"
-os_distro    = "Centos"
-os_sku       = "8_2"
-os_version   = "8.2.2020111800"
+# --- Debian 11
+os_publisher = "Debian"
+os_offer     = "debian-11"
+os_sku       = "11"
+os_version   = "0.20221108.1193"
 
 #----------------------------------------
 # jumphost
 #----------------------------------------
 # VM instances number
-//jumphost_instances = 1
+#jumphost_instances = 1
 # VM size
-//jumphost_vm_size = "XS"
+#jumphost_vm_size = "XS"
 # VM login credentials
-# NOTE: cannot be admin/root in Azure
+# NOTE:  The username cannot be admin/root in Azure
 jumphost_admin_username = "spotfire"
 
 # NOTE: The supplied password must be between 8-123 characters long
@@ -74,11 +74,11 @@ jumphost_admin_password = "s3cr3t0!"
 # TIBCO Spotfire Server (tss)
 #----------------------------------------
 # VM instances number
-//tss_instances = 2
+#tss_instances = 2
 # VM size
-//tss_vm_size = "XS"
+#tss_vm_size = "XS"
 # VM login credentials
-# NOTE: cannot be admin/root in Azure
+# NOTE:  The username cannot be admin/root in Azure
 tss_admin_username = "spotfire"
 
 # NOTE: The supplied password must be between 8-123 characters long
@@ -94,17 +94,23 @@ tss_admin_password = "s3cr3t0!"
 # TIBCO Spotfire Web Player (wp) - Windows
 #----------------------------------------
 # VM instances number
-//wp_instances = 2
+#wp_instances = 2
 # VM size
-//wp_vm_size = "XS"
+#wp_vm_size = "XS"
 # VM Operating System
-wp_os_publisher = "MicrosoftWindowsServer"
-wp_os_offer     = "WindowsServer"
-wp_os_sku       = "2019-Datacenter"
-wp_os_version   = "latest"
+# --- Windows Server 2019
+#wp_os_publisher = "MicrosoftWindowsServer"
+#wp_os_offer     = "WindowsServer"
+#wp_os_sku       = "2019-Datacenter"
+#wp_os_version   = "latest"
+# --- Debian 11
+wp_os_publisher = "Debian"
+wp_os_offer    = "debian-11"
+wp_os_sku       = "11"
+wp_os_version   = "0.20221108.1193"
 
 # VM login credentials
-# NOTE: cannot be admin/root in Azure
+# NOTE: The username cannot be admin/root in Azure
 wp_admin_username = "spotfire"
 
 # NOTE: The supplied password must be between 8-123 characters long

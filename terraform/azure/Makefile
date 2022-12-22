@@ -5,6 +5,19 @@
 # Change Makefile default shell is /bin/sh which does not implement source
 #SHELL := /bin/bash
 
+# Experimental: Get SPOTFIRE_PREFIX from configuration. Used for awareness to avoid own collisions.
+SPOTFIRE_PREFIX=$(shell grep ^prefix *.tfvars | tail -1 | sed "s/[ \"]//g" | cut -d'=' -f2)
+export SPOTFIRE_RG=${SPOTFIRE_PREFIX}-spotfire-rg
+export SPOTFIRE_APPGW=${SPOTFIRE_PREFIX}-spotfire-appgw
+
+$(info > Prefix: ${SPOTFIRE_PREFIX})
+$(info > Resource Group: ${SPOTFIRE_RG})
+$(info )
+
+ifndef SPOTFIRE_PREFIX
+  $(warning Variable SPOTFIRE_PREFIX may not be defined. Verify configuration)
+endif
+
 # import terraform.env vars
 # You can change the default config with `make cfg="terraform.env" build`
 cfg ?= ./terraform.env
@@ -39,10 +52,7 @@ help: ## show help
 
 .DEFAULT_GOAL := help
 
-#### specific #####
-azlogin: ## login into Azure using Azure cli
-	az login
-
+#### common Terraform #####
 lint: ## Validate the Terraform configuration files in a directory
 	terraform validate
 
@@ -60,14 +70,19 @@ destroy: ## Destroy the Terraform managed infrastructure
 
 reapply: destroy apply
 
-show-hosts: ## List hosts inventory (sw deployment targets) using az cli
+terraform-graph:
+	terraform graph | dot -Tsvg > terraform.tfstate.d/terraform_graph.svg
+	terraform graph -draw-cycles | dot -Tsvg > terraform.tfstate.d/terraform_graph_cycles.svg
+
+#### specific Azure #####
+show-hosts: ## List hosts inventory (sw deployment targets) using Azure cli
 # https://docs.microsoft.com/en-us/cli/azure/vm?view=azure-cli-latest
 	$(eval SPOTFIRE_RG=$(shell grep ^prefix variables.tfvars | sed "s/[ \"]//g" | cut -d'=' -f2)-spotfire-rg)
 	az vm list-ip-addresses \
 		--resource-group ${SPOTFIRE_RG} \
 		--output table
 
-show-lb: ## List Load Balancer (Azure Application Gateway) IP address and DNS name using az cli
+show-lb: ## List Load Balancer (Azure Application Gateway) IP address and DNS name using Azure cli
 # https://docs.microsoft.com/en-us/cli/azure/network/application-gateway?view=azure-cli-latest
 # https://docs.microsoft.com/en-us/cli/azure/network/public-ip?view=azure-cli-latest#az_network_public_ip_show
 	$(eval SPOTFIRE_PREFIX=$(shell grep ^prefix variables.tfvars | sed "s/[ \"]//g" | cut -d'=' -f2))
@@ -80,9 +95,23 @@ show-lb: ## List Load Balancer (Azure Application Gateway) IP address and DNS na
 		--query '[ipAddress, dnsSettings.fqdn]' \
 		--output table
 
+verify-lb: ## Verify connection to Spotfire via Load Balancer (Azure Application Gateway) IP address
+	$(eval SPOTFIRE_PREFIX=$(shell grep ^prefix variables.tfvars | sed "s/[ \"]//g" | cut -d'=' -f2))
+	$(eval SPOTFIRE_APPGW_PIP_ID=$(shell az network application-gateway list \
+    	--resource-group ${SPOTFIRE_RG} \
+    	--query "[].frontendIpConfigurations[].publicIpAddress.id" \
+    	--output table \
+    	| grep ${SPOTFIRE_RG}))
+	$(eval SPOTFIRE_LB_PIP=$(shell az network public-ip show --ids ${SPOTFIRE_APPGW_PIP_ID} \
+    	--query 'ipAddress' \
+    	--output json | jq -r))
+	echo $(SPOTFIRE_LB_PIP)
+	curl $(SPOTFIRE_LB_PIP) -v -H "Host: spotfire.local" -L
+
 show-myip: ## Show my ip address
 	dig +short myip.opendns.com @resolver1.opendns.com
 
+#### common Ansible #####
 show-inventory: ## List hosts inventory (sw deployment targets) using Ansible (short)
 	cd ../../ansible && \
 		ansible-inventory \
@@ -118,15 +147,15 @@ deploy: ## Install and configure Spotfire software on infra hosts using Ansible 
 #		export ANSIBLE_CONFIG=./ansible.cfg && \
 #		ANSIBLE_SSH_ARGS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=120" \
 		ANSIBLE_PERSISTENT_COMMAND_TIMEOUT=120 ANSIBLE_TIMEOUT=120 ANSIBLE_DISPLAY_SKIPPED_HOSTS=false ANSIBLE_HOST_KEY_CHECKING=False \
-			ansible-playbook \
-		    -i ${INVENTORY_FILE} \
-		 	--extra-vars @config/vars.yml \
-		 	--extra-vars ${INFRA_EXTRA_VARS} \
+		ansible-playbook \
+			-i ${INVENTORY_FILE} \
+			--extra-vars @config/vars.yml \
+			--extra-vars ${INFRA_EXTRA_VARS} \
 			$(ANSIBLE_EXTRA_ARGS) \
-	  		site.yml
+			site.yml
 #  			--limit wp_servers \
 #	  		 -vvv
 
-terraform-graph:
-	terraform graph | dot -Tsvg > terraform.tfstate.d/terraform_graph.svg
-	terraform graph -draw-cycles | dot -Tsvg > terraform.tfstate.d/terraform_graph_cycles.svg
+#### other Azure specific #####
+azlogin: ## login into Azure using Azure cli
+	az login

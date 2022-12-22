@@ -1,17 +1,14 @@
-
 # Finding OS images in Azure 
 
 Quick notes on finding OS images in Azure.
 
 References:
-
-- https://docs.microsoft.com/en-us/azure/virtual-machines/linux/cli-ps-findimage
-- https://lnx.azurewebsites.net/how-to-search-all-vm-images-in-azure/
+- [Find Azure Marketplace image information using the Azure CLI](https://docs.microsoft.com/en-us/azure/virtual-machines/linux/cli-ps-findimage)
+- [How to search all VM images in Azure](https://lnx.azurewebsites.net/how-to-search-all-vm-images-in-azure/)
 
 ## Login to Azure
 
-After you installed az cli, you need to login to Azure.
-
+After you installed az cli, you need to log in to Azure.
 ```bash
 $ az login
 You have logged in. Now let us find all the subscriptions to which you have access...
@@ -35,56 +32,52 @@ You have logged in. Now let us find all the subscriptions to which you have acce
 
 ## Generic Queries
 
-List locations
-
+List locations:
 ```bash
 $ az account list-locations > build/azure.locations.txt
 ```
 
-List popular images (this query takes long time):
-
+List popular images (this query takes very long time, see below for more specific searches):
 ```bash
-az vm image list --output table > build/azure.image_list.txt
+az vm image list --output table > build/az-vm-image-list.txt
 ```
 
-List publishers:
-
+List publishers in a location:
 ```bash
-az vm image list-publishers --location northeurope --output table > build/northeurope.publishers.txt
+export LOCATION=northeurope
+az vm image list-publishers --location northeurope --output table > build/az-vm-image-list-publishers--location-${LOCATION}.txt
 ```
 
 ## Find out what you are looking for
 
-Listing offers from OpenLogic (CentOS publisher):
-
+List offers from `Debian` in North Europe:
 ```bash
-az vm image list-offers --location northeurope --publisher OpenLogic --output table > build/northeurope.publishers.OpenLogic.txt
+export PUBLISHER=Debian
+az vm image list-offers --location ${LOCATION} --publisher ${PUBLISHER} --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}.txt
+```  
+
+Finding out the available skus for `debian-10`:
+```bash
+export OFFER=debian-11
+az vm image list-skus --location ${LOCATION} --publisher ${PUBLISHER} --offer ${OFFER} --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}--offer-${OFFER}.txt
 ```   
 
-Finding out the available skus for CentOS:
-
+Querying after as specific Debian version:
 ```bash
-az vm image list-skus --location northeurope --publisher OpenLogic --offer CentOS --output table > build/northeurope.publishers.OpenLogic.Centos.txt
-```   
-
-Querying after a specific CentOS version.
-
-```bash
-az vm image list --location northeurope --publisher OpenLogic --offer CentOS --sku 8_2 --all --output table > build/northeurope.publishers.OpenLogic.Centos.versions.txt
+az vm image list --location northeurope --publisher OpenLogic --offer CentOS --sku 11 --all --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}--offer-${OFFER}--sku-11.txt
 ```
 
 Generic queries for CentOS, RHEL, SUSE, openSUSE, Debian images.
-
 ```bash
-az vm image list --location northeurope --publisher OpenLogic --all --output table > build/northeurope.publishers.OpenLogic.txt
-az vm image list --location northeurope --publisher RedHat --all --output table > build/northeurope.publishers.RedHat.txt
-az vm image list --location northeurope --publisher SUSE --all --output table > build/northeurope.publishers.SUSE.txt
-az vm image list --location northeurope --publisher Debian --all --output table > build/northeurope.publishers.Debian.txt
+export PUBLISHER=Debian    && az vm image list --location ${LOCATION} --publisher ${PUBLISHER} --all --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}.txt
+export PUBLISHER=Ubuntu    && az vm image list --location ${LOCATION} --publisher ${PUBLISHER} --all --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}.txt
+export PUBLISHER=OpenLogic && az vm image list --location ${LOCATION} --publisher ${PUBLISHER} --all --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}.txt
+export PUBLISHER=RedHat    && az vm image list --location ${LOCATION} --publisher ${PUBLISHER} --all --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}.txt
+export PUBLISHER=SUSE      && az vm image list --location ${LOCATION} --publisher ${PUBLISHER} --all --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}.txt
 ```
 
 Querying after Windows offers.
-
 ```bash
-az vm image list-offers --location northeurope --publisher MicrosoftWindowsServer --output table > build/northeurope.publishers.MicrosoftWindowsServer.txt
-az vm image list-skus --location northeurope --publisher MicrosoftWindowsServer --offer WindowsServer --output table > build/northeurope.publishers.MicrosoftWindowsServer.WindowsServer.txt
+az vm image list-offers --location northeurope --publisher MicrosoftWindowsServer --output table > build/az-vm-image-list-offers--location-northeurope--publisher-MicrosoftWindowsServer.txt
+az vm image list-skus --location northeurope --publisher MicrosoftWindowsServer --offer WindowsServer --output table > build/az-vm-image-list-skus--location-northeurope--publisher-MicrosoftWindowsServer--offer-WindowsServer.txt
 ```
