@@ -4,8 +4,8 @@
 #----------------------------------------
 
 - name: Linux | Start the Node manager (tsnm) service and set to automatic start on boot
-  systemd:
+  ansible.builtin.systemd:
     name: tsnm-{{ tss_version }}
-    enabled: yes
+    enabled: true
     state: restarted
   become: true

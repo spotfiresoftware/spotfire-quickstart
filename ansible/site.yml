@@ -1,15 +1,16 @@
 ---
-- hosts: tss_servers
+- name: Deploy TIBCO Spotfire Server hosts
+  hosts: tss_servers
   remote_user: '{{ tss_user }}'
   become: true
   roles:
     - common
     - env
-    - { role: tssdb_createdb, run_once: true }
+    - { role: tssdb_createdb, run_once: true }   # NOTE: This runs only on one tss
     - tss_install
-    - tss_bootstrap # NOTE: We throttle this, it bootstraps one tss at a time
+    - tss_bootstrap # NOTE: We throttle this role, so it bootstraps one tss at a time
     - tss_service
-    - { role: tss_deploy_sdn, run_once: true }
+    - { role: tss_deploy_sdn, run_once: true }   # NOTE: This runs only on one tss
     - { role: tss_autotrust, run_once: true }
     - tss_service_reload
   environment:
@@ -24,11 +25,14 @@
     SPOTFIRE_UI_ADMIN_USER: '{{ spotfire_ui_admin_user }}'
     SPOTFIRE_UI_ADMIN_PASSWORD=: '{{ spotfire_ui_admin_password }}'
 
-- hosts: wp_servers
+- name: Deploy TIBCO Spotfire Web Player hosts
+  hosts: wp_servers
   remote_user: '{{ wp_user }}'
+  become: true # works on Windows?
   roles:
     - common
     - tsnm_firewall
     - tsnm_install
-    - tsnm_wp
+    - tsnm_wp_deps
+    - { role: tsnm_wp, when: create_wp_service }
     - tsnm_service

@@ -3,7 +3,7 @@
 # Node manager (Linux) firewall
 # https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_and_environment_security/servsecurity/topics/ports.html
 #----------------------------------------
-#- debug:
+#- ansible.builtin.debug:
 #    msg: "Linux | TODO: Add firewall rules"
 
 # https://docs.ansible.com/ansible/latest/collections/ansible/posix/firewalld_module.html

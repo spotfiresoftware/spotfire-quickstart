@@ -1,0 +1,26 @@
+#----------------------------------------
+# Install libgdiplus from rpm (RedHat)
+#----------------------------------------
+
+# ---- ONLY for RedHat family ----
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/yum_module.html
+# https://docs.microsoft.com/en-us/dotnet/core/install/linux-centos
+- name: Linux | RedHat | Install EPEL (required for libgdiplus)
+  ansible.builtin.yum:
+    name:
+      - epel-release
+    state: present
+  become: true
+  when: ansible_distribution_file_variety == "RedHat"
+
+- name: Linux | RedHat | Install dotnet-5 and dependencies
+  ansible.builtin.yum:
+    name:
+#      - dotnet-sdk-6.0
+#      - dotnet-runtime-6.0
+      - aspnetcore-runtime-6.0
+    state: present
+  become: true
+  when: ansible_distribution_file_variety == "RedHat"
+
+# TODO: Add package dependencies for RHEL as in deps_debian.yml

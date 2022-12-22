@@ -1,0 +1,26 @@
+---
+# Check if tsnm service exist to skip install stesp (intelligent+idempotent)
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/service_facts_module.html
+- name: Linux | Check if the Spotfire node manager service is installed & started
+  ansible.builtin.service:
+    name: tsnm-{{ tss_version }}
+    state: started
+  register: tsnm_service
+  changed_when: false # this is just a check, we do not want to show as changed
+  ignore_errors: true
+  tags: tsnm_install
+
+- ansible.builtin.debug:
+    msg: "Linux | Spotfire node manager service details: '{{ tsnm_service }}'"
+    verbosity: 1
+  tags: tsnm_install
+
+- name: Linux | Verify Spotfire node manager service status
+  ansible.builtin.set_fact:
+    tsnm_service_exists: "{{ false if (tsnm_service.failed == true) else true }}"
+  tags: tsnm_install
+
+- ansible.builtin.debug:
+    msg: "Linux | Is the Spotfire node manager service already installed? '{{ tsnm_service_exists }}'"
+  tags: tsnm_install

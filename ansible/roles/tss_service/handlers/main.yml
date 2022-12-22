@@ -5,7 +5,7 @@
 #----------------------------------------
 
 - name: Restart Spotfire Server (tss) service
-  systemd:
+  ansible.builtin.systemd:
     name: tss-{{ tss_version }}
     state: restarted
   listen: "restart tss"

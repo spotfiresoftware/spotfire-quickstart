@@ -191,8 +191,8 @@ create_bootstrap_config() {
   echo "nodemanager.use.ip=false" >> ${TSS_HOME}/nm/config/nodemanager.properties
 #  SERVER_IP_LIST=$(ifconfig | grep inet | grep -v 127.0.0.1 | grep -v ::1 | awk {'print $2'} | paste -sd "," -)
 #  SERVER_IP_LIST=$(ip -o -f inet addr show eth0)
-#  SERVER_IP_LIST=$(hostname -I | awk '{print $1}')
-  SERVER_IP_LIST=$(hostname)
+  SERVER_IP_LIST=$(hostname -I | awk '{print $1}')
+#  SERVER_IP_LIST=$(hostname)
   IP_ADDRESSES="-A${SERVER_IP_LIST}"
   echo "Assigning addresses as: ${SERVER_IP_LIST}"
   #echo "nodemanager.host.names=" >> ${TSS_HOME}/nm/config/nodemanager.properties

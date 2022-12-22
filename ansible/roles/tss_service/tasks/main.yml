@@ -6,8 +6,8 @@
 
 # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/systemd_module.html
 - name: Start Spotfire Server (tss) service and set to automatic start on boot
-  systemd:
+  ansible.builtin.systemd:
     name: tss-{{ tss_version }}
-    enabled: yes
+    enabled: true
     state: started
   tags: tss_service

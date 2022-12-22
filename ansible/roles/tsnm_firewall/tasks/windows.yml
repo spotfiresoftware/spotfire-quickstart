@@ -15,7 +15,7 @@
     direction: in
     protocol: tcp
     state: present
-    enabled: yes
+    enabled: true
 
 - name: Windows | Adding Windows Firewall rule to allow Back-end registration and communication ports (outbound 9080,9433)
   community.windows.win_firewall_rule:
@@ -25,7 +25,7 @@
     direction: out
     protocol: tcp
     state: present
-    enabled: yes
+    enabled: true
 
 - name: Windows | Adding Windows Firewall rule to allow Spotfire services communication ports (inbound 9501-9503)
   community.windows.win_firewall_rule:
@@ -35,7 +35,7 @@
     direction: in
     protocol: tcp
     state: present
-    enabled: yes
+    enabled: true
 
 - name: Windows | Adding Windows Firewall rule to allow Spotfire services communication ports (inbound 9501-9503)
   community.windows.win_firewall_rule:
@@ -45,4 +45,4 @@
     direction: out
     protocol: tcp
     state: present
-    enabled: yes
+    enabled: true

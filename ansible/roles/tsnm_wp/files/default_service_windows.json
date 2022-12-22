@@ -6,7 +6,6 @@
       "configuration": "Web Player Configuration",
       "customPrefix": "Prefix",
       "resourcePool": "Pool A",
-      "targetFramework": "NETCORE",
       "instances": 1,
       "port": 9501
     }

@@ -1,18 +1,37 @@
 # For AWS
-- name: Set fact tss_hostname (AWS)
-  set_fact:
-    tss_hostname: "{{ hostvars[groups['tss_servers'][0]]['private_dns_name'] }}"
+
+#- name: DEBUG Show tsnm facts
+#  ansible.builtin.debug:
+#    msg: "{{ ansible_facts }}"
+
+- name: Set fact tsnm_ip_address (AWS)
+  ansible.builtin.set_fact:
+    #tsnm_hostname: "{{ private_dns_name }}"
+    #tss_ip_address: "{{ private_ip_address }}"
+    #tsnm_ip_address: "{{ ansible_default_ipv4.address }}"
+    tsnm_ip_address: "{{ ansible_host }}"
+
+- name: Show tsnm_ip_address
+  ansible.builtin.debug:
+    msg: "{{ tsnm_ip_address }}"
+
+#- name: DEBUG Set fact tss_hostname (AWS)
+#  ansible.builtin.set_fact:
+#    tss_hostname_debug: "{{ hostvars[groups['tss_servers'][0]] }}"
+#
+#- name: DEBUG Show tss_hostname
+#  ansible.builtin.debug:
+#    msg: "{{ tss_hostname_debug }}"
+
+- name: Set fact tss_ip_address (AWS)
+  ansible.builtin.set_fact:
+    #tss_hostname: "{{ hostvars[groups['tss_servers'][0]]['private_dns_name'] }}"
+    #tss_ip_address: "{{ hostvars[groups['tss_servers'][0]]['private_ip_address'] }}"
+    #tss_ip_address: "{{ hostvars[groups['tss_servers'][0]]['networkInterfaces'][0]['networkIP'] }}"
+    #tss_ip_address: "{{ hostvars[groups['tss_servers'][0]]['ansible_default_ipv4']['address'] }}"
+    tss_ip_address: "{{ hostvars[groups['tss_servers'][0]]['ansible_host'] }}" # OK with hosts_aws
   when: target_environment == 'AWS'
 
-- name: Set fact tsnm_hostname (AWS)
-  set_fact:
-    tsnm_hostname: "{{ private_dns_name }}"
-  when: target_environment == 'AWS'
-
-- name: Show tss_hostname
-  debug:
-    msg: "{{ tss_hostname }}"
-
-- name: Show tsnm_hostname
-  debug:
-    msg: "{{ tsnm_hostname }}"
+- name: Show tss_ip_address
+  ansible.builtin.debug:
+    msg: "{{ tss_ip_address }}"

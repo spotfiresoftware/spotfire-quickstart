@@ -6,9 +6,15 @@ create_db: true
 use_cloud_db: true
 # If we want to bootstrap the tss server (required for initial install or when adding new tss servers)
 tss_bootstrap: true
+# If we want to create the Web Player service from template
+create_wp_service: true
+# Force sdn files deploy (if there is a previous deployment with the same version)
+force_sdn_deploy: true
+# Force tsnm_service_install (do not skip if already installed)
+tsnm_service_reinstall: true
 
 # tss version
-tss_version: '11.4.0'
+tss_version: '12.0.0'
 tss_home: '/opt/tibco/tss/{{ tss_version }}'
 
 # NOTE: This is an internal fix for getting the Windows service name (variable) using lookup.ini based on the {{ tss_version }}
@@ -19,7 +25,7 @@ tnm_service_name_win: "TIBCO Spotfire Node Manager {{ tss_version }}{{ LTS|regex
 
 # location of Spotfire software packages
 spotfire_local_sw_repo: ../swrepo/build/{{ tss_version }}
-# NOTE: the ending / is relevant for the behavior of the ansible copy module
+# NOTE: Do not remove the ending '/'. It is relevant for the behavior of the ansible copy module
 spotfire_remote_sw_repo: /var/local/spotfire/swrepo/
 
 ## Spotfire DB

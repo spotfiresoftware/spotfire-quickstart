@@ -1,0 +1,26 @@
+---
+# Check if tss service exist to skip install stesp (intelligent+idempotent)
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/service_facts_module.html
+- name: Linux | Check if the Spotfire Server service is installed & started
+  ansible.builtin.service:
+    name: tss-{{ tss_version }}
+    state: started
+  register: tss_service
+  changed_when: false # this is just a check, we do not want to show as changed
+  ignore_errors: true
+  tags: tss_install
+
+- ansible.builtin.debug:
+    msg: "Linux | Spotfire Server service details: '{{ tss_service }}'"
+    verbosity: 1
+  tags: tss_install
+
+- name: Linux | Verify Spotfire Serverr service status
+  ansible.builtin.set_fact:
+    tss_service_exists: "{{ false if (tss_service.failed == true) else true }}"
+  tags: tss_install
+
+- ansible.builtin.debug:
+    msg: "Linux | Is the Spotfire Server service already installed? '{{ tss_service_exists }}'"
+  tags: tss_install

@@ -1,0 +1,3 @@
+---
+- ansible.builtin.set_fact:
+    ansible_shell_type: powershell

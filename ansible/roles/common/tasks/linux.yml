@@ -1,7 +1,7 @@
 ---
 # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/group_module.html
 - name: Create group "spotfire"
-  group:
+  ansible.builtin.group:
     name: spotfire
     state: present
     gid: 1010
@@ -9,7 +9,7 @@
 
 # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/user_module.html
 - name: Create user 'spotfire'
-  user:
+  ansible.builtin.user:
     name: spotfire
     comment: Spotfire user
 #    uid: 1010
@@ -20,12 +20,12 @@
 
 # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_module.html
 - name: Create directory for software repo
-  file:
+  ansible.builtin.file:
     #path: /var/local/spotfire/swrepo
     path: "{{ spotfire_remote_sw_repo }}"
     owner: spotfire
     group: spotfire
-    recurse: yes
+    recurse: true
     state: directory
   tags: swrepo
   become: true

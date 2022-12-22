@@ -8,8 +8,8 @@
 
 # https://docs.ansible.com/ansible/2.10/collections/ansible/builtin/stat_module.html
 - name: Windows | Check local 'default.json' file checksum (service template)
-  stat:
-    path: "{{ role_path }}/files/default_service.json"
+  ansible.builtin.stat:
+    path: "{{ role_path }}/files/default_service_windows.json"
     checksum_algorithm: sha1
   delegate_to: localhost
   register: local_service_definition
@@ -23,7 +23,7 @@
   register: remote_service_file_backup
 
 - name: Windows | Adding Web Player service from a template (only if no service has been installed or service definition cksum differs)
-  win_copy:
-    src: files/default_service.json
+  ansible.windows.win_copy:
+    src: files/default_service_windows.json
     dest: 'C:\tibco\tsnm\{{ tss_version }}\nm\config\default.conf'
-  when: remote_service_file_backup.stat.exists == false or remote_service_file_backup.stat.checksum != local_service_definition.stat.checksum
+  when: not remote_service_file_backup.stat.exists or remote_service_file_backup.stat.checksum != local_service_definition.stat.checksum

@@ -6,9 +6,9 @@
 
 # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/systemd_module.html
 - name: Restart Spotfire Server (tss) service to apply config changes
-  systemd:
+  ansible.builtin.systemd:
     name: tss-{{ tss_version }}
-    enabled: yes
+    enabled: true
     state: restarted
   tags: tss_service
 

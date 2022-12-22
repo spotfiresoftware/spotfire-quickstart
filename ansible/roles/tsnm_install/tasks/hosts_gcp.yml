@@ -1,0 +1,21 @@
+# For GCP
+
+- name: Set fact tsnm_ip_address (GCP)
+  ansible.builtin.set_fact:
+    #tsnm_hostname: "{{ ansible_hostname }}"
+    #tsnm_ip_address: "{{ ansible_default_ipv4.address }}"
+    tsnm_ip_address: "{{ ansible_host }}"
+
+- name: Show tsnm_ip_address
+  ansible.builtin.debug:
+    msg: "{{ tsnm_ip_address }}"
+
+- name: Set fact tss_ip_address (GCP)
+  ansible.builtin.set_fact:
+    #tss_hostname: "{{ hostvars[groups['tss_servers'][0]]['name'] }}"
+    #tss_hostname: "jsonencode({{ hostvars[groups['tss_servers'][0]] }})"
+    tss_ip_address: "{{ hostvars[groups['tss_servers'][0]]['networkInterfaces'][0]['networkIP'] }}"
+
+- name: Show tss_ip_address
+  ansible.builtin.debug:
+    msg: "{{ tss_ip_address }}"

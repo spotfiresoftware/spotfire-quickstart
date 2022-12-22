@@ -1,0 +1,18 @@
+# Ansible-lint completely ignores rules or tags listed below
+
+skip_list:
+#  - name[play]       # basic      idiom (warning)
+  - yaml[comments]   # basic      formatting, yaml
+  - command-instead-of-shell  # Use shell only when shell functionality is required.
+#  - deprecated-module  # Deprecated module.
+  - experimental  # all rules tagged as experimental
+#  - fqcn[action-core]  # Use FQCN for builtin actions.
+#  - fqcn[canonical]  # Use FQCN for builtin actions.
+#  - literal-compare  # Don't compare to literal True/False.
+  - name[missing]  # Rule for checking task and play names.
+  - name[template]  # Rule for checking task and play names.
+  - no-changed-when  # Commands should not change things if nothing needs doing.
+#  - yaml[indentation]  # Violations reported by yamllint.
+  - yaml[line-length]  # Violations reported by yamllint.
+#  - yaml[new-line-at-end-of-file]  # Violations reported by yamllint.
+#  - yaml[truthy]  # Violations reported by yamllint.

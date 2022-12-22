@@ -1,0 +1,70 @@
+---
+#----------------------------------------
+# Spotfire node manager (Linux) tar.gz package install
+# https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/installing_a_node_manager_(tarball_linux).html
+#----------------------------------------
+
+- ansible.builtin.include_tasks: linux-check-tsnm-service-exists.yml
+
+# WARN: Remove the previous install, for troubleshooting and testing
+#- name: Linux | Debian | Remove the previous install
+#  ansible.builtin.command: rm -rf /opt/tibco/tsnm/{{ tss_version }}/
+#  tags: tsnm_uninstall
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_module.html
+- name: Linux | Debian | Create directory for node manager installation
+  ansible.builtin.file:
+    path: /opt/tibco/tsnm/{{ tss_version }}
+    owner: spotfire
+    group: spotfire
+    recurse: true
+    state: directory
+  tags: tsnm_install
+  when: tsnm_service_exists is false or tsnm_service_reinstall
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/unarchive_module.html
+- name: Linux | Debian | Untar Spotfire node manager linux package (tsnm-{{ tss_version }}.x86_64.rpm)
+  ansible.builtin.unarchive:
+    src: "{{ spotfire_local_sw_repo }}/tsnm-{{ tss_version }}.x86_64.tar.gz"
+    dest: /opt/tibco/tsnm/{{ tss_version }}/
+    owner: spotfire
+    group: spotfire
+    remote_src: false
+    extra_opts:
+      - --strip-components=1
+      - --keep-newer-files
+  tags: tsnm_install
+  when: tsnm_service_exists is false or tsnm_service_reinstall
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_module.html
+#- name: Linux | Debian | Reconfigure (remove configured flag)
+#  ansible.builtin.file:
+#    path: /opt/tibco/tsnm/{{ tss_version }}/configured
+#    state: absent
+
+- name: Linux | Debian | Install Spotfire node manager package dependencies
+  ansible.builtin.apt:
+    name: zip
+    state: present
+    update_cache: true
+  become: true
+  tags: tsnm_install
+  when: ansible_distribution_file_variety == "Debian"
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/command_module.html
+- name: Linux | Debian | Run Spotfire node manager configure script for initial setup (use ip address)
+#  ansible.builtin.command: configure -m <NODEMANAGER_REGISTRATION_PORT> -c <NODEMANAGER_COMMUNICATION_PORT> -s <SERVER_NAME> -r <SERVER_BACKEND_REGISTRATION_PORT> -b <SERVER_BACKEND_COMMUNICATION_PORT> -n <NODEMANAGER_HOST_NAMES>
+#  ansible.builtin.command: configure -m 9080 -c 9443 -s $TSS_HOSTNAME -r 9080 -b 9443 -n $NM_HOSTNAME
+#  ansible.builtin.command: /opt/tibco/tsnm/{{ tss_version }}/configure -s {{ tss_hostname }} -n {{ ansible_hostname }}
+#  ansible.builtin.command: /opt/tibco/tsnm/{{ tss_version }}/configure -s {{ tss_hostname }} -n {{ private_dns_name }}
+# NOTE: We need to use private_ip_address to workaround Debian loopback in /etc/hosts
+  ansible.builtin.command: /opt/tibco/tsnm/{{ tss_version }}/configure -s {{ tss_ip_address }} -n {{ tsnm_ip_address }}
+#  become: true
+#  become_user: spotfire
+  tags: tsnm_install
+  when: tsnm_service_exists is false or tsnm_service_reinstall
+
+- name: Linux | Debian | Run Spotfire node manager configure-boot script for setting service in systemd
+  ansible.builtin.command: /opt/tibco/tsnm/{{ tss_version }}/configure-boot
+  tags: tsnm_install
+  when: tsnm_service_exists is false or tsnm_service_reinstall

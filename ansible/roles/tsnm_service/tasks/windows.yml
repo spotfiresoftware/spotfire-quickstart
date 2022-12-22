@@ -8,11 +8,11 @@
 # Install:
 #  $ ansible-galaxy collection install ansible.windows
 - name: Windows | Set the Node manager service to automatic start on boot
-  win_service:
+  ansible.windows.win_service:
     name: "{{ tnm_service_name_win }}"
     start_mode: auto
 
 - name: Windows | Start the Node manager service
-  win_service:
+  ansible.windows.win_service:
     name: "{{ tnm_service_name_win }}"
     state: restarted

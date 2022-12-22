@@ -1,8 +1,8 @@
 # SSH connection
 ansible_user: '{{ tss_user }}'
 #ansible_password: '{{ tss_password }}'
-#ansible_ssh_private_key_file: '{{ ssh_private_key_file }}'
 #ansible_sudo_pass: '{{ tss_password }}'
+#ansible_ssh_private_key_file: '{{ ssh_private_key_file }}'
 
 #ansible_ssh_common_args: '-o "ProxyCommand ssh -W %h:%p {{ jumphost_user }}@{{ jumphost_host }}" -i ~/.ssh/id_rsa {{ ssh_common_args }}'
 ansible_ssh_common_args: '{{ ssh_common_args }} -o ControlMaster=no -o "ProxyCommand ssh -W %h:%p {{ jumphost_user }}@{{ jumphost_host }} -i {{ ssh_private_key_file }} {{ ssh_common_args }}"'

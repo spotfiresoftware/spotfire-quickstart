@@ -8,26 +8,26 @@
 #       Maybe we need a DB connectivity check first...
 
 #- name: Set tss host into fact
-#  set_fact:
+#  ansible.builtin.set_fact:
 #    tss_hostname: "{{ ansible_hostname }}"
 #    tss_ipaddr: "{{ ansible_host }}"
 #
 #- name: Show tss facts
-#  debug:
+#  ansible.builtin.debug:
 #    msg: "{{ hostvars[groups['tss_servers'][0]] }}"
 
 # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_module.html
 - name: Create directory for bootstrap script
-  file:
+  ansible.builtin.file:
     path: /var/local/spotfire/
     owner: spotfire
     group: spotfire
-    recurse: yes
+    recurse: true
     state: directory
   when: tss_bootstrap
 
 - name: Copy Spotfire's bootstrap.sh script
-  copy:
+  ansible.builtin.copy:
     src: files/bootstrap.sh
     dest: /var/local/spotfire/
     owner: spotfire
@@ -40,10 +40,10 @@
 #TODO: execute only if bootstrap file do not exist
 # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/command_module.html
 - name: Run bootstrap.sh script
-  command: /var/local/spotfire/bootstrap.sh
+  ansible.builtin.command: /var/local/spotfire/bootstrap.sh
   # https://docs.ansible.com/ansible/latest/user_guide/become.html
-  become: true
-  become_user: spotfire
+#  become: true
+#  become_user: spotfire
   # https://docs.ansible.com/ansible/latest/user_guide/playbooks_strategies.html#using-keywords-to-control-execution
   throttle: 1
   # https://docs.ansible.com/ansible/latest/user_guide/playbooks_debugger.html
@@ -51,7 +51,6 @@
   register: bootstrap
   when: tss_bootstrap
 
-- debug: var=bootstrap.stdout_lines
+- ansible.builtin.debug: var=bootstrap.stdout_lines
 #  verbosity: 2
   when: tss_bootstrap
-

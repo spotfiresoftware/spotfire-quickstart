@@ -1,24 +1,27 @@
 # For Azure
-#- name: Get first tss server hostname (Azure)
-#  debug:
+
+- name: Set fact tsnm_ip_address (Azure)
+  ansible.builtin.set_fact:
+    #tsnm_hostname: "{{ ansible_hostname }}"
+    #tsnm_ip_address: "{{ ansible_default_ipv4.address }}"
+    tsnm_ip_address: "{{ ansible_host }}"
+
+- name: Show tsnm_ip_address
+  ansible.builtin.debug:
+    msg: "{{ tsnm_ip_address }}"
+
+#- name: DEBUG Show tss_hostname (Azure)
+#  ansible.builtin.debug:
 #    msg: "{{ hostvars[groups['tss_servers'][0]]['name'] | regex_replace('^(.*)-vm$', '\\1') }}"
 #  register: tss_hostname
 #  when: target_environment == 'Azure'
 
-- name: Set fact tss_hostname (Azure)
-  set_fact:
-    tss_hostname: "{{ hostvars[groups['tss_servers'][0]]['name'] | regex_replace('^(.*)-vm$', '\\1') }}"
-  when: target_environment == 'Azure'
+- name: Set fact tss_ip_address (Azure)
+  ansible.builtin.set_fact:
+    #tss_hostname: "{{ hostvars[groups['tss_servers'][0]]['name'] | regex_replace('^(.*)-vm$', '\\1') }}"
+    #tss_ip_address: "{{ hostvars[groups['tss_servers'][0]]['ansible_default_ipv4']['address'] }}"
+    tss_ip_address: "{{ hostvars[groups['tss_servers'][0]]['ansible_facts']['eth0']['ipv4']['address'] }}"
 
-- name: Set fact tss_hostname (Azure)
-  set_fact:
-    tsnm_hostname: "{{ ansible_hostname }}"
-  when: target_environment == 'Azure'
-
-- name: Show tss_hostname
-  debug:
-    msg: "{{ tss_hostname }}"
-
-- name: Show tsnm_hostname
-  debug:
-    msg: "{{ tsnm_hostname }}"
+- name: Show tss_ip_address
+  ansible.builtin.debug:
+    msg: "{{ tss_ip_address }}"

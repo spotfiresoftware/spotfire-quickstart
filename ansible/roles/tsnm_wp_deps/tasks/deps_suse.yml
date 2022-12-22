@@ -1,0 +1,42 @@
+---
+#----------------------------------------
+# Install libgdiplus from rpm (SUSE)
+#----------------------------------------
+
+# ---- ONLY for SUSE family ----
+# https://docs.ansible.com/ansible/latest/collections/community/general/zypper_module.html
+# https://docs.microsoft.com/en-us/dotnet/core/install/linux-sles
+- name: Linux | SUSE | Install Microsoft .NET package repository
+  community.general.zypper:
+    name:
+      - https://packages.microsoft.com/config/sles/{{ ansible_distribution_major_version }}/packages-microsoft-prod.rpm
+    state: present
+    disable_gpg_check: true
+  become: true
+  when: ansible_distribution_file_variety == "SUSE"
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_module.html
+#- name: Linux | SUSE | Fix Microsoft .NET package repository (create repo link)
+#  file:
+##   This line may transformed into /etc/zypp in OpenSUSE 15.3, as line 69
+#    src: '/etc/yum.repos.d/microsoft-prod.repo'
+##    src: '/etc/zypp/repos.d/microsoft-prod.repo'
+#    dest: '/etc/zypp/repos.d/microsoft-prod.repo'
+#    state: link
+#  become: true
+#  when: ansible_distribution_file_variety == "SUSE"
+#  ignore_errors: true
+
+- name: Linux | SUSE | Install dotnet-5 and dependencies
+  community.general.zypper:
+    name:
+#      - dotnet-sdk-6.0
+#      - dotnet-runtime-6.0
+      - aspnetcore-runtime-6.0
+    state: present
+    disable_gpg_check: true
+    update_cache: true
+  become: true
+  when: ansible_distribution_file_variety == "SUSE"
+
+  # TODO: Add package dependencies for SUSE as in deps_debian.yml

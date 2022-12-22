@@ -1,0 +1,57 @@
+---
+#----------------------------------------
+# Spotfire Server (Linux) tar.gz package install
+# https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/installing_the_spotfire_server_files_(tarball_linux).html
+#----------------------------------------
+
+- ansible.builtin.include_tasks: linux-check-tss-service-exists.yml
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_module.html
+- name: Linux | Debian | Create directory for Spotfire Server installation
+  ansible.builtin.file:
+    path: /opt/tibco/tss/{{ tss_version }}
+    owner: spotfire
+    group: spotfire
+    recurse: true
+    state: directory
+  tags: tss_install
+  when: tss_service_exists is false
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/unarchive_module.html
+- name: Linux | Debian | Copy Spotfire Server linux package (tss-{{ tss_version }}.x86_64.tar.gz)
+  ansible.builtin.copy:
+    src: "{{ spotfire_local_sw_repo }}/tss-{{ tss_version }}.x86_64.tar.gz"
+    dest: /tmp/
+    owner: spotfire
+    group: spotfire
+  tags: tss_install
+  when: tss_service_exists is false
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/unarchive_module.html
+- name: Linux | Debian | Untar Spotfire Server linux package (tss-{{ tss_version }}.x86_64.tar.gz)
+  ansible.builtin.unarchive:
+    src: "{{ spotfire_local_sw_repo }}/tss-{{ tss_version }}.x86_64.tar.gz"
+    dest: /opt/tibco/tss/{{ tss_version }}/
+    owner: spotfire
+    group: spotfire
+    remote_src: false
+    unsafe_writes: true
+    keep_newer: false
+    extra_opts:
+      - --strip-components=1
+      - --keep-newer-files
+  tags: tss_install
+  when: tss_service_exists is false
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/command_module.html
+# configure -s <SERVER_FRONTEND_PORT> -r <SERVER_BACKEND_REGISTRATION_PORT> -b <SERVER_BACKEND_COMMUNICATION_PORT>
+- name: Linux | Debian | Run Spotfire Server configure script for initial setup
+  ansible.builtin.command: /opt/tibco/tss/{{ tss_version }}/configure -s 80 -r 9080 -b 9443
+#  become: true
+#  become_user: spotfire
+  tags: tss_install
+  when: tss_service_exists is false
+
+- name: Linux | Debian | Run Spotfire Server configure-boot script for setting service in systemd
+  ansible.builtin.command: /opt/tibco/tss/{{ tss_version }}/configure-boot
+  tags: tss_install

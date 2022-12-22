@@ -5,28 +5,47 @@
 #----------------------------------------
 
 - name: Verify if already deployed client packages (Spotfire.Dxp.sdn) to Spotfire Server
-  shell:
+  ansible.builtin.shell:
     chdir: /opt/tibco/tss/{{ tss_version }}/tomcat/spotfire-bin/
     cmd: ./config.sh show-deployment --tool-password="${SPOTFIRE_CONFIG_TOOL_PASSWORD}" -a Production | grep -i Version | grep {{ tss_version }} | wc -l
   register: sdn_installed
   changed_when: false # this is just a check, not showing changes here
-  ignore_errors: yes
+  ignore_errors: true
 
 - name: Debug SDN status
-  debug:
+  ansible.builtin.debug:
     msg: "Is Spotfire.Dxp.sdn already deployed? '{{ sdn_installed.stdout }}'"
 
-- name: Copy client packages (Spotfire.Dxp.sdn) to Spotfire Server
-  copy:
-    src: "{{ spotfire_local_sw_repo }}/Spotfire.Dxp.sdn"
+- name: Copy client packages (Spotfire.Dxp*.sdn) to Spotfire Server
+  ansible.builtin.copy:
+    #src: "{{ spotfire_local_sw_repo }}/Spotfire.Dxp.sdn"
+    src: "{{ item }}"
     dest: "{{ spotfire_remote_sw_repo }}"
     owner: spotfire
     group: spotfire
     mode: '0644'
-  when: sdn_installed.stdout == '0'
+  with_fileglob: "{{ spotfire_local_sw_repo }}/Spotfire.Dxp*.sdn"
+  when: sdn_installed.stdout == '0' or force_sdn_deploy
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/find_module.html
+- name: Get copied client packages (Spotfire.Dxp*.sdn) on remote machine
+  ansible.builtin.find:
+    paths: "{{ spotfire_remote_sw_repo }}"
+    pattern: "*sdn"
+  register: found_sdn_files
+
+- name: Parse out found_sdn_files paths
+  ansible.builtin.set_fact:
+    my_sdn_files: "{{ found_sdn_files | json_query('files[*].path') }}"
+
+- ansible.builtin.debug:
+    var: item
+  with_items: "{{ my_sdn_files }}"
 
 - name: Deploying client packages (Spotfire.Dxp.sdn) to Spotfire Server
-  shell:
+  ansible.builtin.shell:
     chdir: /opt/tibco/tss/{{ tss_version }}/tomcat/spotfire-bin/
-    cmd: ./config.sh update-deployment --tool-password="${SPOTFIRE_CONFIG_TOOL_PASSWORD}" -a Production "{{ spotfire_remote_sw_repo }}/Spotfire.Dxp.sdn"
-  when: sdn_installed.stdout == '0'
+    #cmd: ./config.sh update-deployment --tool-password="${SPOTFIRE_CONFIG_TOOL_PASSWORD}" -a Production "{{ spotfire_remote_sw_repo }}/Spotfire.Dxp.sdn"
+    cmd: ./config.sh update-deployment --tool-password="${SPOTFIRE_CONFIG_TOOL_PASSWORD}" -a Production "{{ item }}"
+  with_items: "{{ my_sdn_files }}"
+  when: sdn_installed.stdout == '0' or force_sdn_deploy

@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #
 # This script will create all database schemas and fill them with all the initial data.
 #
@@ -43,18 +43,18 @@ check_error() {
 }
 
 check_table_exists() {
-  DB_TABLE="persistent_sessions"
+  DB_TABLE="SN_VERSION"
   # poor's man check for some created table
   table_exists_out=$(psql -h ${SPOTFIRE_DB_HOST} -U ${SPOTFIRE_DB_USER} -d ${SPOTFIRE_DB_NAME} -c "SELECT * FROM pg_catalog.pg_tables;")
   rc=$?
   if [[ $rc != 0 ]];then
-    echo "ERROR($rc): Could not read tables in database \"$SPOTFIRE_DB_HOST\". Continue database schema creation."
+    echo "INFO($rc): Could not read tables in database \"$SPOTFIRE_DB_HOST\". Continue database schema creation."
     return 1
   else
     table_exists=$(echo $table_exists_out | grep -i $DB_TABLE)
     rc=$?
     if [[ $rc != 0 ]];then
-      echo "ERROR($rc): Could not find table \"$DB_TABLE\" in database \"$SPOTFIRE_DB_HOST\". Continue database schema creation."
+      echo "INFO($rc): Could not find table \"$DB_TABLE\" in database \"$SPOTFIRE_DB_HOST\". Continue database schema creation."
       return 2
     else
       echo "Found table \"$DB_TABLE\" in database \"$SPOTFIRE_DB_HOST\". Continue checking if required database schema creation."

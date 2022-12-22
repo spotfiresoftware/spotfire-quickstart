@@ -5,7 +5,7 @@
 
 # https://docs.ansible.com/ansible/latest/collections/ansible/builtin/template_module.html
 - name: Copy Spotfire config.env in profile.d
-  template:
+  ansible.builtin.template:
     src: templates/config.env
     dest: /etc/profile.d/spotfire.env
     owner: spotfire
