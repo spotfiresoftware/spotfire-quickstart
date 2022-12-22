@@ -1,0 +1,15 @@
+# NOTE: This is only an static hosts file example for usage with Ansible.
+# We use Ansible dynamic host file with host_groups_gcp.yml and host_groups_of_groups.yml files,
+# using the GCP tags together with the Ansible google.cloud collection.
+
+[jumphost_servers]
+sandbox-somo-jumphost ansible_host=34.105.246.37 ansible_connection=ssh ansible_user=spotfire
+
+[tss_servers]
+sandbox-somo-tss-0 ansible_connection=ssh ansible_user=spotfire
+sandbox-somo-tss-1 ansible_connection=ssh ansible_user=spotfire
+
+[wp_servers]
+sandbox-somo-tswp-0 ansible_connection=ssh ansible_user=spotfire
+sandbox-somo-tswp-1 ansible_connection=ssh ansible_user=spotfire
+

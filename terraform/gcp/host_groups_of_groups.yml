@@ -1,0 +1,8 @@
+[jumphost_servers:children]
+gcp_role_jumphost
+
+[tss_servers:children]
+gcp_role_tss
+
+[wp_servers:children]
+gcp_role_tswp

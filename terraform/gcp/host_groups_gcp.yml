@@ -1,0 +1,34 @@
+---
+#
+# This plugin is part of the google.cloud collection (version 1.0.2).
+# To install it use: ansible-galaxy collection install google.cloud
+#                    pip install --upgrade requests google-auth
+#
+# https://docs.ansible.com/ansible/latest/collections/google/cloud/gcp_compute_inventory.html
+# https://docs.ansible.com/ansible/latest/scenario_guides/guide_gce.html
+# https://docs.ansible.com/ansible/latest/plugins/inventory.html#inventory-plugins
+#
+plugin: gcp_compute
+projects:
+  - spotfire-product-mgmt
+
+auth_kind: serviceaccount
+# NOTE: relative path from <repo>/ansible
+service_account_file: ../terraform/gcp/sa-private-key.json
+
+keyed_groups:
+  # Create groups from GCE labels
+  - prefix: gcp
+    key: labels
+
+hostnames:
+  # List host by name instead of the default public ip
+  - name
+
+compose:
+  # Set an inventory parameter to use the Public IP address to connect to the host
+  # For Private ip use "networkInterfaces[0].networkIP"
+  #ansible_host: networkInterfaces[0].accessConfigs[0].natIP|default(networkInterfaces[0].networkIP, true) | first
+  ansible_host: networkInterfaces[0].accessConfigs[0].natIP
+  ansible_user: spotfire
+  ansible_ssh_private_key_file: ./.ssh/id_rsa_gcp
