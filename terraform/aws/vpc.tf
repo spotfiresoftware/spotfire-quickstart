@@ -29,7 +29,7 @@ resource "aws_subnet" "public" {
   count                   = length(data.aws_availability_zones.available.names)
   vpc_id                  = aws_vpc.this.id
   cidr_block              = "10.0.${10 + count.index}.0/24"
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
   availability_zone       = element(data.aws_availability_zones.available.names, count.index)
 
   tags = {
@@ -41,7 +41,7 @@ resource "aws_subnet" "private" {
   count                   = length(data.aws_availability_zones.available.names)
   vpc_id                  = aws_vpc.this.id
   cidr_block              = "10.0.${count.index}.0/24"
-  map_public_ip_on_launch = true
+  map_public_ip_on_launch = false
   availability_zone       = element(data.aws_availability_zones.available.names, count.index)
 
   tags = {
@@ -86,6 +86,8 @@ resource "aws_route_table_association" "public" {
 #----------------------------------------
 # NAT Gateway
 #----------------------------------------
+# Elastic IPs
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/eip
 resource "aws_eip" "this" {
   count = length(data.aws_availability_zones.available.names)
 
@@ -96,6 +98,7 @@ variable "single_nat_gateway" {
   default = false
 }
 
+# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/nat_gateway
 resource "aws_nat_gateway" "this" {
   count = length(data.aws_availability_zones.available.names)
 

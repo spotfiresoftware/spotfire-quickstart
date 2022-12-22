@@ -75,6 +75,7 @@ resource "aws_instance" "tss" {
   ami           = lookup(var.aws_amis, var.tss_vm_os)
   instance_type = lookup(var.tss_instance_types, var.tss_size)
 
+//  subnet_id = element(aws_subnet.public.*.id, count.index)
   subnet_id = element(aws_subnet.private.*.id, count.index)
   vpc_security_group_ids = [aws_security_group.mgt.id, aws_security_group.tss-web.id,
   aws_security_group.tss-be.id, aws_security_group.tss-cluster.id]
@@ -119,6 +120,7 @@ resource "aws_instance" "wp" {
   ami           = lookup(var.aws_amis, var.wp_vm_os)
   instance_type = lookup(var.wp_instance_types, var.wp_size)
 
+//  subnet_id = element(aws_subnet.public.*.id, count.index)
   subnet_id = element(aws_subnet.private.*.id, count.index)
   vpc_security_group_ids = [aws_security_group.mgt.id, aws_security_group.tss-be.id,
   aws_security_group.tnm.id, aws_security_group.win.id]
@@ -213,15 +215,15 @@ resource "aws_security_group" "tss-web" {
 
   ingress {
     description = "Allow inbound HTTP from management addresses"
-    from_port   = 8080
-    to_port     = 8080
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = var.admin_address_prefixes
   }
   ingress {
     description     = "Allow inbound HTTP traffic from Application Load Balancer"
-    from_port       = 8080
-    to_port         = 8080
+    from_port       = 80
+    to_port         = 80
     protocol        = "tcp"
     security_groups = [aws_security_group.web-alb.id]
   }
@@ -284,20 +286,20 @@ resource "aws_security_group" "tss-cluster" {
     protocol    = "tcp"
     self        = true
   }
-  //  ingress {
-  //    description = "Allow inbound back-end registration traffic"
-  //    from_port   = 9080
-  //    to_port     = 9080
-  //    protocol    = "tcp"
-  //    self        = true
-  //  }
-  //  ingress {
-  //    description = "Allow inbound back-end communication traffic"
-  //    from_port   = 9443
-  //    to_port     = 9443
-  //    protocol    = "tcp"
-  //    self        = true
-  //  }
+    ingress {
+      description = "Allow inbound back-end registration traffic"
+      from_port   = 9080
+      to_port     = 9080
+      protocol    = "tcp"
+      self        = true
+    }
+    ingress {
+      description = "Allow inbound back-end communication traffic"
+      from_port   = 9443
+      to_port     = 9443
+      protocol    = "tcp"
+      self        = true
+    }
   egress {
     description = "Allow outbound traffic"
     from_port   = 0
@@ -380,6 +382,28 @@ resource "local_file" "ansible-inventory-aws_ec2" {
   directory_permission = "0770"
 }
 
+# Generates the static Ansible Inventory file
+resource "local_file" "ansible-inventory-hosts_aws" {
+  content = templatefile("${path.module}/ansible_inventory.tmpl", {
+    # jumphost
+    jumphost_hostnames = aws_instance.jumphost[*].tags["Name"],
+    jumphost_pip_addresses = aws_instance.jumphost[*].public_ip,
+    jumphost_user = lookup(var.aws_ami_user, var.jumphost_vm_os),
+    # tss
+    tss_hostnames = aws_instance.tss[*].tags["Name"],
+    tss_ip_addresses = aws_instance.tss.*.private_ip,
+    tss_user      = lookup(var.aws_ami_user, var.jumphost_vm_os),
+    # wp
+    wp_hostnames = aws_instance.wp[*].tags["Name"],
+    wp_ip_addresses = aws_instance.wp.*.private_ip,
+    wp_user       = lookup(var.aws_ami_user, var.jumphost_vm_os),
+    }
+  )
+  filename             = "${var.workspace_dir}/${terraform.workspace}/ansible_config/hosts_aws"
+  file_permission      = "0660"
+  directory_permission = "0770"
+}
+
 # Generates the Ansible Config file (credentials)
 resource "local_file" "ansible-config-infra" {
   content = templatefile("${path.module}/ansible_config.tmpl", {
@@ -388,8 +412,9 @@ resource "local_file" "ansible-config-infra" {
     //    tss_user          = var.tss_admin_username,
     //    wp_user           = var.wp_admin_username,
     jumphost_user = lookup(var.aws_ami_user, var.jumphost_vm_os),
+    jumphost_host = aws_instance.jumphost[0].public_ip,
     tss_user      = lookup(var.aws_ami_user, var.jumphost_vm_os),
-    //    wp_user           = lookup(var.aws_ami_user, var.jumphost_vm_os),
+//        wp_user           = lookup(var.aws_ami_user, var.jumphost_vm_os),
     wp_user           = var.wp_admin_username,
     wp_password       = var.wp_admin_password,
     db_host           = local.db_address,

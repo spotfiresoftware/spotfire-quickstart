@@ -4,9 +4,9 @@
 
 Follow these instructions if you want to install the following applications in your server:
 
-* Terraform
-* Ansible
-* AWS CLI
+- Terraform
+- Ansible
+- Azure CLI
 
 For easy reference, the official vendor procedures for a Debian/Ubuntu distribution are compiled in this page. 
 For other operating systems, please check the specific vendor documentation.
@@ -15,7 +15,7 @@ For other operating systems, please check the specific vendor documentation.
 
 If you start from a minimal distro, you may need to install some basic common tools.
 
-```
+```bash
 apt-get install -y gnupg software-properties-common curl
 ```
 
@@ -26,20 +26,20 @@ See also [Install Terraform](https://learn.hashicorp.com/tutorials/terraform/ins
 
 For your convenience, these are the steps:
 
-1. Update your system sources and upgrade packages.
-   ```
+1. Update your system sources and upgrade packages:
+   ```bash
    sudo apt-get update && sudo apt-get upgrade -y
    ```
-2. Add the HashiCorp key.
-   ```
+2. Add the HashiCorp key:
+   ```bash
    curl -fsSL https://apt.releases.hashicorp.com/gpg | sudo apt-key add -
    ```
-3. Add the official HashiCorp repository.
-   ```
+3. Add the official HashiCorp repository:
+   ```bash
    sudo apt-add-repository "deb [arch=$(dpkg --print-architecture)] https://apt.releases.hashicorp.com $(lsb_release -cs) main"
    ```
-4. Install the Terraform package.
-   ```
+4. Install the Terraform package:
+   ```bash
    sudo apt install -y terraform
    ```
 
@@ -49,31 +49,32 @@ For installing Ansible, we follow Ansible's official procedure: [Installing Ansi
 
 For your convenience, these are the steps:
 
-1. Install `pip`, `setuptools` and `wheel` if not already in the system.
-   ```
+1. Install `pip`, `setuptools` and `wheel` if not already in the system:
+   ```bash
    python3 -m pip install --upgrade pip setuptools wheel
    ```
-2. Install Ansible. Note you need at least Ansible 2.8 version for running Ansible Galaxy. 
+2. Install Ansible: 
+   ```bash
+   python3 -m pip install ansible
+   ```
+   **Note**: You need at least Ansible 2.8 version for running Ansible Galaxy. 
    Check your version with `ansible --version`.
-   ```
-   python3 -m pip install 'ansible==2.10.7'
-   ```
-3. Install general required Ansible collections.
-   ```
+3. Install general required Ansible collections:
+   ```bash
    ansible-galaxy collection install community.windows
    ```
 4. Using the AWS Resource Manager modules requires having specific AWS SDK modules installed on the host running Ansible. 
    For more details, see the [Ansible AWS guide](https://docs.ansible.com/ansible/latest/scenario_guides/guide_aws.html).
-   ```
+   ```bash
    ansible-galaxy collection install amazon.aws
-   sudo pip3 install --user boto3   
+   python3 -m pip install --user boto3
    ```
 
 ## Install AWS CLI
 
 For installing AWS CLI, we follow AWS's official procedure: [Install the AWS CLI v2 on Linux](https://docs.aws.amazon.com/cli/latest/userguide/install-cliv2-linux.html).
 
-```
+```bash
 cd /tmp
 curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
 unzip awscliv2.zip
@@ -92,7 +93,7 @@ For direct how directly use a non federated AWS account, please refer to AWS doc
 
 You need to configure the AWS cli with:
 
-```
+```bash
 aws configure
 ```
 
@@ -100,19 +101,19 @@ This command will query for your credential details and will generate the `~/.aw
 
 You can add your federated account as a profile in your `~/.aws/config` file.
 For example, adding `SpotfirePMRole` profile:
-```
+```bash
 [default]
 region = eu-north-1
 output = json
 
 [profile SpotfirePMRole]
-role_arn = arn:aws:iam::ACCOUNT_ID:role/SpotfirePowerUser
+role_arn = arn:aws:iam::987537861642:role/SpotfirePowerUser
 source_profile = default
 ```
 
 You could as well add other accounts in your `~/.aws/credentials` file.
 For example, adding `anotherUser` account:
-```
+```bash
 [default]
 aws_access_key_id = YOUR_ACCESS_KEY_ID
 aws_secret_access_key = YOUR_SECRET_ACCESS_KEY_ID
@@ -132,7 +133,7 @@ For information on AWS IAM roles, see [IAM roles
 - Minus: Slower method (implies ~5-7 secs extra on each call)
 
 To use your the federated account as an assigned role, you can just export the profile name in your environment: 
-```
+```bash
 export AWS_PROFILE=SpotfirePMRole
 ```
 
@@ -144,8 +145,8 @@ export AWS_PROFILE=SpotfirePMRole
 To use your the federated account as an assigned role, you need to fetch the temporal credentials and export them into your environment. 
 This can be done in one command with:
 
-```
-source <(aws sts assume-role --role-arn arn:aws:iam::ACCOUNT_ID:role/SpotfirePowerUser --profile SpotfirePMRole --role-session-name SpotfirePowerUser \
+```bash
+source <(aws sts assume-role --role-arn arn:aws:iam::987537861642:role/SpotfirePowerUser --profile SpotfirePMRole --role-session-name SpotfirePowerUser \
    | jq -r  '.Credentials | @sh "export AWS_ACCESS_KEY_ID=\(.AccessKeyId)\nexport AWS_SECRET_ACCESS_KEY=\(.SecretAccessKey)\nexport AWS_SESSION_TOKEN=\(.SessionToken)\n "')
 ```
 
@@ -154,13 +155,12 @@ You need to this from time to time due session token timeout.
 
 You can do that easier with the provided Makefile, so you do not need to remember that syntax:
 
-```
+```bash
 tsa aws-assume-role-env
 ```
 
 Remember to export the variables from the tsa command output:
-
-```
+```bash
 export AWS_ACCESS_KEY_ID=ASSUMED_ROLE_ACCESS_KEY_ID
 export AWS_SECRET_ACCESS_KEY=ASSUMED_ROLE_SECRET_ACCESS_KEY_ID
 export AWS_SESSION_TOKEN=ASSUMED_ROLE_SESSION_TOKEN

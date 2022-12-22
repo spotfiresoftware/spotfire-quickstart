@@ -32,17 +32,22 @@ keyed_groups:
 
 hostnames:
   - tag:Name=Name  # Return specific hosts only
+  - tag:Name
 #  - tag:CustomDNSName
   - dns-name
 #  - name: 'tag:Name=Tag1,Name=Tag2'
 #  - name: 'private-ip-address'
-  - private-dns-name
+#    separator: '_'
+#    prefix: 'tag:Name'
+  - private-ip-address
+#  - private-dns-name
 
 compose:
   # Use the private IP address to connect to the host
   # (note: this does not modify inventory_hostname, which is set via I(hostnames))
 #  ansible_host: public_ipv4addresses|default(private_ipv_addresses, true) | first
-  ansible_host: public_dns_name
+  #ansible_host: public_dns_name
+  ansible_host: private_ip_address
 
 # For setting credentials,
 # either export them as environment variables:

@@ -7,7 +7,7 @@ output "jumphost_pip_addresses" {
   value = aws_instance.jumphost.*.public_ip
 }
 
-output "jumphost_ip_addresses" {
+output "tss_ip_addresses" {
   value = aws_instance.tss.*.private_ip
 }
 

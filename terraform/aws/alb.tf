@@ -48,8 +48,8 @@ resource "aws_alb" "web" {
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group
 resource "aws_alb_target_group" "web" {
-  name     = "${var.prefix}-spotfire-web-alb-group"
-  port     = 8080
+  name     = "${var.prefix}-spot-web-alb-group"
+  port     = 80
   protocol = "HTTP"
   vpc_id   = aws_vpc.this.id
   stickiness {
@@ -58,7 +58,8 @@ resource "aws_alb_target_group" "web" {
   # Alter the destination of the health check to be the login page.
   health_check {
     path = "/spotfire/login.html"
-    port = 8080
+    port = 80
+    matcher = "200-302" # Required to allow for 302 Found (URL redirection)
   }
 }
 
@@ -98,7 +99,7 @@ resource "aws_alb_target_group_attachment" "tss" {
   target_group_arn = aws_alb_target_group.web.arn
   target_id        = element(aws_instance.tss.*.id, count.index)
   //  target_id        = each.key
-  port = 8080
+  port = 80
 }
 
 output "aws_alb_dns_name" {

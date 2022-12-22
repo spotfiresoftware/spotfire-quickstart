@@ -1,0 +1,14 @@
+[jumphost_servers]
+%{~ for index, jumphost_hostname in jumphost_hostnames }
+${ jumphost_hostname } ansible_connection=ssh ansible_user=${jumphost_user} ansible_host=${ jumphost_pip_addresses[index] }
+%{~ endfor }
+
+[tss_servers]
+%{~ for index, tss_hostname in tss_hostnames }
+${tss_hostname} ansible_connection=ssh ansible_user=${tss_user} ansible_host=${ tss_ip_addresses[index] }
+%{~ endfor }
+
+[wp_servers]
+%{~ for index, wp_hostname in wp_hostnames }
+${wp_hostname} ansible_connection=ssh ansible_user=${wp_user} ansible_host=${ wp_ip_addresses[index] }
+%{~ endfor }

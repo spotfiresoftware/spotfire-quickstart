@@ -15,5 +15,5 @@ provider "aws" {
   //  }
 
   # Much better to use the AWS CLI credentials file
-  shared_credentials_file = "path_file_credentials like ~/.aws/credentials"
+  #shared_credentials_file = "path_file_credentials like ~/.aws/credentials"
 }

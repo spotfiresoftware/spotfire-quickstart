@@ -6,20 +6,20 @@ variable "create_spotfire_db" {
   default     = true
 }
 
-//variable "create_alb" {
-//  description = "Create AWS Application Load Balancer for HTTP access to TIBCO Spotfire Server instances (recommended if using Spotfire Server cluster)"
-//  default     = true
-//}
+#variable "create_alb" {
+#  description = "Create AWS Application Load Balancer for HTTP access to TIBCO Spotfire Server instances (recommended if using Spotfire Server cluster)"
+#  default     = true
+#}
 
 variable "create_tss_public_ip" {
   description = "Create Public IP for direct access to TIBCO Spotfire Server instances (only for testing)"
   default     = false
 }
 
-# WARN: WP on Linux is not currently supported, just for testing future support
+# NOTE: See documentation for differences when running Web Player on Linux
 variable "create_wp_linux" {
-  description = "Use Linux for Web Player services (experimental, the default is Windows)"
-  default     = false
+  description = "Use Linux for Web Player services"
+  default     = true
 }
 
 #----------------------------------------
@@ -32,19 +32,20 @@ variable "tags" {
     # specific tags
     description   = "Spotfire quickstart: basic install"
     app           = "Spotfire"
-    app_version   = "11.4"
+    app_version   = "12.0.0"
     environment   = "dev"
-    infra_version = "0.1"
+    infra_version = "0.2"
   }
 }
 
 variable "prefix" {
-  default = "sandbox"
+  default     = "sandbox-codename"
+  description = "Prefix for resources"
 }
 
-//variable "environment" {
-//  default = "dev"
-//}
+#variable "environment" {
+#  default = "dev"
+#}
 
 #----------------------------------------
 # AWS region
@@ -74,13 +75,14 @@ variable "web_address_prefixes" {
 # https://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_CreateDBInstance.html
 
 variable "postgresql_db_version" {
+  # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_PostgreSQL.html#PostgreSQL.Concepts
   description = "PostgreSQL data server version"
-  default     = "13.1"
+  default     = "14.3"
 }
 
 variable "spotfire_db_instance_class" {
-  description = "Spotfire database instance class"
   # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/Concepts.DBInstanceClass.html
+  description = "Spotfire database instance class"
   default = "db.t3.micro"
 }
 
@@ -101,10 +103,10 @@ variable "spotfire_db_admin_password" {
   sensitive   = true
 }
 
-//variable "spotfire_db_server_name" {
-//  description = "Spotfire database server name"
-//  default     = "spotfiredb-server"
-//}
+#variable "spotfire_db_server_name" {
+#  description = "Spotfire database server name"
+#  default     = "spotfiredb-server"
+#}
 variable "spotfire_db_name" {
   description = "Spotfire database name. For AWS RDS, it must begin with a letter and contain only alphanumeric characters."
   default     = "spotfiredb"
@@ -135,12 +137,12 @@ variable "key_name" {
 # ssh key file
 variable "ssh_public_key_file" {
   description = "Spotfire VM SSH public key file location (local)"
-  default     = "~/.ssh/id_rsa.pub"
+  default     = "~/.ssh/id_rsa_aws.pub"
 }
 
 variable "ssh_private_key_file" {
   description = "Spotfire VM SSH private key file location (local)"
-  default     = "~/.ssh/id_rsa"
+  default     = "~/.ssh/id_rsa_aws"
 }
 
 #----------------------------------------
@@ -151,31 +153,35 @@ variable "ssh_private_key_file" {
 # https://eu-north-1.console.aws.amazon.com/ec2/v2/home?region=eu-north-1
 # https://docs.aws.amazon.com/cli/latest/reference/ec2/describe-images.html
 variable "aws_amis" {
+
   default = {
-    # all images in eu-north
-    #
-    # openSUSE Leap 15.3
-    # https://aws.amazon.com/marketplace/server/configuration?productId=5e60433b-bd08-44d8-be9e-2b774638fa6c&ref_=psb_cfg_continue
-    "openSUSE" = "ami-04460796ff54dee3b"
-    # CentOS 8 (x86_64) - with Updates HVM
-    # https://aws.amazon.com/marketplace/server/configuration?productId=471d022d-974f-4f9c-8e39-b00d9b583833&ref_=psb_cfg_continue
-    "CentOS" = "ami-0966447150c11d877"
-    # RHEL_HA-8.4.0_HVM-20210504-x86_64-2-Hourly2-GP2
-    "RHEL" = "ami-0baa9e2e64f3c00db"
-    # Windows
-    # https://aws.amazon.com/marketplace/server/configuration?productId=ef297a90-3ad0-4674-83b4-7f0ec07c39bb&ref_=psb_cfg_continue
-    "Windows2019" = "ami-0de5cf558e1cb5cf9"
+  # all images in eu-north
+  #
+  # openSUSE Leap 15.3
+  # https://aws.amazon.com/marketplace/server/configuration?productId=5e60433b-bd08-44d8-be9e-2b774638fa6c&ref_=psb_cfg_continue
+  "openSUSE" = "ami-04460796ff54dee3b"
+  # CentOS 8 (x86_64) - with Updates HVM
+  # https://aws.amazon.com/marketplace/server/configuration?productId=471d022d-974f-4f9c-8e39-b00d9b583833&ref_=psb_cfg_continue
+  "CentOS" = "ami-0966447150c11d877"
+  # RHEL_HA-8.4.0_HVM-20210504-x86_64-2-Hourly2-GP2
+  "RHEL" = "ami-0baa9e2e64f3c00db"
+  # Debian 11 debian-11-amd64-20211011-792
+  # https://aws.amazon.com/marketplace/pp/prodview-l5gv52ndg5q6i
+  "Debian11" = "ami-09561a092f2052f25"
+  # Windows
+  # https://aws.amazon.com/marketplace/server/configuration?productId=ef297a90-3ad0-4674-83b4-7f0ec07c39bb&ref_=psb_cfg_continue
+  "Windows2019" = "ami-0de5cf558e1cb5cf9"
   }
 }
 
 variable "jumphost_vm_os" {
-  default = "CentOS"
+  default = "Debian11"
 }
 variable "tss_vm_os" {
-  default = "CentOS"
+  default = "Debian11"
 }
 variable "wp_vm_os" {
-  default = "Windows2019"
+  default = "Debian11"
 }
 
 # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/managing-users.html
@@ -192,6 +198,7 @@ variable "aws_ami_user" {
   default = {
     "CentOS"      = "centos"
     "Debian"      = "admin"
+    "Debian11"    = "admin"
     "openSUSE"    = "ec2-user"
     "RHEL"        = "ec2-user"
     "SUSE"        = "ec2-user"

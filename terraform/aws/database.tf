@@ -69,10 +69,10 @@ resource "aws_db_instance" "this" {
   identifier = local.db_instance_id
 
   allocated_storage      = var.spotfire_db_size
+  db_name                = var.spotfire_db_name
   engine                 = "postgres"
   engine_version         = var.postgresql_db_version
   instance_class         = var.spotfire_db_instance_class
-  name                   = var.spotfire_db_name
   username               = var.spotfire_db_admin_username
   password               = var.spotfire_db_admin_password
   db_subnet_group_name   = aws_db_subnet_group.this.id
