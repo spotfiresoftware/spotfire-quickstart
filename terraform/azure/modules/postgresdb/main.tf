@@ -22,10 +22,15 @@ resource "azurerm_postgresql_server" "this" {
   auto_grow_enabled            = true
 
   public_network_access_enabled = true
-  //  ssl_enforcement_enabled          = true
-  //  ssl_minimal_tls_version_enforced = "TLS1_2"
-  ssl_enforcement_enabled         = false
-  ssl_minimal_tls_version_enforced = "TLSEnforcementDisabled"
+
+  # https://learn.microsoft.com/en-us/azure/governance/policy/samples/built-in-policies
+  #  ssl_enforcement_enabled         = false
+  #  ssl_minimal_tls_version_enforced = "TLSEnforcementDisabled"
+  # Needs to comply with policy: "Azure SQL Database should be running TLS version 1.2 or newer" (Error: 'Enable encryption')
+  ssl_enforcement_enabled          = true
+  ssl_minimal_tls_version_enforced = "TLS1_2"
+
+#  infrastructure_encryption_enabled = false // This property is currently still in development and not supported by Microsoft.
 
   tags = var.tags
 }

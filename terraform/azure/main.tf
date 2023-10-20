@@ -19,6 +19,7 @@ module "networking" {
 
   # dependencies
   resource_group_name = module.base.rg_name
+  jumphost_public_ips = module.jumphost.vm_public_ips
 
   # specific
   admin_address_prefixes          = var.admin_address_prefixes
@@ -27,11 +28,11 @@ module "networking" {
   public_subnet_address_prefixes  = var.public_subnet_address_prefixes
   private_subnet_address_prefixes = var.private_subnet_address_prefixes
   appgw_subnet_address_prefixes   = var.appgw_subnet_address_prefixes
-  jumphost_public_ips             = module.jumphost.vm_public_ips
 }
 
 # Setup storage
 module "storage" {
+  count    = var.create_storage ? 1 : 0
   source   = "./modules/storage"
   location = var.location
   prefix   = var.prefix
@@ -50,7 +51,8 @@ module "certificates" {
   tags     = var.tags
 
   # dependencies
-  resource_group_name = module.base.rg_name
+  resource_group_name    = module.base.rg_name
+  admin_address_prefixes = var.admin_address_prefixes
 }
 
 # Setup bastion host
@@ -67,7 +69,7 @@ module "bastion" {
   resource_group_name = module.base.rg_name
   //  availability_set_id = module.base.availability_set_id
   //  subnet_id           = module.networking.subnet_id
-  vnet_name = module.networking.vnet_name
+  vnet_name           = module.networking.vnet_name
 
   # specific
   bastion_subnet_address_prefixes = var.bastion_subnet_address_prefixes
@@ -78,19 +80,22 @@ module "tssdb" {
   // conditional module execution
   count = var.create_spotfire_db ? 1 : 0
 
-  source   = "./modules/tssdb"
+  source   = "./modules/postgres_flexible_db"
   location = var.location
   prefix   = var.prefix
   tags     = var.tags
 
   # dependencies
-  resource_group_name = module.base.rg_name
+  resource_group_name        = module.base.rg_name
   //  availability_set_id = module.base.availability_set_id
-  subnet_id = module.networking.private_subnet_id
+  virtual_network_id         = module.networking.vnet_id
+  virtual_network_name       = module.networking.vnet_name
 
   # specific
+  db_subnet_address_prefixes = var.db_subnet_address_prefixes
   postgresql_db_version      = var.postgresql_db_version
   spotfire_db_size           = var.spotfire_db_size
+  spotfire_db_instance_class = var.spotfire_db_instance_class
   spotfire_db_admin_username = var.spotfire_db_admin_username
   spotfire_db_admin_password = var.spotfire_db_admin_password
 }
@@ -192,7 +197,7 @@ module "wp" {
 # Setup wp
 module "wp_windows" {
   // conditional module execution
-  //  count = var.create_wp_linux ? 0 : 1
+  count = var.create_wp_linux ? 0 : 1
 
   source   = "./modules/vm_windows"
   location = var.location
@@ -224,9 +229,10 @@ module "wp_windows" {
   cert_secret_id = module.certificates.cert_secret_id
   key_vault_key  = module.certificates.key_vault_key
 
-  storage_account   = module.storage.storage_account
-  storage_share     = module.storage.storage_share
-  storage_container = module.storage.storage_container
+  # storage is only required for Windows init scripts, not required for Linux services
+  storage_account   = var.create_wp_linux ? 0 : module.storage.storage_account
+  storage_share     = var.create_wp_linux ? 0 : module.storage.storage_share
+  storage_container = var.create_wp_linux ? 0 : module.storage.storage_container
   //  win_script_ssh_setup = module.storage.win_script_ssh_setup
 }
 
@@ -234,11 +240,11 @@ module "appgw" {
   // conditional module execution
   count = var.create_appgw ? 1 : 0
 
-  source   = "./modules/appgw"
-  location = var.location
-  prefix   = var.prefix
-  tags     = var.tags
-  appgw_subnet_address_prefixes  = var.appgw_subnet_address_prefixes
+  source                        = "./modules/appgw"
+  location                      = var.location
+  prefix                        = var.prefix
+  tags                          = var.tags
+  appgw_subnet_address_prefixes = var.appgw_subnet_address_prefixes
 
   # dependencies
   resource_group_name = module.base.rg_name
@@ -287,7 +293,6 @@ module "output_files" {
 
   // conditional output (must indicate the first and only item from the count list)
   spotfire_db_server_name = var.create_spotfire_db ? module.tssdb[0].db_server.name : var.spotfire_db_server_name
-  spotfire_db_name        = var.create_spotfire_db ? module.tssdb[0].db_name : var.spotfire_db_name
-  ssh-timeout             = ""
-  sshkey                  = ""
+  #spotfire_db_name        = var.create_spotfire_db ? module.tssdb[0].db_name : var.spotfire_db_name
+  spotfire_db_name        = var.spotfire_db_name
 }

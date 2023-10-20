@@ -27,6 +27,11 @@ variable "create_bastion" {
   default     = false
 }
 
+variable "create_storage" {
+  description = "Create Storage (only required for saving Windows init scripts)"
+  default     = false
+}
+
 #----------------------------------------
 # Resources prefix & tags
 #----------------------------------------
@@ -35,17 +40,11 @@ variable "tags" {
 
   default = {
     # specific tags
-    description   = "Spotfire quickstart: basic install"
+    description   = "Spotfire Quickstart: Basic install"
     app           = "Spotfire"
     app_version   = "12.0.0"
     environment   = "dev"
-    infra_version = "0.2"
-
-    # PM account common automatic tags
-    "Business Unit"  = "Products & Technology"
-    "Cost Center"    = "63615"
-    "Department"     = "Spotfire Development Platform"
-    "Classification" = "Non-Production"
+    infra_version = "0.3"
   }
 }
 
@@ -113,9 +112,12 @@ variable "bastion_subnet_address_prefixes" {
 
 variable "appgw_subnet_address_prefixes" {
   description = "Azure Application Gateway's SubNetwork address space"
-  #default     = ["10.0.3.0/24"]
   default     = ["10.1.0.0/16"]
-  //  default = [cidrsubnet(var.vnet_address_space,30,1)]
+}
+
+variable "db_subnet_address_prefixes" {
+  description = "Azure Database SubNetwork address space"
+  default     = ["10.0.5.0/24"]
 }
 
 #----------------------------------------
@@ -127,19 +129,19 @@ variable "appgw_subnet_address_prefixes" {
 variable "postgresql_db_version" {
   description = "PostgreSQL data server version"
   # https://docs.microsoft.com/en-us/azure/postgresql/concepts-supported-versions
-  default = "11"
+  # https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-supported-versions
+  default = "15"
 }
 
 variable "spotfire_db_instance_class" {
   description = "Spotfire database instance class"
   # Name of the pricing tier and compute configuration. Follow the convention {pricing tier}{compute generation}{vCores}
-  default = "GP_Gen5_2"
+  default = "B_Standard_B2ms"
 }
 
 variable "spotfire_db_size" {
-  description = "Spotfire database size"
-  # between 5120 MB(5GB) and 16777216 MB(16TB) for General Purpose/Memory Optimized SKUs
-  default = "5120"
+  description = "Spotfire database size for Postgres flexible server: one of [32768 65536 131072 262144 524288 1048576 2097152 4193280 4194304 8388608 16777216 33553408]"
+  default = "32768"
 }
 
 # DB server login credentials

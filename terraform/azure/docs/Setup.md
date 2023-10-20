@@ -87,7 +87,13 @@ For installing Azure CLI, we follow Azure's official procedure: [Install the Azu
     ```
    If the CLI can open your default browser, it will do so and load an Azure sign-in page.
 
-   Otherwise, open a browser page at https://aka.ms/devicelogin and enter the authorization code displayed in your terminal.
+   To force a device code flow use:
+    ```bash
+    az login --use-device-code
+    ```
+   Then, open a browser page at https://aka.ms/devicelogin and enter the authorization code displayed in your terminal.
+
+   For more info. see [Sign in with Azure CLI](https://learn.microsoft.com/en-us/cli/azure/authenticate-azure-cli).
 
 3. After successfully login, the Azure subscription information is displayed in the terminal. Note your Azure's subscription ID and tenant ID.
 

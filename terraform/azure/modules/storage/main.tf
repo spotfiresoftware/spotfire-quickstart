@@ -28,6 +28,16 @@ resource "azurerm_storage_account" "this" {
   tags = var.tags
 }
 
+# Need this to comply with policy: "Restrict network access to selected IP addresses"
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account_network_rules
+resource "azurerm_storage_account_network_rules" "this" {
+  storage_account_id = azurerm_storage_account.this.id
+  default_action     = "Deny"
+  ip_rules           = var.admin_address_prefixes //  List of public IP or IP ranges in CIDR Format
+#  virtual_network_subnet_ids = var.subnet_id
+#  bypass                     = ["AzureServices"]
+}
+
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_share
 resource "azurerm_storage_share" "this" {
   name                 = "spotfire-share"

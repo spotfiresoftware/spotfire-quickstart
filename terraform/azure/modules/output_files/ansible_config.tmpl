@@ -14,13 +14,15 @@ db_host: ${ db_server }.postgres.database.azure.com
 db_port: 5432
 
 # Spotfire DB Admin user and password
-db_admin_user: '${ db_admin_user }@${ db_server }'
+#db_admin_user: '${ db_admin_user }@${ db_server }'
+db_admin_user: '${ db_admin_user }'
 db_admin_password: '${ db_admin_password }'
 
 # Spotfire Database name, username and password for the Spotfire database.
 db_name: ${ db_name }
 # NOTE: For Azure, we use the same user&password for the spotfiredb than for the dbserver
-db_user: '${ db_admin_user }@${ db_server }'
+#db_user: '${ db_admin_user }@${ db_server }'
+db_user: '${ db_admin_user }'
 db_password: '${ db_admin_password }'
 
 # Spotfire Admin GUI user and password

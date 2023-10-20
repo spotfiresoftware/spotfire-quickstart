@@ -26,3 +26,9 @@ variable "resource_group_name" {
 variable "subnet_id" {
   default = ""
 }
+
+variable "admin_address_prefixes" {
+  # Recommended to use more strict than /9 mask
+  description = "CIDR or source IP range allowed for environment administration"
+  default     = ["43.21.0.0/16"]
+}

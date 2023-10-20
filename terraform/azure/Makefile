@@ -66,7 +66,7 @@ apply: ## Build or change the Terraform managed infrastructure
 	time terraform apply -var-file="variables.tfvars" -var-file="vars-size-${SPOTFIRE_SIZE}.tfvars" --auto-approve
 
 destroy: ## Destroy the Terraform managed infrastructure
-	time terraform destroy --auto-approve
+	time terraform destroy -var-file="variables.tfvars" --auto-approve
 
 reapply: destroy apply
 
@@ -86,25 +86,19 @@ show-lb: ## List Load Balancer (Azure Application Gateway) IP address and DNS na
 # https://docs.microsoft.com/en-us/cli/azure/network/application-gateway?view=azure-cli-latest
 # https://docs.microsoft.com/en-us/cli/azure/network/public-ip?view=azure-cli-latest#az_network_public_ip_show
 	$(eval SPOTFIRE_PREFIX=$(shell grep ^prefix variables.tfvars | sed "s/[ \"]//g" | cut -d'=' -f2))
-	$(eval SPOTFIRE_APPGW_PIP_ID=$(shell az network application-gateway list \
+	az network public-ip show \
 		--resource-group ${SPOTFIRE_RG} \
-		--query "[].frontendIpConfigurations[].publicIpAddress.id" \
-		--output table \
-		| grep ${SPOTFIRE_RG}))
-	az network public-ip show --ids ${SPOTFIRE_APPGW_PIP_ID} \
+		--name ${SPOTFIRE_PREFIX}-spotfire-pip \
 		--query '[ipAddress, dnsSettings.fqdn]' \
 		--output table
 
 verify-lb: ## Verify connection to Spotfire via Load Balancer (Azure Application Gateway) IP address
 	$(eval SPOTFIRE_PREFIX=$(shell grep ^prefix variables.tfvars | sed "s/[ \"]//g" | cut -d'=' -f2))
-	$(eval SPOTFIRE_APPGW_PIP_ID=$(shell az network application-gateway list \
-    	--resource-group ${SPOTFIRE_RG} \
-    	--query "[].frontendIpConfigurations[].publicIpAddress.id" \
-    	--output table \
-    	| grep ${SPOTFIRE_RG}))
-	$(eval SPOTFIRE_LB_PIP=$(shell az network public-ip show --ids ${SPOTFIRE_APPGW_PIP_ID} \
-    	--query 'ipAddress' \
-    	--output json | jq -r))
+	$(eval SPOTFIRE_LB_PIP=$(shell az network public-ip show \
+		--resource-group sandbox-luigi-spotfire-rg \
+		--name sandbox-luigi-spotfire-pip \
+		--query 'ipAddress' \
+		--output json | jq -r))
 	echo $(SPOTFIRE_LB_PIP)
 	curl $(SPOTFIRE_LB_PIP) -v -H "Host: spotfire.local" -L
 
@@ -158,4 +152,4 @@ deploy: ## Install and configure Spotfire software on infra hosts using Ansible 
 
 #### other Azure specific #####
 azlogin: ## login into Azure using Azure cli
-	az login
+	az login --use-device-code

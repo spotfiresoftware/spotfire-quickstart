@@ -23,11 +23,16 @@ resource "azurerm_subnet" "agw_subnet" {
   address_prefixes     = var.appgw_subnet_address_prefixes
 }
 
+# https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/public_ip
 resource "azurerm_public_ip" "appgw_pip" {
   name                = "${var.prefix}-spotfire-pip"
   location            = var.location
   resource_group_name = var.resource_group_name
-  allocation_method   = "Dynamic"
+  allocation_method   = "Static"
+  # Application Gateway v2 only supports public IP address.
+  # Application Gateway v2 does not allow sku "Basic"
+  sku      = "Standard"
+  sku_tier = "Regional"
 
   tags = var.tags
 }
@@ -47,10 +52,12 @@ resource "azurerm_application_gateway" "network" {
     # States ILB Mode only is not supported on V2.
     # The Frontend IP Address has to be a public. This is what I get when I try to create the Application Gateway v2 with a private ip address.
     # "Application Gateways with a tier of Standard_v2 don’t support only private IP addresses as the frontend. Supported SKU tiers are standard and WAF."
-    #name     = "Standard_v2"
-    #tier     = "Standard_v2"
-    name     = "Standard_Small"
-    tier     = "Standard"
+
+    # Update: 202306: Application Gateway v1 is deprecated. See https://aka.ms/V1retirement
+    #    name     = "Standard_Small"
+    #    tier     = "Standard" // deprecated
+    name     = "Standard_v2"
+    tier     = "Standard_v2"
     capacity = 2
   }
   gateway_ip_configuration {
@@ -85,11 +92,11 @@ resource "azurerm_application_gateway" "network" {
   }
   request_routing_rule {
     name                       = local.request_routing_rule_name
+    priority                   = 9 // required when sku.0.tier is set to *_v2
     rule_type                  = "Basic"
     http_listener_name         = local.listener_name
     backend_address_pool_name  = local.backend_address_pool_name
     backend_http_settings_name = local.http_setting_name
-    #priority                   = 25
   }
   probe {
     name = "login-check"
@@ -101,6 +108,11 @@ resource "azurerm_application_gateway" "network" {
     unhealthy_threshold = 3
     pick_host_name_from_backend_http_settings = true
   }
+
+  depends_on = [
+    azurerm_public_ip.appgw_pip
+  ]
+
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface_application_gateway_backend_address_pool_association

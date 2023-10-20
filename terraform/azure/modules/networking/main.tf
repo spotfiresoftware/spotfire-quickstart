@@ -22,7 +22,8 @@ resource "azurerm_subnet" "public" {
   //address_prefixes     = [cidrsubnet(var.vnet_address_space,8,1)]
   address_prefixes = var.public_subnet_address_prefixes
 
-  //service_endpoints    = ["Microsoft.Sql"] //, "Microsoft.Storage"]
+  # NOTE: Service endpoint is only required for (deprecated) PostgreSQL Single server
+  //service_endpoints = ["Microsoft.Sql"] //, "Microsoft.Storage"]
   //enforce_private_link_endpoint_network_policies = false
   private_endpoint_network_policies_enabled = false
 }
@@ -35,7 +36,8 @@ resource "azurerm_subnet" "private" {
   //    address_prefixes     = [cidrsubnet(var.vnet_address_space,8,1)]
   address_prefixes = var.private_subnet_address_prefixes
 
-  service_endpoints                              = ["Microsoft.Sql"] //, "Microsoft.Storage"]
+  # NOTE: Service endpoint is only required for (deprecated) PostgreSQL Single server
+  //service_endpoints = ["Microsoft.Sql"] //, "Microsoft.Storage"]
   //enforce_private_link_endpoint_network_policies = false
   private_endpoint_network_policies_enabled = false
 }
@@ -50,7 +52,8 @@ resource "azurerm_network_security_group" "public" {
   # azurerm_network_security_rule can stand on its own there are many rules for better management
   # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_rule
   security_rule {
-    name                       = "Allow management (SSH, RDP) from admin IPs"
+    name                       = "ssh-rdp-4-public-subnet"
+    description                = "Allow management (SSH, RDP) from admin IPs"
     priority                   = 100
     direction                  = "Inbound"
     access                     = "Allow"
@@ -81,7 +84,8 @@ resource "azurerm_network_security_group" "private" {
   # azurerm_network_security_rule can stand on its own, there are many rules for better management
   # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_security_rule
   security_rule {
-    name                       = "Allow management (SSH, RDP) from admin IPs"
+    name                       = "ssh-rdp-4-private-subnet"
+    description                = "Allow management (SSH, RDP) from admin IPs"
     priority                   = 100
     direction                  = "Inbound"
     access                     = "Allow"
@@ -92,7 +96,8 @@ resource "azurerm_network_security_group" "private" {
     destination_address_prefix = "*"
   }
   security_rule {
-    name                       = "Allow management (SSH, RDP) from jumphost public ips"
+    name                       = "ssh-rdp-4-jumphost-ips"
+    description                = "Allow management (SSH, RDP) from jumphost public ips"
     priority                   = 101
     direction                  = "Inbound"
     access                     = "Allow"
@@ -103,7 +108,8 @@ resource "azurerm_network_security_group" "private" {
     destination_address_prefix = "*"
   }
   security_rule {
-    name                       = "Allow web access (8080, 8433) from web IPs"
+    name                       = "web-ui-4-web-ips"
+    description                = "Allow web access (8080, 8433) from web IPs"
     priority                   = 110
     direction                  = "Inbound"
     access                     = "Allow"
@@ -114,7 +120,8 @@ resource "azurerm_network_security_group" "private" {
     destination_address_prefix = "*"
   }
   security_rule {
-    name                       = "Allow web access (8080, 8433) from admin IPs"
+    name                       = "web-ui-4-admin-ips"
+    description                = "Allow web access (8080, 8433) from admin IPs"
     priority                   = 111
     direction                  = "Inbound"
     access                     = "Allow"
@@ -125,7 +132,8 @@ resource "azurerm_network_security_group" "private" {
     destination_address_prefix = "*"
   }
   security_rule {
-    name                       = "Allow web access (8080, 8433) from appgw IPs"
+    name                       = "web-ui-4-appgw-ips"
+    description                = "Allow web access (8080, 8433) from AppGW IPs"
     priority                   = 112
     direction                  = "Inbound"
     access                     = "Allow"
@@ -135,6 +143,7 @@ resource "azurerm_network_security_group" "private" {
     source_address_prefixes    = var.appgw_subnet_address_prefixes
     destination_address_prefix = "*"
   }
+
   tags = var.tags
 }
 

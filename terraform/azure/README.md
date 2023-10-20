@@ -1,6 +1,8 @@
 
 # Automatic Deployment of Spotfire Platform on Azure using Terraform + Ansible
 
+[[_TOC_]]
+
 ## Overview
 
 This **Spotfire QuickStart** example shows how to automatically deploy the Spotfire Platform on Azure 
@@ -24,7 +26,7 @@ This basic installation will deploy the following components:
 - Jump-host server VMs for administration of the TIBCO Spotfire VMs.
 - TIBCO Spotfire Server VMs (using Azure Linux Virtual Machine instances).
 - TIBCO Spotfire Web Player VMs (using Azure Windows Virtual Machine instances).
-- TIBCO Spotfire database (using Azure Database for PostgreSQL).
+- TIBCO Spotfire database (using Azure Database for PostgreSQL flexible server).
 - Load balancer (using Azure Application Gateway) (optional).
 - Azure Bastion host to manage Windows servers (optional).
 
@@ -63,7 +65,7 @@ See the corresponding vendor instructions for using other operating systems.
 
 1. Clone this repo into a folder in your launcher host:
     ```bash
-    git clone https://got-gitlab01.emea.tibco.com/mdiez/sandbox/
+    git clone https://github.com/spotfiresoftware/spotfire-quickstart
     ```
 
 2. Download the Spotfire software and copy the files into `<this_repo_root>/swrepo/build`:
@@ -120,7 +122,7 @@ The deployment life cycle consists of these steps:
 
 2. If not already done, sign in into Azure with the Azure CLI:
     ```bash
-    make azlogin
+    make azlogin --use-device-code
     ```
     **Note**: For more details, see [Install the applications](docs/Setup.md).
 
@@ -139,11 +141,11 @@ The deployment life cycle consists of these steps:
    so you allow infra admin and end user access to the environment from your respective selected address blocks
    (you can find your public ip address for example in https://whatismyipaddress.com/).
 
-   Note: We may decide to not create an Azure Application Gateway, or an Azure Bastion,
+   **Note**: We may decide to not create an Azure Application Gateway, or an Azure Bastion,
    since it takes some time, money, and it may not be very interesting for very small test environments (like 1tss+1tswp).
    Check in `vars-size-XS.tfvars` the variables that control *resource creation and sizing*.
 
-   Note: If you choose to not creating an Azure Application Gateway, you need to choose to create public ip addresses for your tss hosts.
+   **Note**: If you choose to not creating an Azure Application Gateway, you need to choose to create public ip addresses for your tss hosts.
 
    **Note**: The `vars-size-XS.tfvars` settings overrides `variables.tfvars` settings.
 
@@ -180,7 +182,7 @@ The deployment life cycle consists of these steps:
     make deploy
     ```
 
-    **Note**: You can use similar deploy command as previous to limit the deployment to a specific type of server.
+    **Note**: You can use a similar `deploy` command as above to limit the deployment to a specific type of server.
     For example if you only increased the number of VM instances for the Web Player servers you can just deploy those with:
     ```bash
     make deploy ANSIBLE_EXTRA_ARGS="--limit wp_servers"
