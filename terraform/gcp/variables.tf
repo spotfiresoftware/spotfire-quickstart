@@ -37,11 +37,11 @@ variable "tags" {
 
   default = {
     # specific tags
-    description   = "Spotfire quickstart: basic install"
+    description   = "Spotfire Quickstart: Basic install"
     app           = "Spotfire"
     app_version   = "12.0.0"
     environment   = "dev"
-    infra_version = "0.2"
+    infra_version = "0.3"
   }
 }
 
@@ -97,7 +97,7 @@ variable "tss_version" {
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/sql_database_instance
 variable "postgresql_db_version" {
   description = "PostgreSQL data server version"
-  default     = "POSTGRES_14"
+  default     = "POSTGRES_15"
 }
 
 variable "spotfire_db_instance_class" {
@@ -126,10 +126,10 @@ variable "spotfire_db_admin_password" {
 #  description = "Spotfire database server name"
 #  default     = "spotfiredb-server"
 #}
-#variable "spotfire_db_name" {
-#  description = "Spotfire database name"
-#  default     = "spotfiredb"
-#}
+variable "spotfire_db_name" {
+  description = "Spotfire database name"
+  default     = "spotfiredb"
+}
 
 #----------------------------------------
 # Spotfire Admin UI login credentials

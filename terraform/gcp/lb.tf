@@ -33,7 +33,7 @@ resource "google_compute_target_pool" "default" {
 }
 
 resource "google_compute_http_health_check" "default" {
-  name               = "login-check"
+  name               = "${var.prefix}-login-check"
   request_path       = "/spotfire/login.html"
   port               = 80
   check_interval_sec = 10

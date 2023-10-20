@@ -25,10 +25,11 @@
 //  peer_network = var.wp_vpc_id
 //}
 
-resource "google_sql_database" "database" {
-  name     = "${var.prefix}-db-${var.tss_version}"
-  instance = google_sql_database_instance.master.name
-}
+# NOTE: This is not longer required. We use create-db to create spotfire_database
+#resource "google_sql_database" "database" {
+#  name     = "${var.prefix}-db-${var.tss_version}"
+#  instance = google_sql_database_instance.master.name
+#}
 
 //# https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/sql_database_instance
 //# Private instance
@@ -66,7 +67,7 @@ resource "google_sql_database" "database" {
 resource "google_sql_database_instance" "master" {
   //  name = var.spotfire_db_name
   name             = "${var.prefix}-spotfire-db-alpha"
-  database_version = "POSTGRES_13"
+  database_version = var.postgresql_db_version
   region           = var.region
 
   # required to destroy the db
@@ -76,7 +77,7 @@ resource "google_sql_database_instance" "master" {
   //  depends_on = [module.vpc.network]
 
   settings {
-    tier            = "db-f1-micro"
+    tier            = var.spotfire_db_instance_class
     disk_size       = var.spotfire_db_size # GB
     disk_autoresize = true
 
@@ -104,7 +105,6 @@ resource "google_sql_database_instance" "master" {
       role = "spotfiredb"
     }
   }
-
 }
 
 resource "google_sql_user" "default" {
@@ -114,16 +114,9 @@ resource "google_sql_user" "default" {
   #host     = "%" # allows connection from any host, only for troubleshooting
 }
 
-variable "spotfire_db_name" {
-  default = "unset"
-}
-
 output "spotfire_db_name" {
-  value = var.create_spotfire_db ? google_sql_database.database.name : var.spotfire_db_name
-}
-
-output "spotfire_db_address" {
-  value = var.create_spotfire_db ? google_sql_database.database.name : var.spotfire_db_name
+  #value = var.create_spotfire_db ? google_sql_database.database.name : var.spotfire_db_name
+  value = var.spotfire_db_name
 }
 
 locals {

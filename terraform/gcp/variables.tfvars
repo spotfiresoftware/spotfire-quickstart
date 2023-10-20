@@ -27,9 +27,10 @@ web_address_prefixes   = ["12.0.0.0/8"]
 #----------------------------------------
 # https://cloud.google.com/sql/
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/sql_database_instance
-#postgresql_db_version = "POSTGRES_14"
+postgresql_db_version = "POSTGRES_15"
 # database size in gibibytes (GiB)
 #spotfire_db_size = "10"
+#spotfire_db_instance_class = "db-f1-micro"
 
 # DB server login credentials
 spotfire_db_admin_username = "dbadmin"
@@ -38,6 +39,8 @@ spotfire_db_admin_password = "s3cr3t0!"
 # Spotfire Admin GUI user and password
 spotfire_ui_admin_username = "admin"
 spotfire_ui_admin_password = "s3cr3t0!"
+
+spotfire_db_name="spotfiredb"
 
 #----------------------------------------
 # generic VM (Linux)

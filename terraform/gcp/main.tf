@@ -12,17 +12,17 @@ resource "tls_private_key" "private_key" {
   algorithm = "ED25519"
 }
 
-resource "local_file" "public_key" {
-  filename        = "${var.ssh_public_key_file}.pub"
-  content         = trimspace(tls_private_key.private_key.public_key_openssh)
-  file_permission = "0400"
-}
-
-resource "local_sensitive_file" "private_key" {
-  filename        = var.ssh_public_key_file
-  content         = tls_private_key.private_key.private_key_pem
-  file_permission = "0400"
-}
+#resource "local_file" "public_key" {
+#  filename        = "${var.ssh_private_key_file}.pub"
+#  content         = trimspace(tls_private_key.private_key.public_key_openssh)
+#  file_permission = "0400"
+#}
+#
+#resource "local_sensitive_file" "private_key" {
+#  filename        = var.ssh_private_key_file
+#  content         = tls_private_key.private_key.private_key_pem
+#  file_permission = "0400"
+#}
 
 # Writes the generated private key to a local file for usage from Ansible
 variable "workspace_dir" {
@@ -256,10 +256,9 @@ resource "local_file" "ansible-config-infra" {
     db_host              = local.spotfire_db_address,
     db_admin_user        = var.spotfire_db_admin_username,
     db_admin_password    = var.spotfire_db_admin_password,
-    //        db_name           = var.spotfire_db_name,
-    db_name           = google_sql_database.database.name,
-    ui_admin_user     = var.spotfire_ui_admin_username,
-    ui_admin_password = var.spotfire_ui_admin_password
+    db_name              = var.spotfire_db_name,
+    ui_admin_user        = var.spotfire_ui_admin_username,
+    ui_admin_password    = var.spotfire_ui_admin_password
     }
   )
   filename             = "${var.workspace_dir}/${terraform.workspace}/ansible_config/infra.yml"
