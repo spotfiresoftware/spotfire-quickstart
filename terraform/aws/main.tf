@@ -27,16 +27,18 @@ variable "workspace_dir" {
   default = "./terraform.tfstate.d/"
 }
 
-locals {
-  ssh_priv_key_file = "${var.workspace_dir}/${terraform.workspace}/ansible_config/private_key.pem"
-}
+#locals {
+#  #ssh_priv_key_file = "${var.workspace_dir}/${terraform.workspace}/ansible_config/private_key.pem"
+#  ssh_priv_key_file = "~/.ssh/aws_private_key.pem"
+#}
 
 resource "local_file" "this" {
   content = templatefile("${path.module}/private_key.pem.tmpl", {
     private_key = tls_private_key.privkey.private_key_pem
     }
   )
-  filename             = local.ssh_priv_key_file
+  #filename             = local.ssh_priv_key_file
+  filename             = var.ssh_private_key_file
   file_permission      = "0600"
   directory_permission = "0700"
 }
@@ -407,7 +409,8 @@ resource "local_file" "ansible-inventory-hosts_aws" {
 # Generates the Ansible Config file (credentials)
 resource "local_file" "ansible-config-infra" {
   content = templatefile("${path.module}/ansible_config.tmpl", {
-    ssh_priv_key_file = local.ssh_priv_key_file,
+    #ssh_priv_key_file = local.ssh_priv_key_file,
+    ssh_priv_key_file = var.ssh_private_key_file,
     //    jumphost_user     = var.jumphost_admin_username,
     //    tss_user          = var.tss_admin_username,
     //    wp_user           = var.wp_admin_username,

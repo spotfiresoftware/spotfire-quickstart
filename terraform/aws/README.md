@@ -1,6 +1,8 @@
 
 # Automatic Deployment of Spotfire Platform on AWS using Terraform + Ansible
 
+[[_TOC_]]
+
 ## Overview
 
 This **Spotfire QuickStart** example shows how to automatically deploy the Spotfire Platform on AWS
@@ -56,7 +58,7 @@ See the corresponding vendor instructions for using other operating systems.
 
 1. Clone this repo into a folder in your launcher host:
     ```bash
-    git clone https://got-gitlab01.emea.tibco.com/mdiez/sandbox/
+    git clone https://github.com/spotfiresoftware/spotfire-quickstart
     ```
 
 2. Download the Spotfire software and copy the files into `<this_repo_root>/swrepo/build`:
@@ -173,7 +175,7 @@ The deployment life cycle consists of these steps:
     make deploy
     ```
 
-    **Note**: You can use similar deploy command as previous to limit the deployment to a specific type of server.
+    **Note**: You can use a similar `deploy` command as above to limit the deployment to a specific type of server.
     For example if you only increased the number of VM instances for the Web Player servers you can just deploy those with:
     ```bash
     make deploy ANSIBLE_EXTRA_ARGS="--limit wp_servers"

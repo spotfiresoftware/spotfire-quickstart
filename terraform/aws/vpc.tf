@@ -91,7 +91,7 @@ resource "aws_route_table_association" "public" {
 resource "aws_eip" "this" {
   count = length(data.aws_availability_zones.available.names)
 
-  vpc = true
+  domain   = "vpc"
 }
 
 variable "single_nat_gateway" {

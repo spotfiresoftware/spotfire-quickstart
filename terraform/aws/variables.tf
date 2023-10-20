@@ -30,11 +30,11 @@ variable "tags" {
 
   default = {
     # specific tags
-    description   = "Spotfire quickstart: basic install"
+    description   = "Spotfire Quickstart: Basic install"
     app           = "Spotfire"
     app_version   = "12.0.0"
     environment   = "dev"
-    infra_version = "0.2"
+    infra_version = "0.3"
   }
 }
 
@@ -77,7 +77,7 @@ variable "web_address_prefixes" {
 variable "postgresql_db_version" {
   # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_PostgreSQL.html#PostgreSQL.Concepts
   description = "PostgreSQL data server version"
-  default     = "14.3"
+  default     = "15"
 }
 
 variable "spotfire_db_instance_class" {
@@ -142,7 +142,7 @@ variable "ssh_public_key_file" {
 
 variable "ssh_private_key_file" {
   description = "Spotfire VM SSH private key file location (local)"
-  default     = "~/.ssh/id_rsa_aws"
+  default     = "~/.ssh/id_rsa_aws.pem"
 }
 
 #----------------------------------------

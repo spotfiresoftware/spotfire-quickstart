@@ -69,7 +69,10 @@ resource "aws_db_instance" "this" {
   identifier = local.db_instance_id
 
   allocated_storage      = var.spotfire_db_size
-  db_name                = var.spotfire_db_name
+
+  # NOTE: We skip 'db_name', so no db is created. We use create-db to create spotfire_database
+  #db_name                = var.spotfire_db_name
+
   engine                 = "postgres"
   engine_version         = var.postgresql_db_version
   instance_class         = var.spotfire_db_instance_class

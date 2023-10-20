@@ -22,9 +22,9 @@ web_address_prefixes   = ["12.0.0.0/8"]
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_BestPractices.html
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_PostgreSQL.html
 # https://learn.hashicorp.com/tutorials/terraform/aws-rds?in=terraform/aws
-#postgresql_db_version = "14.1"
+postgresql_db_version = "15"
 # database size in gibibytes (GiB)
-#spotfire_db_size = "5"
+spotfire_db_size = "5"
 
 # DB server login credentials
 spotfire_db_admin_username = "dbadmin"
@@ -34,13 +34,14 @@ spotfire_db_admin_password = "s3cr3t0!"
 spotfire_ui_admin_username = "admin"
 spotfire_ui_admin_password = "s3cr3t0!"
 
+spotfire_db_name="spotfiredb"
+
 #----------------------------------------
 # generic VM (Linux)
 #----------------------------------------
 
 # ssh key file
-#ssh_public_key_file  = "~/.ssh/id_rsa.pub"
-#ssh_private_key_file = "~/.ssh/id_rsa"
+ssh_private_key_file = "/home/user/.ssh/id_rsa_aws.pub"
 
 #----------------------------------------
 # jumphost
