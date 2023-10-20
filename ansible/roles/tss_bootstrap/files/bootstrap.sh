@@ -82,6 +82,7 @@ if [[ $SPOTFIRE_DB_TYPE == 'postgres' ]]; then
   SPOTFIRE_DB_DRIVER_NAME='postgresql'
   # JDBC connection URL for the Spotfire Database
   SPOTFIRE_DB_URL="jdbc:${SPOTFIRE_DB_DRIVER_NAME}://${SPOTFIRE_DB_HOST}:${SPOTFIRE_DB_PORT}/${SPOTFIRE_DB_NAME}"
+  #SPOTFIRE_DB_URL="jdbc:${SPOTFIRE_DB_DRIVER_NAME}://${SPOTFIRE_DB_HOST}:${SPOTFIRE_DB_PORT}/${SPOTFIRE_DB_NAME}?sslmode=require"
 
 elif [[ $SPOTFIRE_DB_TYPE == 'oracle' ]]; then
 
@@ -197,22 +198,25 @@ create_bootstrap_config() {
   echo "Assigning addresses as: ${SERVER_IP_LIST}"
   #echo "nodemanager.host.names=" >> ${TSS_HOME}/nm/config/nodemanager.properties
 
-  echo "timeout $SPOTFIRE_CONFIG bootstrap --no-prompt \
-    --driver-class=\"${SPOTFIRE_DB_DRIVER_CLASS}\" \
-    --database-url=\"${SPOTFIRE_DB_URL}\" \
-    --username=\"${SPOTFIRE_DB_USER}\" \
-    --password=\"${SPOTFIRE_DB_PASSWORD}\" \
-    --tool-password=\"${SPOTFIRE_CONFIG_TOOL_PASSWORD}\" \
-    $IP_ADDRESSES
+  echo "timeout $SPOTFIRE_CONFIG \
+    bootstrap --no-prompt \
+      --driver-class=\"${SPOTFIRE_DB_DRIVER_CLASS}\" \
+      --database-url=\"${SPOTFIRE_DB_URL}\" \
+      --username=\"${SPOTFIRE_DB_USER}\" \
+      --password=\"${SPOTFIRE_DB_PASSWORD}\" \
+      --tool-password=\"${SPOTFIRE_CONFIG_TOOL_PASSWORD}\" \
+      $IP_ADDRESSES
   "
 
   cd ${SPOTFIRE_BIN_DIR} && \
-  ./config.sh bootstrap --force --no-prompt \
-    --driver-class="${SPOTFIRE_DB_DRIVER_CLASS}" \
-    --database-url="${SPOTFIRE_DB_URL}" \
-    --username="${SPOTFIRE_DB_USER}" --password="${SPOTFIRE_DB_PASSWORD}" \
-    --tool-password="${SPOTFIRE_CONFIG_TOOL_PASSWORD}" \
-     $IP_ADDRESSES
+  ./config.sh \
+    bootstrap --force --no-prompt \
+      --driver-class="${SPOTFIRE_DB_DRIVER_CLASS}" \
+      --database-url="${SPOTFIRE_DB_URL}" \
+      --username="${SPOTFIRE_DB_USER}" \
+      --password="${SPOTFIRE_DB_PASSWORD}" \
+      --tool-password="${SPOTFIRE_CONFIG_TOOL_PASSWORD}" \
+       $IP_ADDRESSES
   show_result $?
   echo
 }

@@ -29,3 +29,14 @@
     state: directory
   tags: swrepo
   become: true
+
+# NOTE: Install the 'acl' package that provides 'setfacl' so that proper permissions can be applied to the /tmp folders
+#       https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_privilege_escalation.html#resolving-temporary-file-error-messsages
+- name: Install acl
+  apt:
+    state: latest
+    update_cache: true
+    pkg:
+      - acl
+  become: true
+  when: ansible_distribution_file_variety is defined and (ansible_distribution_file_variety == "Debian")

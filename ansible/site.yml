@@ -6,8 +6,8 @@
   roles:
     - common
     - env
-    - { role: tssdb_createdb, run_once: true }   # NOTE: This runs only on one tss
     - tss_install
+    - { role: tssdb_createdb, run_once: true }   # NOTE: This runs only on one tss
     - tss_bootstrap # NOTE: We throttle this role, so it bootstraps one tss at a time
     - tss_service
     - { role: tss_deploy_sdn, run_once: true }   # NOTE: This runs only on one tss

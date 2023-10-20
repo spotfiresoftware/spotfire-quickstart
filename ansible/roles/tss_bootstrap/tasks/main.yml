@@ -42,8 +42,8 @@
 - name: Run bootstrap.sh script
   ansible.builtin.command: /var/local/spotfire/bootstrap.sh
   # https://docs.ansible.com/ansible/latest/user_guide/become.html
-#  become: true
-#  become_user: spotfire
+  become: true
+  become_user: spotfire
   # https://docs.ansible.com/ansible/latest/user_guide/playbooks_strategies.html#using-keywords-to-control-execution
   throttle: 1
   # https://docs.ansible.com/ansible/latest/user_guide/playbooks_debugger.html
