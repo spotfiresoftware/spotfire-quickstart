@@ -1,20 +1,11 @@
-# cleaner view
-ignore-this
-
 # terraform
 .terraform
 .terraform.lock.hcl
 .terraform.tfstate.lock.info
 terraform.tfstate*
-
 terraform-inventory
 
-credentials.env
 *.log
 
-ansible_config_files/**
-
 # workspaces
-env/*
-
-InstallAzureCLIDeb
+env/

@@ -1,4 +1,9 @@
+# cleaner view
 build/
-tmp/*
+tmp/
 ignore-this/
 notes/
+
+# IntelliJ IDEA
+.idea/
+*.iml
