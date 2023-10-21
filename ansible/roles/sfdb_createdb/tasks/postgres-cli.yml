@@ -1,0 +1,34 @@
+#----------------------------------------
+# Install postgres
+#----------------------------------------
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/yum_module.html
+- name: Linux | RedHat | Install postgresql tools
+  ansible.builtin.yum:
+    name: postgresql
+    state: present
+  tags: spotfire_db
+  when: create_db and ansible_distribution_file_variety == "RedHat"
+
+# https://docs.ansible.com/ansible/latest/collections/community/general/zypper_module.html
+- name: Linux | SUSE | Install postgresql tools
+  community.general.zypper:
+    name: postgresql
+    state: present
+    disable_gpg_check: true
+  tags: spotfire_db
+  when: create_db and ansible_distribution_file_variety == "SUSE"
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_module.html
+- name: Linux | Debian | Update repositories cache
+  ansible.builtin.apt:
+    update_cache: true
+  when: create_db and ansible_distribution_file_variety == "Debian"
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/apt_module.html
+- name: Linux | Debian | Install postgresql cli
+  ansible.builtin.apt:
+    name: postgresql-client-15
+    state: present
+  tags: spotfire_db
+  when: create_db and ansible_distribution_file_variety == "Debian"

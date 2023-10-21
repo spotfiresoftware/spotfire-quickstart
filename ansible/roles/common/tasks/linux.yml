@@ -33,8 +33,8 @@
 # NOTE: Install the 'acl' package that provides 'setfacl' so that proper permissions can be applied to the /tmp folders
 #       https://docs.ansible.com/ansible/latest/playbook_guide/playbooks_privilege_escalation.html#resolving-temporary-file-error-messsages
 - name: Install acl
-  apt:
-    state: latest
+  ansible.builtin.apt:
+    state: present
     update_cache: true
     pkg:
       - acl

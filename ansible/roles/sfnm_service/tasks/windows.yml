@@ -1,0 +1,18 @@
+---
+#----------------------------------------
+# Web Player role (Windows) service
+#----------------------------------------
+
+# https://github.com/ansible-collections/ansible.windows/blob/main/docs/ansible.windows.win_service_module.rst
+# Requires ansible.windows collection
+# Install:
+#  $ ansible-galaxy collection install ansible.windows
+- name: Windows | Set the Node manager service to automatic start on boot
+  ansible.windows.win_service:
+    name: "{{ sfnm_service_name_win }}"
+    start_mode: auto
+
+- name: Windows | Start the Node manager service
+  ansible.windows.win_service:
+    name: "{{ sfnm_service_name_win }}"
+    state: restarted

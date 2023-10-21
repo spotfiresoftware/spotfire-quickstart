@@ -1,21 +1,21 @@
 ---
-- name: Deploy TIBCO Spotfire Server hosts
-  hosts: tss_servers
-  remote_user: '{{ tss_user }}'
+- name: Deploy Spotfire Server hosts
+  hosts: sfs_servers
+  remote_user: '{{ sfs_user }}'
   become: true
   roles:
     - common
     - env
-    - tss_install
-    - { role: tssdb_createdb, run_once: true }   # NOTE: This runs only on one tss
-    - tss_bootstrap # NOTE: We throttle this role, so it bootstraps one tss at a time
-    - tss_service
-    - { role: tss_deploy_sdn, run_once: true }   # NOTE: This runs only on one tss
-    - { role: tss_autotrust, run_once: true }
-    - tss_service_reload
+    - sfs_install
+    - { role: sfdb_createdb, run_once: true }   # NOTE: This runs only on one sfs
+    - sfs_bootstrap # NOTE: We throttle this role, so it bootstraps one sfs at a time
+    - sfs_service
+    - { role: sfs_deploy_sdn, run_once: true }   # NOTE: This runs only on one sfs
+    - { role: sfs_autotrust, run_once: true }
+    - sfs_service_reload
   environment:
-#    TSS_HOME: "{{ tss_home }}"
-    TSS_VERSION: '{{ tss_version }}'
+#    SPOTFIRE_HOME: "{{ sfs_home }}"
+    SPOTFIRE_VERSION: '{{ spotfire_version }}'
     SPOTFIRE_DB_TYPE: '{{ db_type }}'
     SPOTFIRE_DB_HOST: '{{ db_host }}'
     SPOTFIRE_DB_NAME: '{{ db_name }}'
@@ -25,14 +25,14 @@
     SPOTFIRE_UI_ADMIN_USER: '{{ spotfire_ui_admin_user }}'
     SPOTFIRE_UI_ADMIN_PASSWORD=: '{{ spotfire_ui_admin_password }}'
 
-- name: Deploy TIBCO Spotfire Web Player hosts
-  hosts: wp_servers
-  remote_user: '{{ wp_user }}'
+- name: Deploy Spotfire Web Player hosts
+  hosts: sfwp_servers
+  remote_user: '{{ sfwp_user }}'
   become: true # works on Windows?
   roles:
     - common
-    - tsnm_firewall
-    - tsnm_install
-    - tsnm_wp_deps
-    - { role: tsnm_wp, when: create_wp_service }
-    - tsnm_service
+    - sfnm_firewall
+    - sfnm_install
+    - sfwp_deps
+    - { role: sfwp, when: create_sfwp_service }
+    - sfnm_service

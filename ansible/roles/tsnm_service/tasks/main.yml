@@ -1,8 +1,0 @@
----
-# Include OS specific tasks
-- name: Deploy TIBCO Spotfire node manager on Linux
-  ansible.builtin.include_tasks: linux.yml
-  when: ansible_distribution_file_variety is defined and (ansible_distribution_file_variety == "Debian" or ansible_distribution_file_variety == "RedHat" or ansible_distribution_file_variety == "SUSE")
-- name: Deploy TIBCO Spotfire node manager on Windows
-  ansible.builtin.include_tasks: windows.yml
-  when: ansible_os_family == "Windows"

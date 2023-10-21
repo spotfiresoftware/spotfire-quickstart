@@ -39,4 +39,4 @@ deploy: ## idempotent deploy software into existing infrastructure
 		-i inventory/host_groups_azure_rm.yml \
 		--extra-vars @config/vars.yml \
 		site.yml
-		# --limit wp_servers
+		# --limit sfwp_servers

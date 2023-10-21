@@ -1,8 +1,8 @@
 [jumphost_servers]
 sandbox-jumphost-0-vm ansible_host=10.10.10.10 ansible_connection=ssh ansible_user=spotfire
 
-[tss_servers]
-sandbox-tss-0-vm ansible_connection=ssh ansible_user=spotfire
+[sfs_servers]
+sandbox-spotfireserver-0-vm ansible_connection=ssh ansible_user=spotfire
 
-[wp_servers]
-sandbox-wp-0-vm ansible_connection=ssh ansible_user=spotfire
+[sfwp_servers]
+sandbox-sfwp-0-vm ansible_connection=ssh ansible_user=spotfire

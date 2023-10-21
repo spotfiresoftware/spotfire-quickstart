@@ -1,0 +1,14 @@
+# SSH connection
+ansible_user: '{{ sfwp_user }}'
+#ansible_password: '{{ sfwp_password }}'    # may be needed to be enabled for Windows for some providers
+#ansible_sudo_pass: '{{ sfwp_password }}'   # may be needed to be enabled for Windows for some providers
+#ansible_ssh_private_key_file: '{{ ssh_private_key_file }}'
+
+#ansible_ssh_common_args: '-o "ProxyCommand ssh -W %h:%p {{ jumphost_user }}@{{ jumphost_host }}" -i ~/.ssh/id_rsa {{ ssh_common_args }}'
+#ansible_ssh_common_args: '{{ ssh_common_args }} -o "ProxyCommand ssh -W %h:%p {{ jumphost_user }}@{{ jumphost_host }} -i {{ ssh_private_key_file }} {{ ssh_common_args }}"'
+ansible_ssh_common_args: '{{ ssh_common_args }} -o ControlMaster=no -o "ProxyCommand ssh -W %h:%p {{ jumphost_user }}@{{ jumphost_host }} -i {{ ssh_private_key_file }} {{ ssh_common_args }}"'
+
+# Note: Required ONLY For Windows servers, by default shell
+# TODO: Dynamic shell assignation if using Windows server (tip: create own sfwp_win_servers group)
+#ansible_shell_type: cmd
+#ansible_shell_type: powershell

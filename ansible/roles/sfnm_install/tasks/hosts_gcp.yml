@@ -1,0 +1,21 @@
+# For GCP
+
+- name: Set fact sfnm_ip_address (GCP)
+  ansible.builtin.set_fact:
+    #sfnm_hostname: "{{ ansible_hostname }}"
+    #sfnm_ip_address: "{{ ansible_default_ipv4.address }}"
+    sfnm_ip_address: "{{ ansible_host }}"
+
+- name: Show sfnm_ip_address
+  ansible.builtin.debug:
+    msg: "{{ sfnm_ip_address }}"
+
+- name: Set fact sfs_ip_address (GCP)
+  ansible.builtin.set_fact:
+    #sfs_hostname: "{{ hostvars[groups['sfs_servers'][0]]['name'] }}"
+    #sfs_hostname: "jsonencode({{ hostvars[groups['sfs_servers'][0]] }})"
+    sfs_ip_address: "{{ hostvars[groups['sfs_servers'][0]]['networkInterfaces'][0]['networkIP'] }}"
+
+- name: Show sfs_ip_address
+  ansible.builtin.debug:
+    msg: "{{ sfs_ip_address }}"

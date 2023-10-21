@@ -1,0 +1,12 @@
+---
+#----------------------------------------
+# Spotfire Server package install
+# - https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/installing_the_spotfire_server_files_(rpm_linux).html
+#----------------------------------------
+# Include OS specific tasks
+- name: Install Spotfire Server Linux (tar.gz)
+  ansible.builtin.include_tasks: linux-targz.yml
+  when: ansible_distribution_file_variety is defined and (ansible_distribution_file_variety == "Debian")
+- name: Install Spotfire Server Linux (rpm)
+  ansible.builtin.include_tasks: linux-rpm.yml
+  when: ansible_distribution_file_variety is defined and (ansible_distribution_file_variety == "RedHat" or ansible_distribution_file_variety == "SUSE")

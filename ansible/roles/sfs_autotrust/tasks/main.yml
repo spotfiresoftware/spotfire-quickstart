@@ -1,0 +1,34 @@
+---
+#----------------------------------------
+# Spotfire Server set automatic trust to nodes
+# - https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/automatically_trusting_new_nodes.html
+#----------------------------------------
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/shell_module.html
+- name: Export configuration file
+  ansible.builtin.shell:
+    chdir: /opt/spotfire/spotfireserver/{{ spotfire_version }}/tomcat/spotfire-bin/
+    cmd: ./config.sh export-config --tool-password="${SPOTFIRE_CONFIG_TOOL_PASSWORD}" --force config_autotrust.xml
+
+- name: Set automatic trust to nodes
+  ansible.builtin.shell:
+    chdir: /opt/spotfire/spotfireserver/{{ spotfire_version }}/tomcat/spotfire-bin/
+#    cmd: ./config.sh set-config-list-prop --name=security.trust.auto-trust.allowed-hosts-config.allowed-ip-regexps --item-name=allowed-ip-regexp -v"10\.\d{1,3}\.\d{1,3}\.\d{1,3}"
+    cmd: ./config.sh set-config-prop -c config_autotrust.xml --name=security.trust.auto-trust.enabled --value=true
+
+- name: Set to expire missing nodes after five minutes
+  ansible.builtin.shell:
+    chdir: /opt/spotfire/spotfireserver/{{ spotfire_version }}/tomcat/spotfire-bin/
+    cmd: ./config.sh set-config-prop --name=nodemanager.expire-offline --value=5
+
+- name: Set to deployment area update every 1 m (by default 5 min)
+  ansible.builtin.shell:
+    chdir: /opt/spotfire/spotfireserver/{{ spotfire_version }}/tomcat/spotfire-bin/
+    cmd: ./config.sh set-config-prop --name=deployment.delay-between-refresh-minutes --value=1
+
+- name: Import configuration file
+  ansible.builtin.shell:
+    chdir: /opt/spotfire/spotfireserver/{{ spotfire_version }}/tomcat/spotfire-bin/
+    cmd: ./config.sh import-config --tool-password="${SPOTFIRE_CONFIG_TOOL_PASSWORD}" --comment="Configured autotrust" config_autotrust.xml
+  notify:
+    - restart sfs

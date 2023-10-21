@@ -1,0 +1,60 @@
+---
+#----------------------------------------
+# Spotfire node manager (Windows) package install
+# https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/installing_a_node_manager_(silently_on_windows).html
+#----------------------------------------
+# Requires ansible.windows collection
+# Install:
+#  $ ansible-galaxy collection install ansible.windows
+#
+
+#- name: Show sfs first server
+#  ansible.builtin.debug:
+#    msg: "{{ hostvars[groups['sfs_servers'][0]] |  to_nice_yaml }}"
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/windows/win_service_module.html
+# Making install idempotent
+- name: Windows | Check if the Spotfire node manager service is installed
+  ansible.windows.win_service:
+    name: "{{ sfnm_service_name_win }}"
+    state: started
+  register: nm_service
+  changed_when: false # this is just a check, not showing changes here
+  ignore_errors: true
+
+- ansible.builtin.debug:
+    msg: "Windows | Is the Spotfire node manager service already installed? '{{ nm_service.exists }}'"
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/windows/win_copy_module.html
+- name: Windows | Copy Spotfire node manager windows package (nm-setup.exe)
+  ansible.windows.win_copy:
+    src: "{{ spotfire_local_sw_repo }}/nm-setup.exe"
+    dest: C:\Users\{{ sfwp_user }}\nm-setup.exe
+  tags: cp_package
+  when: nm_service.exists is false
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/windows/win_command_module.html
+#- name: Windows | Uninstall Spotfire node manager windows package (nm-setup.exe)
+#  ansible.windows.win_command: nm-setup.exe -uninstall -silent -log "C:\Users\{{ sfwp_user }}\nm-setup.uninstall.log"
+#  args:
+#    chdir: C:\Users\{{ sfwp_user }}\
+#  tags: uninstall_package
+##  when: nm_service.exists is true
+#  changed_when: false # this is just a check, not showing changes here
+#  ignore_errors: true
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/windows/win_command_module.html
+- name: Windows | Install Spotfire node manager windows package (nm-setup.exe)
+  ansible.windows.win_command: nm-setup.exe SERVER_NAME={{ sfs_hostname }} NODEMANAGER_HOST={{ sfnm_hostname }} NODEMANAGER_HOST_NAMES={{ sfnm_hostname }} -silent -log "C:\Users\{{ sfwp_user }}\nm-setup.log"
+#    NODEMANAGER_REGISTRATION_PORT=9080
+#    NODEMANAGER_COMMUNICATION_PORT=9443
+#    SERVER_NAME={{ sfs_host }}
+#    SERVER_BACKEND_REGISTRATION_PORT=9080
+#    SERVER_BACKEND_COMMUNICATION_PORT=9443
+#    NODEMANAGER_HOST_NAMES={{ sfs_host }}
+#    NODEMANAGER_HOST=NodeManagerHost
+#    -log "C:\Users\{{ sfwp_user }}\nm-install.log"
+  args:
+    chdir: C:\Users\{{ sfwp_user }}\
+  tags: install_package
+  when: nm_service.exists is false

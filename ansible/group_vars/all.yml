@@ -8,4 +8,4 @@ ssh_common_args: '-i {{ ssh_private_key_file }} -o StrictHostKeyChecking=no -o U
 #jumphost_host: "{{ hostvars[groups['jumphost_servers'][0]]['ansible_default_ipv4']['address'] }}"
 jumphost_host: "{{ hostvars[groups['jumphost_servers'][0]]['ansible_host'] }}"
 
-tss_host: "{{ hostvars[groups['tss_servers'][0]]['ansible_host'] }}"
+sfs_host: "{{ hostvars[groups['sfs_servers'][0]]['ansible_host'] }}"

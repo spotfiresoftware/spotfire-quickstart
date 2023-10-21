@@ -1,0 +1,27 @@
+# For Azure
+
+- name: Set fact sfnm_ip_address (Azure)
+  ansible.builtin.set_fact:
+    #sfnm_hostname: "{{ ansible_hostname }}"
+    #sfnm_ip_address: "{{ ansible_default_ipv4.address }}"
+    sfnm_ip_address: "{{ ansible_host }}"
+
+- name: Show sfnm_ip_address
+  ansible.builtin.debug:
+    msg: "{{ sfnm_ip_address }}"
+
+#- name: DEBUG Show sfs_hostname (Azure)
+#  ansible.builtin.debug:
+#    msg: "{{ hostvars[groups['sfs_servers'][0]]['name'] | regex_replace('^(.*)-vm$', '\\1') }}"
+#  register: sfs_hostname
+#  when: target_environment == 'Azure'
+
+- name: Set fact sfs_ip_address (Azure)
+  ansible.builtin.set_fact:
+    #sfs_hostname: "{{ hostvars[groups['sfs_servers'][0]]['name'] | regex_replace('^(.*)-vm$', '\\1') }}"
+    #sfs_ip_address: "{{ hostvars[groups['sfs_servers'][0]]['ansible_default_ipv4']['address'] }}"
+    sfs_ip_address: "{{ hostvars[groups['sfs_servers'][0]]['ansible_facts']['eth0']['ipv4']['address'] }}"
+
+- name: Show sfs_ip_address
+  ansible.builtin.debug:
+    msg: "{{ sfs_ip_address }}"

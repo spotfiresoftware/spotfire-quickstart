@@ -1,0 +1,52 @@
+---
+#----------------------------------------
+# Create Spotfire DB table schemas with scripts
+#----------------------------------------
+
+- ansible.builtin.include_tasks: postgres-cli.yml
+
+- name: Copy postgres_install scripts
+  ansible.builtin.copy:
+    src: "{{ spotfire_local_sw_repo }}/scripts/postgres_install/"
+    dest: /opt/spotfire/sfdb/postgres_install/
+    owner: spotfire
+    group: spotfire
+    mode: '0755'
+    directory_mode: '0755'
+  tags: spotfire_db
+  when: create_db
+
+- name: On-premises | Create Spotfire database with the create_databases.sh script
+  ansible.builtin.command:
+    cmd: /opt/spotfire/sfdb/postgres_install/create_databases.sh
+    chdir: /opt/spotfire/sfdb/postgres_install/
+#  debugger: on_failed
+  register: create_databases
+  tags: spotfire_db
+  when: create_db and not use_cloud_db
+
+- name: AWS,Azure,GCP | Copy postgres_install custom cloud scripts
+  ansible.builtin.copy:
+    src: files/postgres_install/create_databases_cloud.sh
+    dest: /opt/spotfire/sfdb/postgres_install/
+    owner: spotfire
+    group: spotfire
+    mode: '0755'
+    directory_mode: '0755'
+  tags: spotfire_db
+  when: create_db and use_cloud_db
+
+- name: AWS,Azure,GCP | Create Spotfire database with the create_databases.sh script
+  ansible.builtin.command:
+    cmd: /opt/spotfire/sfdb/postgres_install/create_databases_cloud.sh
+    chdir: /opt/spotfire/sfdb/postgres_install/
+#  debugger: on_failed
+  register: create_databases
+  tags: spotfire_db
+  when: create_db and use_cloud_db
+#  become: true
+#  become_user: spotfire
+
+- ansible.builtin.debug: var=create_databases.stdout_lines
+  tags: spotfire_db
+  when: create_db

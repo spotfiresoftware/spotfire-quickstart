@@ -1,0 +1,73 @@
+#----------------------------------------
+# Install dependencies for Debian 11
+#----------------------------------------
+
+# https://docs.microsoft.com/en-us/dotnet/core/install/linux-debian
+- name: Linux | Debian 11 | Install Microsoft .NET package repository
+  ansible.builtin.apt:
+    deb: https://packages.microsoft.com/config/debian/11/packages-microsoft-prod.deb
+    state: present
+    allow_unauthenticated: true
+  become: true
+  when: ansible_distribution_file_variety == "Debian"
+
+- name: Install apt-transport-https
+  ansible.builtin.apt:
+    name: apt-transport-https
+    state: present
+    update_cache: true
+  become: true
+  when: ansible_distribution_file_variety == "Debian"
+
+- name: Linux | Debian 11 | Install Microsoft .NET 6.0
+  ansible.builtin.apt:
+    name: aspnetcore-runtime-6.0
+    state: present
+    update_cache: true
+  become: true
+  when: ansible_distribution_file_variety == "Debian"
+
+- name: Linux | Debian 11 | Install Spotfire package dependencies
+  ansible.builtin.apt:
+    name:
+      - libasound2
+      - libatk-bridge2.0-0
+      - libcairo2
+      - libcups2
+      - libexif12
+      - libfontconfig1
+      - libgbm1
+      - libgif7
+      - libglib2.0-0
+      - libharfbuzz0b
+      - libjpeg62-turbo
+      - libnss3
+      - libpango-1.0-0
+      - libpangocairo-1.0-0
+      - libpng16-16
+      - libtiff5
+      - libx11-6
+      - libxcomposite1
+      - libxdamage1
+      - libxkbcommon0
+      - libxrandr2
+      - xvfb
+      - xauth
+      - unixodbc
+    state: present
+  become: true
+  when: ansible_distribution_file_variety == "Debian" and ansible_distribution_major_version == "11"
+
+- name: Install common font packages
+  ansible.builtin.apt:
+    name:
+      - fonts-arphic-ukai
+      - fonts-arphic-uming
+      - fonts-ipafont-mincho
+      - fonts-ipafont-gothic
+      - fonts-liberation
+      - fonts-unfonts-core
+      - fonts-roboto
+    state: present
+  become: true
+  when: ansible_distribution_file_variety == "Debian"

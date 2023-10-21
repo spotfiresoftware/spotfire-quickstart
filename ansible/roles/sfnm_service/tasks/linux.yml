@@ -1,0 +1,11 @@
+---
+#----------------------------------------
+# Web Player (Linux) service
+#----------------------------------------
+
+- name: Linux | Start the Spotfire node manager (sfnm) service and set to automatic start on boot
+  ansible.builtin.systemd:
+    name: spotfirenodemanager-{{ spotfire_version }}
+    enabled: true
+    state: restarted
+  become: true

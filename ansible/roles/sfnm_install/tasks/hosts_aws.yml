@@ -1,0 +1,37 @@
+# For AWS
+
+#- name: DEBUG Show sfnm facts
+#  ansible.builtin.debug:
+#    msg: "{{ ansible_facts }}"
+
+- name: Set fact sfnm_ip_address (AWS)
+  ansible.builtin.set_fact:
+    #sfnm_hostname: "{{ private_dns_name }}"
+    #sfs_ip_address: "{{ private_ip_address }}"
+    #sfnm_ip_address: "{{ ansible_default_ipv4.address }}"
+    sfnm_ip_address: "{{ ansible_host }}"
+
+- name: Show sfnm_ip_address
+  ansible.builtin.debug:
+    msg: "{{ sfnm_ip_address }}"
+
+#- name: DEBUG Set fact sfs_hostname (AWS)
+#  ansible.builtin.set_fact:
+#    sfs_hostname_debug: "{{ hostvars[groups['sfs_servers'][0]] }}"
+#
+#- name: DEBUG Show sfs_hostname
+#  ansible.builtin.debug:
+#    msg: "{{ sfs_hostname_debug }}"
+
+- name: Set fact sfs_ip_address (AWS)
+  ansible.builtin.set_fact:
+    #sfs_hostname: "{{ hostvars[groups['sfs_servers'][0]]['private_dns_name'] }}"
+    #sfs_ip_address: "{{ hostvars[groups['sfs_servers'][0]]['private_ip_address'] }}"
+    #sfs_ip_address: "{{ hostvars[groups['sfs_servers'][0]]['networkInterfaces'][0]['networkIP'] }}"
+    #sfs_ip_address: "{{ hostvars[groups['sfs_servers'][0]]['ansible_default_ipv4']['address'] }}"
+    sfs_ip_address: "{{ hostvars[groups['sfs_servers'][0]]['ansible_host'] }}" # OK with hosts_aws
+  when: target_environment == 'AWS'
+
+- name: Show sfs_ip_address
+  ansible.builtin.debug:
+    msg: "{{ sfs_ip_address }}"

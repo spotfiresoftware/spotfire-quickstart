@@ -1,0 +1,56 @@
+---
+#----------------------------------------
+# Spotfire Server bootstrap
+# - https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/configuration_using_the_configuration_tool.html
+#----------------------------------------
+
+# WARN: We need the Spotfire DB in place before we start the bootstrap!!
+#       Maybe we need a DB connectivity check first...
+
+#- name: Set sfs host into fact
+#  ansible.builtin.set_fact:
+#    sfs_hostname: "{{ ansible_hostname }}"
+#    sfs_ipaddr: "{{ ansible_host }}"
+#
+#- name: Show sfs facts
+#  ansible.builtin.debug:
+#    msg: "{{ hostvars[groups['sfs_servers'][0]] }}"
+
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/file_module.html
+- name: Create directory for bootstrap script
+  ansible.builtin.file:
+    path: /var/local/spotfire/
+    owner: spotfire
+    group: spotfire
+    recurse: true
+    state: directory
+  when: sfs_bootstrap
+
+- name: Copy Spotfire's bootstrap.sh script
+  ansible.builtin.copy:
+    src: files/bootstrap.sh
+    dest: /var/local/spotfire/
+    owner: spotfire
+    group: spotfire
+    mode: '0755'
+  when: sfs_bootstrap
+
+# will generate the bootstrap file:
+#   /opt/spotfire/spotfireserver/11.3.0/tomcat/webapps/spotfire/WEB-INF/bootstrap.xml
+#TODO: execute only if bootstrap file do not exist
+# https://docs.ansible.com/ansible/latest/collections/ansible/builtin/command_module.html
+- name: Run bootstrap.sh script
+  ansible.builtin.command: /var/local/spotfire/bootstrap.sh
+  # https://docs.ansible.com/ansible/latest/user_guide/become.html
+  become: true
+  become_user: spotfire
+  # https://docs.ansible.com/ansible/latest/user_guide/playbooks_strategies.html#using-keywords-to-control-execution
+  throttle: 1
+  # https://docs.ansible.com/ansible/latest/user_guide/playbooks_debugger.html
+#  debugger: on_failed
+  register: bootstrap
+  when: sfs_bootstrap
+
+- ansible.builtin.debug: var=bootstrap.stdout_lines
+#  verbosity: 2
+  when: sfs_bootstrap
