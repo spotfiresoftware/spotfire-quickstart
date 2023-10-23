@@ -22,14 +22,8 @@
 //  ]
 //  name         = "peering1"
 //  network      = google_compute_network.sql_vpc.id
-//  peer_network = var.wp_vpc_id
+//  peer_network = var.sfwp_vpc_id
 //}
-
-# NOTE: This is not longer required. We use create-db to create spotfire_database
-#resource "google_sql_database" "database" {
-#  name     = "${var.prefix}-db-${var.tss_version}"
-#  instance = google_sql_database_instance.master.name
-#}
 
 //# https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/sql_database_instance
 //# Private instance
@@ -38,42 +32,41 @@
 //
 //  name = "private-network"
 //}
-//
-//# https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_global_address
-//resource "google_compute_global_address" "private_ip_address" {
-//  provider = google-beta
-//
-//  name          = "${var.prefix}-private-ip"
-//  address_type  = "INTERNAL"
-//  purpose       = "VPC_PEERING"
-//  prefix_length = 16
-//  network       = google_compute_network.private_network.id
-////  network = module.vpc.network_id
-//
-//  depends_on = [module.vpc]
-//}
-//
-//resource "google_service_networking_connection" "private_vpc_connection" {
-//  provider = google-beta
-//
-//  network                 = google_compute_network.private_network.id
-////  network                 = module.vpc.network_id
-//  service                 = "servicenetworking.googleapis.com"
-//  reserved_peering_ranges = [google_compute_global_address.private_ip_address.name]
-//}
+
+# https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_global_address
+resource "google_compute_global_address" "private_ip_address" {
+  name          = "${var.prefix}-private-ip"
+  address_type  = "INTERNAL"
+  purpose       = "VPC_PEERING"
+  prefix_length = 16
+  network       = local.network
+
+  depends_on = [module.vpc]
+}
+
+resource "google_service_networking_connection" "private_vpc_connection" {
+  network                 = local.network
+  service                 = "servicenetworking.googleapis.com"
+  reserved_peering_ranges = [google_compute_global_address.private_ip_address.name]
+}
+
+locals {
+  db_private_ip = google_compute_global_address.private_ip_address.address
+}
 
 # https://cloud.google.com/sql/
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/sql_database_instance
 resource "google_sql_database_instance" "master" {
   //  name = var.spotfire_db_name
-  name             = "${var.prefix}-spotfire-db-alpha"
+  name             = "${var.prefix}-spotfire-db"
   database_version = var.postgresql_db_version
   region           = var.region
 
   # required to destroy the db
-  deletion_protection = false
+  deletion_protection = false         # Terraform level
+#  deletion_protection_enabled = false # GCP level
 
-  //  depends_on = [google_service_networking_connection.private_vpc_connection]
+  depends_on = [google_service_networking_connection.private_vpc_connection]
   //  depends_on = [module.vpc.network]
 
   settings {
@@ -85,20 +78,15 @@ resource "google_sql_database_instance" "master" {
     #availability_type = "REGIONAL"
 
     ip_configuration {
-      ipv4_enabled = true # "false" prevents to assign a public ip
+      ipv4_enabled = false # "false" prevents to assign a public ip
       require_ssl  = false
 
-      //      private_network = "default"
-      //      private_network = "projects/${var.project_id}/global/networks/${module.vpc.network_name}"
-      //      private_network = module.vpc.network_id
-      //      private_network = google_compute_network.private_network.id
-      //      private_network = module.vpc.subnets
-
-      authorized_networks {
-        name = "spotfiredb_connect"
-        // value = var.static_ip_wp
-        value = "0.0.0.0/0"
-      }
+      private_network = local.network
+      //enable_private_path_for_google_cloud_services = true
+#      authorized_networks {
+#        name = "spotfiredb_connect"
+#        value = "0.0.0.0/0"
+#      }
     }
 
     user_labels = {
@@ -107,12 +95,22 @@ resource "google_sql_database_instance" "master" {
   }
 }
 
+# https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/sql_user
 resource "google_sql_user" "default" {
   instance = google_sql_database_instance.master.name
   name     = var.spotfire_db_admin_username
   password = var.spotfire_db_admin_password
+
+  deletion_policy = "ABANDON"
   #host     = "%" # allows connection from any host, only for troubleshooting
 }
+
+# NOTE: This is not longer required. We can just use create-db to create spotfire_database.
+#resource "google_sql_database" "database" {
+#  name     = "${var.prefix}-db-${var.spotfire_version}"
+#  instance = google_sql_database_instance.master.name
+#  depends_on = [google_sql_database_instance.master, google_sql_user.default]
+#}
 
 output "spotfire_db_name" {
   #value = var.create_spotfire_db ? google_sql_database.database.name : var.spotfire_db_name
@@ -120,5 +118,6 @@ output "spotfire_db_name" {
 }
 
 locals {
-  spotfire_db_address = var.create_spotfire_db ? google_sql_database_instance.master.public_ip_address : var.spotfire_db_name
+  #spotfire_db_address = var.create_spotfire_db ? google_sql_database_instance.master.public_ip_address : var.spotfire_db_name
+  spotfire_db_address = var.create_spotfire_db ? google_sql_database_instance.master.private_ip_address : var.spotfire_db_name
 }

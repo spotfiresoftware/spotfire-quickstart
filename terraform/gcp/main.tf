@@ -101,18 +101,18 @@ resource "google_compute_instance" "jumphost" {
 //  region = "${lookup(var.instance, "region")}"
 //}
 
-resource "google_compute_instance" "tss" {
-  count = var.tss_instances
+resource "google_compute_instance" "sfs" {
+  count = var.sfs_instances
 
-  name         = "${var.prefix}-tss-${count.index}"
-  machine_type = var.tss_instance_type
+  name         = "${var.prefix}-sfs-${count.index}"
+  machine_type = var.sfs_instance_type
   zone         = element(data.google_compute_zones.available.names, count.index)
 
-  tags = [var.prefix, "tss"]
+  tags = [var.prefix, "sfs"]
 
   boot_disk {
     initialize_params {
-      image = var.tss_vm_os
+      image = var.sfs_vm_os
       size  = 10
     }
   }
@@ -132,7 +132,7 @@ resource "google_compute_instance" "tss" {
   }
 
   labels = {
-    role = "tss"
+    role = "sfs"
   }
 }
 
@@ -141,8 +141,8 @@ resource "google_compute_instance" "tss" {
 #----------------------------------------
 data "template_file" "windows_configure_ssh" {
   template = <<EOF
-net user ${var.wp_admin_username} '${var.wp_admin_password}' /add /y
-net localgroup administrators ${var.wp_admin_username} /add
+net user ${var.sfwp_admin_username} '${var.sfwp_admin_password}' /add /y
+net localgroup administrators ${var.sfwp_admin_username} /add
 
 Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
 Start-Service sshd
@@ -158,19 +158,19 @@ EOF
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/compute_instance
 # https://cloud.google.com/compute/docs/images/os-details#windows_server
 # https://cloud.google.com/compute/docs/instances/startup-scripts/windows
-resource "google_compute_instance" "wp" {
-  count = var.wp_instances
+resource "google_compute_instance" "sfwp" {
+  count = var.sfwp_instances
 
-  name         = "${var.prefix}-wp-${count.index}"
-  machine_type = var.wp_instance_type
+  name         = "${var.prefix}-sfwp-${count.index}"
+  machine_type = var.sfwp_instance_type
   zone         = element(data.google_compute_zones.available.names, count.index)
 
-  tags = [var.prefix, "tswp"]
+  tags = [var.prefix, "sfwp"]
 
   boot_disk {
     initialize_params {
 #      image = "windows-2022"
-      image = var.wp_vm_os
+      image = var.sfwp_vm_os
       size  = 50 # min for windows-2022
     }
   }
@@ -182,12 +182,12 @@ resource "google_compute_instance" "wp" {
   metadata = {
     # https://cloud.google.com/compute/docs/metadata/default-metadata-values
 #    enable-windows-ssh = true
-    windows-startup-script-ps1 = var.create_wp_linux ? null : data.template_file.windows_configure_ssh.rendered
+    windows-startup-script-ps1 = var.create_sfwp_linux ? null : data.template_file.windows_configure_ssh.rendered
     ssh-keys = "${var.gce_ssh_user}:${file(var.ssh_public_key_file)}"
   }
 #  provisioner "file" {
 #    source      = var.ssh_public_key_file
-#    destination = "C:/Users/${var.wp_admin_username}/.ssh/id_rsa.pub"
+#    destination = "C:/Users/${var.sfwp_admin_username}/.ssh/id_rsa.pub"
 #  }
 
   allow_stopping_for_update = true
@@ -197,7 +197,7 @@ resource "google_compute_instance" "wp" {
   }
 
   labels = {
-    role = "tswp"
+    role = "sfwp"
   }
 }
 
@@ -229,9 +229,9 @@ resource "google_compute_firewall" "allow-all-internal" {
   }
 }
 
-resource "google_compute_firewall" "allow-tss-db" {
+resource "google_compute_firewall" "allow-sfs-db" {
   project     = var.project_id
-  name        = "${var.prefix}-allow-tss-db"
+  name        = "${var.prefix}-allow-sfs-db"
   network     = local.network
   description = "Allows internal traffic"
 
@@ -247,12 +247,12 @@ resource "google_compute_firewall" "allow-tss-db" {
 # Generates the Ansible Config file (credentials)
 resource "local_file" "ansible-config-infra" {
   content = templatefile("${path.module}/ansible_config.tmpl", {
-    tss_version          = var.tss_version,
+    spotfire_version          = var.spotfire_version,
     ssh_private_key_file = var.ssh_private_key_file,
     jumphost_user        = var.jumphost_admin_username,
-    tss_user             = var.tss_admin_username,
-    wp_user              = var.wp_admin_username,
-    wp_password          = var.wp_admin_password,
+    sfs_user             = var.sfs_admin_username,
+    sfwp_user              = var.sfwp_admin_username,
+    sfwp_password          = var.sfwp_admin_password,
     db_host              = local.spotfire_db_address,
     db_admin_user        = var.spotfire_db_admin_username,
     db_admin_password    = var.spotfire_db_admin_password,

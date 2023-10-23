@@ -6,7 +6,7 @@
 target_environment: 'GCP'
 
 # Spotfire Server version
-tss_version: '${ tss_version }'
+spotfire_version: '${ spotfire_version }'
 
 # Spotfire DB
 #db_type: postgres
@@ -31,11 +31,11 @@ spotfire_ui_admin_password: '${ ui_admin_password }'
 jumphost_user: '${ jumphost_user }'
 
 # Spotfire Server credentials
-tss_user: '${ tss_user }'
+sfs_user: '${ sfs_user }'
 
 # Web Player credentials
-wp_user: '${ wp_user }'
-wp_password: '${ wp_password }'
+sfwp_user: '${ sfwp_user }'
+sfwp_password: '${ sfwp_password }'
 
 # Note: Generate your own SSH keys
 #ansible_ssh_private_key_file: '../terraform/gcp/${ ssh_private_key_file }'

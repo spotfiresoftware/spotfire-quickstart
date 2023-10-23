@@ -72,6 +72,8 @@ destroy: ## Destroy the Terraform managed infrastructure
 
 reapply: destroy apply
 
+infra: init plan apply ## init plan & apply
+
 terraform-graph:
 	terraform graph | dot -Tsvg > terraform.tfstate.d/terraform_graph.svg
 	terraform graph -draw-cycles | dot -Tsvg > terraform.tfstate.d/terraform_graph_cycles.svg
@@ -134,12 +136,12 @@ deploy: ## Install and configure Spotfire software on infra hosts using Ansible 
 		ANSIBLE_PERSISTENT_COMMAND_TIMEOUT=120 ANSIBLE_TIMEOUT=120 ANSIBLE_DISPLAY_SKIPPED_HOSTS=false ANSIBLE_HOST_KEY_CHECKING=False \
 		ansible-playbook \
 			-i ${INVENTORY_FILE} \
-		    -i ${INVENTORY_FILE_GOG} \
+			-i ${INVENTORY_FILE_GOG} \
 			--extra-vars @config/vars.yml \
 			--extra-vars ${INFRA_EXTRA_VARS} \
 			$(ANSIBLE_EXTRA_ARGS) \
 			site.yml
-#  			--limit wp_servers \
+#  			--limit sfwp_servers \
 #	  		 -vvv
 
 #### other GCP specific #####

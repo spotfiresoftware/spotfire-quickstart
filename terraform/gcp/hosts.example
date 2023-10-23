@@ -5,11 +5,11 @@
 [jumphost_servers]
 sandbox-somo-jumphost ansible_host=34.105.246.37 ansible_connection=ssh ansible_user=spotfire
 
-[tss_servers]
-sandbox-somo-tss-0 ansible_connection=ssh ansible_user=spotfire
-sandbox-somo-tss-1 ansible_connection=ssh ansible_user=spotfire
+[sfs_servers]
+sandbox-somo-sfs-0 ansible_connection=ssh ansible_user=spotfire
+sandbox-somo-sfs-1 ansible_connection=ssh ansible_user=spotfire
 
-[wp_servers]
-sandbox-somo-tswp-0 ansible_connection=ssh ansible_user=spotfire
-sandbox-somo-tswp-1 ansible_connection=ssh ansible_user=spotfire
+[sfwp_servers]
+sandbox-somo-sfwp-0 ansible_connection=ssh ansible_user=spotfire
+sandbox-somo-sfwp-1 ansible_connection=ssh ansible_user=spotfire
 

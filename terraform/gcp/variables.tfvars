@@ -1,7 +1,8 @@
 #----------------------------------------
 # Google project
 #----------------------------------------
-project_id = "my-spotfire-project"
+# Note: REQUIRED. Set this to your project id
+#project_id = "my-spotfire-project"
 
 #----------------------------------------
 # Resources prefix
@@ -9,25 +10,26 @@ project_id = "my-spotfire-project"
 prefix = "sandbox-toad"
 
 #----------------------------------------
-# Google region
+# Google region & zone
 #----------------------------------------
-region = "europe-west2"
-#zone   = "europe-west2-a"
+# https://cloud.google.com/compute/docs/regions-zones
+region = "europe-north1"
+#zone   = "europe-north1-a"
 
 #----------------------------------------
 # Networking
 #----------------------------------------
 # You may want to limit the allowed addresses to reach your environment for
 # admin (ssh jumphost) and web access (application)
-admin_address_prefixes = ["12.34.0.0/16"]
-web_address_prefixes   = ["12.0.0.0/8"]
+#admin_address_prefixes = ["12.34.0.0/16"]
+#web_address_prefixes   = ["14.0.0.0/8"]
 
 #----------------------------------------
-# Spotfire Database (tssdb)
+# Spotfire Database (sfdb)
 #----------------------------------------
 # https://cloud.google.com/sql/
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/sql_database_instance
-postgresql_db_version = "POSTGRES_15"
+#postgresql_db_version = "POSTGRES_15"
 # database size in gibibytes (GiB)
 #spotfire_db_size = "10"
 #spotfire_db_instance_class = "db-f1-micro"
@@ -64,30 +66,28 @@ jumphost_instance_type = "e2-small"
 jumphost_admin_username = "spotfire"
 
 #----------------------------------------
-# TIBCO Spotfire Server (tss)
+# Spotfire Server (sfs)
 #----------------------------------------
 # VM instances number
-tss_instances = 3
+sfs_instances = 3
 # VM size
-#tss_vm_size = "XS"
-tss_instance_type = "e2-medium"
-# VM OS (Debian11)
-#tss_vm_os = "debian-cloud/debian-11"
+#sfs_vm_size = "XS"
+sfs_instance_type = "e2-medium"
+# VM OS (Debian 12)
+#sfs_vm_os = "debian-cloud/debian-12"
 # VM login credentials
-tss_admin_username = "spotfire"
+sfs_admin_username = "spotfire"
 
 #----------------------------------------
-# TIBCO Spotfire Web Player (wp) - Windows
+# Spotfire Web Player (wp) - Windows
 #----------------------------------------
 # VM instances number
-wp_instances = 3
+sfwp_instances = 3
 # VM size
-#wp_vm_size = "XS"
-wp_instance_type = "e2-medium"
-# VM OS (Windows 2022)
-#wp_vm_os = "windows-2022"
-# VM OS (Debian 11)
-wp_vm_os = "debian-cloud/debian-11"
+#sfwp_vm_size = "XS"
+sfwp_instance_type = "e2-medium"
+# VM OS (Debian 12)
+#sfwp_vm_os = "debian-cloud/debian-12"
 # VM login credentials
-wp_admin_username = "spotfire"
-wp_admin_password = "secret0!"
+sfwp_admin_username = "spotfire"
+sfwp_admin_password = "secret0!"

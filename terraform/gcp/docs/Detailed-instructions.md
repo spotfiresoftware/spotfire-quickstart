@@ -1,10 +1,10 @@
-# Quickstart for TIBCO Spotfire on GCP: Detailed instructions
+# Quickstart for Spotfire on GCP: Detailed instructions
 
 ## Overview
 
 These detailed instructions describe how to use `terraform` and `ansible` commands to automatically deploy the Spotfire Platform on GCP.
 
-If you do not want to know about the details, jump to the "Easy peasy instructions" section in [Automatic Deployment of Spotfire Platform on GCP](../README.md).
+If you do not want to know about the internal of how `terraform` and `ansible` are used, jump to the standard setup instructions in [Automatic Deployment of Spotfire Platform on GCP](../README.md).
 
 ## Procedure
 
@@ -96,7 +96,7 @@ If you do not want to know about the details, jump to the "Easy peasy instructio
         --extra-vars @config/vars.yml \
         --extra-vars @../terraform/gcp/terraform.tfstate.d/spotfire-gcp-dev/ansible_config/infra.yml \
         site.yml \
-        --limit wp_servers
+        --limit sfwp_servers
     ```
 
 ### Destroy the created environment

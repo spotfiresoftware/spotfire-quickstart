@@ -21,11 +21,11 @@ resource "google_compute_target_pool" "default" {
   region = var.region
 
 #  instances        = [
-#      "europe-west2-a/sandbox-somo-tss-0",
-#      "europe-west2-b/sandbox-somo-tss-1",
+#      "europe-west2-a/sandbox-somo-sfs-0",
+#      "europe-west2-b/sandbox-somo-sfs-1",
 #  ]
   # get instance list dynamically:
-  instances = tolist(google_compute_instance.tss.*.self_link)
+  instances = tolist(google_compute_instance.sfs.*.self_link)
 
   health_checks = [
     google_compute_http_health_check.default.name,
@@ -44,5 +44,5 @@ output "gce_fw_ip" {
   value = google_compute_forwarding_rule.default.ip_address
 }
 output "lb_instances" {
-  value = tolist(google_compute_instance.tss.*.id)
+  value = tolist(google_compute_instance.sfs.*.id)
 }
