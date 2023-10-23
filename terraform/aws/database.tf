@@ -43,7 +43,8 @@ resource "aws_security_group" "rds" {
     to_port   = 5432
     protocol  = "tcp"
     security_groups = [
-    aws_security_group.tss-web.id]
+      aws_security_group.sfs-web.id
+    ]
   }
   # Allow all outbound traffic.
   egress {

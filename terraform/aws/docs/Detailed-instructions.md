@@ -1,10 +1,10 @@
-# Quickstart for TIBCO Spotfire on AWS: Detailed instructions
+# Quickstart for Spotfire on AWS: Detailed instructions
 
 ## Overview
 
 These detailed instructions describe how to use `terraform` and `ansible` commands to automatically deploy the Spotfire Platform on AWS.
 
-If you do not want to know about the details, jump to the "Easy peasy instructions" section in [Automatic Deployment of Spotfire Platform on AWS](../README.md).
+If you do not want to know about the internal of how `terraform` and `ansible` are used, jump to the standard setup instructions in [Automatic Deployment of Spotfire Platform on AWS](../README.md).
 
 ## Procedure
 
@@ -94,7 +94,7 @@ If you do not want to know about the details, jump to the "Easy peasy instructio
        --extra-vars @config/vars.yml \
        --extra-vars @../terraform/aws/terraform.tfstate.d/${TF_WORKSPACE}/ansible_config_files/infra.yml \
        site.yml \
-       --limit wp_servers
+       --limit sfwp_servers
     ```
 
 

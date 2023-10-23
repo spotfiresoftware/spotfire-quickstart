@@ -3,12 +3,12 @@
 ${ jumphost_hostname } ansible_connection=ssh ansible_user=${jumphost_user} ansible_host=${ jumphost_pip_addresses[index] }
 %{~ endfor }
 
-[tss_servers]
-%{~ for index, tss_hostname in tss_hostnames }
-${tss_hostname} ansible_connection=ssh ansible_user=${tss_user} ansible_host=${ tss_ip_addresses[index] }
+[sfs_servers]
+%{~ for index, sfs_hostname in sfs_hostnames }
+${sfs_hostname} ansible_connection=ssh ansible_user=${sfs_user} ansible_host=${ sfs_ip_addresses[index] }
 %{~ endfor }
 
-[wp_servers]
-%{~ for index, wp_hostname in wp_hostnames }
-${wp_hostname} ansible_connection=ssh ansible_user=${wp_user} ansible_host=${ wp_ip_addresses[index] }
+[sfwp_servers]
+%{~ for index, sfwp_hostname in sfwp_hostnames }
+${sfwp_hostname} ansible_connection=ssh ansible_user=${sfwp_user} ansible_host=${ sfwp_ip_addresses[index] }
 %{~ endfor }

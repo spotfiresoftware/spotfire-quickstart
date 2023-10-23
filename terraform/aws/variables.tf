@@ -7,17 +7,17 @@ variable "create_spotfire_db" {
 }
 
 #variable "create_alb" {
-#  description = "Create AWS Application Load Balancer for HTTP access to TIBCO Spotfire Server instances (recommended if using Spotfire Server cluster)"
+#  description = "Create AWS Application Load Balancer for HTTP access to Spotfire Server instances (recommended if using Spotfire Server cluster)"
 #  default     = true
 #}
 
-variable "create_tss_public_ip" {
-  description = "Create Public IP for direct access to TIBCO Spotfire Server instances (only for testing)"
+variable "create_sfs_public_ip" {
+  description = "Create Public IP for direct access to Spotfire Server instances (only for testing)"
   default     = false
 }
 
 # NOTE: See documentation for differences when running Web Player on Linux
-variable "create_wp_linux" {
+variable "create_sfwp_linux" {
   description = "Use Linux for Web Player services"
   default     = true
 }
@@ -32,9 +32,9 @@ variable "tags" {
     # specific tags
     description   = "Spotfire Quickstart: Basic install"
     app           = "Spotfire"
-    app_version   = "12.0.0"
+    app_version   = "14.0.0"
     environment   = "dev"
-    infra_version = "0.3"
+    infra_version = "0.4"
   }
 }
 
@@ -69,7 +69,7 @@ variable "web_address_prefixes" {
 }
 
 #----------------------------------------
-# Spotfire Database (tssdb)
+# Spotfire Database (sfdb)
 #----------------------------------------
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/db_instance
 # https://docs.aws.amazon.com/AmazonRDS/latest/APIReference/API_CreateDBInstance.html
@@ -155,7 +155,7 @@ variable "ssh_private_key_file" {
 variable "aws_amis" {
 
   default = {
-  # all images in eu-north
+  # NOTE: AMIs in eu-north
   #
   # openSUSE Leap 15.3
   # https://aws.amazon.com/marketplace/server/configuration?productId=5e60433b-bd08-44d8-be9e-2b774638fa6c&ref_=psb_cfg_continue
@@ -168,6 +168,11 @@ variable "aws_amis" {
   # Debian 11 debian-11-amd64-20211011-792
   # https://aws.amazon.com/marketplace/pp/prodview-l5gv52ndg5q6i
   "Debian11" = "ami-09561a092f2052f25"
+  # Debian 12 debian-12-amd64-20231013-1532
+  # https://aws.amazon.com/marketplace/pp/prodview-g5rooj5oqzrw4
+  # https://wiki.debian.org/Cloud/AmazonEC2Image/Bookworm
+  "Debian12" = "ami-04d1cd69ce1b4503b"
+
   # Windows
   # https://aws.amazon.com/marketplace/server/configuration?productId=ef297a90-3ad0-4674-83b4-7f0ec07c39bb&ref_=psb_cfg_continue
   "Windows2019" = "ami-0de5cf558e1cb5cf9"
@@ -175,13 +180,13 @@ variable "aws_amis" {
 }
 
 variable "jumphost_vm_os" {
-  default = "Debian11"
+  default = "Debian12"
 }
-variable "tss_vm_os" {
-  default = "Debian11"
+variable "sfs_vm_os" {
+  default = "Debian12"
 }
-variable "wp_vm_os" {
-  default = "Debian11"
+variable "sfwp_vm_os" {
+  default = "Debian12"
 }
 
 # https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/managing-users.html
@@ -199,6 +204,7 @@ variable "aws_ami_user" {
     "CentOS"      = "centos"
     "Debian"      = "admin"
     "Debian11"    = "admin"
+    "Debian12"    = "admin"
     "openSUSE"    = "ec2-user"
     "RHEL"        = "ec2-user"
     "SUSE"        = "ec2-user"
@@ -216,11 +222,11 @@ variable "jumphost_admin_username" {
 }
 
 #----------------------------------------
-# Spotfire Server (tss)
+# Spotfire Server (sfs)
 #----------------------------------------
 # VM login credentials
-variable "tss_admin_username" {
-  description = "TIBCO Spotfire Server VM admin username"
+variable "sfs_admin_username" {
+  description = "Spotfire Server VM admin username"
   default     = "spotfire"
 }
 
@@ -228,12 +234,12 @@ variable "tss_admin_username" {
 # Web Player (wp)
 #----------------------------------------
 # VM login credentials
-variable "wp_admin_username" {
-  description = "TIBCO Spotfire Web Player VM admin username"
+variable "sfwp_admin_username" {
+  description = "Spotfire Web Player VM admin username"
   default     = "spotfire"
 }
-variable "wp_admin_password" {
-  description = "TIBCO Spotfire Web Player VM admin password"
+variable "sfwp_admin_password" {
+  description = "Spotfire Web Player VM admin password"
   default     = "d3f4ult!"
   sensitive   = true
 }
@@ -245,11 +251,11 @@ variable "jumphost_instances" {
   description = "Number of jumphost instances"
   default     = 1
 }
-variable "tss_instances" {
-  description = "Number of TIBCO Spotfire Server instances"
+variable "sfs_instances" {
+  description = "Number of Spotfire Server instances"
   default     = 2
 }
-variable "wp_instances" {
-  description = "Number of TIBCO Spotfire Web Player instances"
+variable "sfwp_instances" {
+  description = "Number of Spotfire Web Player instances"
   default     = 2
 }

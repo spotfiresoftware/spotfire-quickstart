@@ -91,13 +91,13 @@ resource "aws_alb_listener" "listener_http" {
 //}
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group_attachment
-resource "aws_alb_target_group_attachment" "tss" {
-  depends_on = [aws_instance.tss]
+resource "aws_alb_target_group_attachment" "sfs" {
+  depends_on = [aws_instance.sfs]
 
-  //  for_each         = toset(aws_instance.tss.*.id)
-  count            = var.tss_instances
+  //  for_each         = toset(aws_instance.sfs.*.id)
+  count            = var.sfs_instances
   target_group_arn = aws_alb_target_group.web.arn
-  target_id        = element(aws_instance.tss.*.id, count.index)
+  target_id        = element(aws_instance.sfs.*.id, count.index)
   //  target_id        = each.key
   port = 80
 }

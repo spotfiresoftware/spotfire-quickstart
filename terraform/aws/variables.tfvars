@@ -13,11 +13,11 @@ region = "eu-north-1"
 #----------------------------------------
 # You may want to limit the allowed addresses to reach your environment for
 # admin (ssh jumphost) and web access (application)
-admin_address_prefixes = ["12.34.0.0/16"]
-web_address_prefixes   = ["12.0.0.0/8"]
+#admin_address_prefixes = ["12.34.0.0/16"]
+#web_address_prefixes   = ["14.0.0.0/8"]
 
 #----------------------------------------
-# Spotfire Database (tssdb)
+# Spotfire Database (sfdb)
 #----------------------------------------
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_BestPractices.html
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_PostgreSQL.html
@@ -41,7 +41,7 @@ spotfire_db_name="spotfiredb"
 #----------------------------------------
 
 # ssh key file
-ssh_private_key_file = "/home/user/.ssh/id_rsa_aws.pub"
+#ssh_private_key_file = "/home/myuser/.ssh/id_rsa_aws.pub"
 
 #----------------------------------------
 # jumphost
@@ -52,38 +52,38 @@ ssh_private_key_file = "/home/user/.ssh/id_rsa_aws.pub"
 #jumphost_vm_size = "XS"
 
 # VM OS (Debian)
-jumphost_vm_os = "Debian11"
+#jumphost_vm_os = "Debian12"
 # VM login credentials
 #jumphost_admin_username = "admin"
 
 #----------------------------------------
-# TIBCO Spotfire Server (tss)
+# Spotfire Server (sfs)
 #----------------------------------------
 # VM instances number
-#tss_instances = 2
+#sfs_instances = 2
 # VM size
-#tss_vm_size = "XS"
+#sfs_vm_size = "XS"
 
 # VM OS (Debian)
-tss_vm_os = "Debian11"
+#sfs_vm_os = "Debian12"
 # VM login credentials
-#tss_admin_username = "admin"
+#sfs_admin_username = "admin"
 
 #----------------------------------------
-# TIBCO Spotfire Web Player (wp)
+# Spotfire Web Player (wp)
 #----------------------------------------
 # VM instances number
-#wp_instances = 2
+#sfwp_instances = 2
 # VM size
-#wp_vm_size = "XS"
+#sfwp_vm_size = "XS"
 
 # VM OS (Windows2019)
-#wp_vm_os = "Windows2019"
+#sfwp_vm_os = "Windows2019"
 # VM login credentials
-#wp_admin_username = "spotfire"
-#wp_admin_password = "admin"
+#sfwp_admin_username = "spotfire"
+#sfwp_admin_password = "admin"
 
 # VM OS (Linux)
-wp_vm_os = "Debian11"
+#sfwp_vm_os = "Debian11"
 # VM login credentials
-#wp_admin_username = "admin" # Debian
+#sfwp_admin_username = "admin" # Debian

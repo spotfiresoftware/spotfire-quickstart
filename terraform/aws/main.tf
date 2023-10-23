@@ -71,25 +71,25 @@ resource "aws_instance" "jumphost" {
   }))
 }
 
-resource "aws_instance" "tss" {
-  count = var.tss_instances
+resource "aws_instance" "sfs" {
+  count = var.sfs_instances
 
-  ami           = lookup(var.aws_amis, var.tss_vm_os)
-  instance_type = lookup(var.tss_instance_types, var.tss_size)
+  ami           = lookup(var.aws_amis, var.sfs_vm_os)
+  instance_type = lookup(var.sfs_instance_types, var.sfs_size)
 
 //  subnet_id = element(aws_subnet.public.*.id, count.index)
   subnet_id = element(aws_subnet.private.*.id, count.index)
-  vpc_security_group_ids = [aws_security_group.mgt.id, aws_security_group.tss-web.id,
-  aws_security_group.tss-be.id, aws_security_group.tss-cluster.id]
+  vpc_security_group_ids = [aws_security_group.mgt.id, aws_security_group.sfs-web.id,
+  aws_security_group.sfs-be.id, aws_security_group.sfs-cluster.id]
 
   key_name = aws_key_pair.keypair.key_name
 
-  associate_public_ip_address = var.create_tss_public_ip
+  associate_public_ip_address = var.create_sfs_public_ip
 
   tags = merge(var.tags, tomap({
     prefix = var.prefix,
-    Name   = "${var.prefix}-tss-${count.index}",
-    role   = "tss_servers"
+    Name   = "${var.prefix}-sfs-${count.index}",
+    role   = "sfs_servers"
   }))
 }
 
@@ -100,8 +100,8 @@ resource "aws_instance" "tss" {
 data "template_file" "windows_configure_ssh" {
   template = <<EOF
 <powershell>
-net user ${var.wp_admin_username} '${var.wp_admin_password}' /add /y
-net localgroup administrators ${var.wp_admin_username} /add
+net user ${var.sfwp_admin_username} '${var.sfwp_admin_password}' /add /y
+net localgroup administrators ${var.sfwp_admin_username} /add
 
 Add-WindowsCapability -Online -Name OpenSSH.Server~~~~0.0.1.0
 Start-Service sshd
@@ -116,26 +116,26 @@ New-ItemProperty -Path "HKLM:\SOFTWARE\OpenSSH" -Name DefaultShell -Value "C:\Wi
 EOF
 }
 
-resource "aws_instance" "wp" {
-  count = var.wp_instances
+resource "aws_instance" "sfwp" {
+  count = var.sfwp_instances
 
-  ami           = lookup(var.aws_amis, var.wp_vm_os)
-  instance_type = lookup(var.wp_instance_types, var.wp_size)
+  ami           = lookup(var.aws_amis, var.sfwp_vm_os)
+  instance_type = lookup(var.sfwp_instance_types, var.sfwp_size)
 
 //  subnet_id = element(aws_subnet.public.*.id, count.index)
   subnet_id = element(aws_subnet.private.*.id, count.index)
-  vpc_security_group_ids = [aws_security_group.mgt.id, aws_security_group.tss-be.id,
-  aws_security_group.tnm.id, aws_security_group.win.id]
+  vpc_security_group_ids = [aws_security_group.mgt.id, aws_security_group.sfs-be.id,
+                            aws_security_group.sfnm.id, aws_security_group.win.id]
 
   associate_public_ip_address = "false"
 
   key_name  = aws_key_pair.keypair.key_name
-  user_data = var.create_wp_linux ? null : data.template_file.windows_configure_ssh.rendered
+  user_data = var.create_sfwp_linux ? null : data.template_file.windows_configure_ssh.rendered
 
   tags = merge(var.tags, tomap({
     prefix = var.prefix,
     Name   = "${var.prefix}-wp-${count.index}",
-    role   = "wp_servers"
+    role   = "sfwp_servers"
   }))
 }
 
@@ -205,14 +205,14 @@ resource "aws_security_group" "mgt" {
   }
 }
 
-#--- tss web ---#
-resource "aws_security_group" "tss-web" {
-  name        = "${var.prefix}-spotfire-tss-web-sg"
-  description = "Security group for Spotfire Server (tss) that allows web access"
+#--- sfs web ---#
+resource "aws_security_group" "sfs-web" {
+  name        = "${var.prefix}-spotfire-sfs-web-sg"
+  description = "Security group for Spotfire Server (sfs) that allows web access"
   vpc_id      = aws_vpc.this.id
 
   tags = {
-    Name = "${var.prefix}-spotfire-tss-web-sg"
+    Name = "${var.prefix}-spotfire-sfs-web-sg"
   }
 
   ingress {
@@ -239,13 +239,13 @@ resource "aws_security_group" "tss-web" {
 }
 
 #--- services registration & communication ---#
-resource "aws_security_group" "tss-be" {
-  name        = "${var.prefix}-spotfire-tss-be-sg"
+resource "aws_security_group" "sfs-be" {
+  name        = "${var.prefix}-spotfire-sfs-be-sg"
   description = "Spotfire Server services registration & communication  traffic"
   vpc_id      = aws_vpc.this.id
 
   tags = {
-    Name = "${var.prefix}-tss-be-sg"
+    Name = "${var.prefix}-sfs-be-sg"
   }
 
   ingress {
@@ -253,14 +253,14 @@ resource "aws_security_group" "tss-be" {
     from_port       = 9080
     to_port         = 9080
     protocol        = "tcp"
-    security_groups = [aws_security_group.tss-web.id, aws_security_group.tnm.id]
+    security_groups = [aws_security_group.sfs-web.id, aws_security_group.sfnm.id]
   }
   ingress {
     description     = "Allow inbound back-end communication traffic"
     from_port       = 9443
     to_port         = 9443
     protocol        = "tcp"
-    security_groups = [aws_security_group.tss-web.id, aws_security_group.tnm.id]
+    security_groups = [aws_security_group.sfs-web.id, aws_security_group.sfnm.id]
   }
   egress {
     description = "Allow outbound traffic"
@@ -271,18 +271,18 @@ resource "aws_security_group" "tss-be" {
   }
 }
 
-#--- tss clustering ---#
-resource "aws_security_group" "tss-cluster" {
-  name        = "${var.prefix}-spotfire-tss-cluster-sg"
-  description = "Spotfire Server (tss) cluster traffic"
+#--- sfs clustering ---#
+resource "aws_security_group" "sfs-cluster" {
+  name        = "${var.prefix}-spotfire-sfs-cluster-sg"
+  description = "Spotfire Server (sfs) cluster traffic"
   vpc_id      = aws_vpc.this.id
 
   tags = {
-    Name = "${var.prefix}-tss-cluster-sg"
+    Name = "${var.prefix}-sfs-cluster-sg"
   }
 
   ingress {
-    description = "Allow inbound clustering traffic between tss"
+    description = "Allow inbound clustering traffic between sfs"
     from_port   = 5701
     to_port     = 5703
     protocol    = "tcp"
@@ -311,22 +311,22 @@ resource "aws_security_group" "tss-cluster" {
   }
 }
 
-#--- node manager ---#
-resource "aws_security_group" "tnm" {
-  name        = "${var.prefix}-spotfire-tnm-sg"
-  description = "Spotfire node manager (tnm) cluster traffic"
+#--- sfnm (node manager) ---#
+resource "aws_security_group" "sfnm" {
+  name        = "${var.prefix}-spotfire-sfnm-sg"
+  description = "Spotfire node manager (sfnm) cluster traffic"
   vpc_id      = aws_vpc.this.id
 
   tags = {
-    Name = "${var.prefix}-spotfire-tnm-sg"
+    Name = "${var.prefix}-spotfire-sfnm-sg"
   }
 
   ingress {
-    description     = "Allow inbound service communication from tss nodes"
+    description     = "Allow inbound service communication from sfs nodes"
     from_port       = 9501
     to_port         = 9510
     protocol        = "tcp"
-    security_groups = [aws_security_group.tss-web.id]
+    security_groups = [aws_security_group.sfs-web.id]
   }
   egress {
     description = "Allow outbound traffic"
@@ -334,7 +334,7 @@ resource "aws_security_group" "tnm" {
     to_port     = 0
     protocol    = "tcp"
     //    self        = true
-    security_groups = [aws_security_group.tss-web.id]
+    security_groups = [aws_security_group.sfs-web.id]
   }
 }
 
@@ -388,17 +388,17 @@ resource "local_file" "ansible-inventory-aws_ec2" {
 resource "local_file" "ansible-inventory-hosts_aws" {
   content = templatefile("${path.module}/ansible_inventory.tmpl", {
     # jumphost
-    jumphost_hostnames = aws_instance.jumphost[*].tags["Name"],
+    jumphost_hostnames     = aws_instance.jumphost[*].tags["Name"],
     jumphost_pip_addresses = aws_instance.jumphost[*].public_ip,
-    jumphost_user = lookup(var.aws_ami_user, var.jumphost_vm_os),
-    # tss
-    tss_hostnames = aws_instance.tss[*].tags["Name"],
-    tss_ip_addresses = aws_instance.tss.*.private_ip,
-    tss_user      = lookup(var.aws_ami_user, var.jumphost_vm_os),
+    jumphost_user          = lookup(var.aws_ami_user, var.jumphost_vm_os),
+    # sfs
+    sfs_hostnames    = aws_instance.sfs[*].tags["Name"],
+    sfs_ip_addresses = aws_instance.sfs.*.private_ip,
+    sfs_user         = lookup(var.aws_ami_user, var.jumphost_vm_os),
     # wp
-    wp_hostnames = aws_instance.wp[*].tags["Name"],
-    wp_ip_addresses = aws_instance.wp.*.private_ip,
-    wp_user       = lookup(var.aws_ami_user, var.jumphost_vm_os),
+    sfwp_hostnames    = aws_instance.sfwp[*].tags["Name"],
+    sfwp_ip_addresses = aws_instance.sfwp.*.private_ip,
+    sfwp_user         = lookup(var.aws_ami_user, var.jumphost_vm_os),
     }
   )
   filename             = "${var.workspace_dir}/${terraform.workspace}/ansible_config/hosts_aws"
@@ -412,14 +412,14 @@ resource "local_file" "ansible-config-infra" {
     #ssh_priv_key_file = local.ssh_priv_key_file,
     ssh_priv_key_file = var.ssh_private_key_file,
     //    jumphost_user     = var.jumphost_admin_username,
-    //    tss_user          = var.tss_admin_username,
-    //    wp_user           = var.wp_admin_username,
+    //    sfs_user          = var.sfs_admin_username,
+    //    sfwp_user           = var.sfwp_admin_username,
     jumphost_user = lookup(var.aws_ami_user, var.jumphost_vm_os),
     jumphost_host = aws_instance.jumphost[0].public_ip,
-    tss_user      = lookup(var.aws_ami_user, var.jumphost_vm_os),
-//        wp_user           = lookup(var.aws_ami_user, var.jumphost_vm_os),
-    wp_user           = var.wp_admin_username,
-    wp_password       = var.wp_admin_password,
+    sfs_user      = lookup(var.aws_ami_user, var.jumphost_vm_os),
+//        sfwp_user           = lookup(var.aws_ami_user, var.jumphost_vm_os),
+    sfwp_user         = var.sfwp_admin_username,
+    sfwp_password     = var.sfwp_admin_password,
     db_host           = local.db_address,
     db_admin_user     = var.spotfire_db_admin_username,
     db_admin_password = var.spotfire_db_admin_password,

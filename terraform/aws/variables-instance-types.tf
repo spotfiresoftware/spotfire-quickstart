@@ -33,14 +33,14 @@ variable "jumphost_instance_type" {
 }
 
 #----------------------------------------
-# TSS sizing    S   M   L   XL
+# SFS sizing    S   M   L   XL
 # ------------- --- --- --- ---
 # CPU (# cores) 2   4   8   16
 # Memory (GB)   16  32  64  128
 #----------------------------------------
-variable "tss_instance_types" {
+variable "sfs_instance_types" {
   type        = map(string)
-  description = "TIBCO Spotfire Server VM predefined sizes"
+  description = "Spotfire Server VM predefined sizes"
   default = {
     "XS" = "t3.large"
     "S"  = "m4.xlarge"
@@ -49,20 +49,20 @@ variable "tss_instance_types" {
     "XL" = "c4.8xlarge"
   }
 }
-variable "tss_size" {
-  description = "TIBCO Spotfire Server VM size"
+variable "sfs_size" {
+  description = "Spotfire Server VM size"
   default     = "XS"
 }
 
 #----------------------------------------
-# TSWP sizing   S   M   L   XL
+# SFWP sizing   S   M   L   XL
 # ------------- --- --- --- ---
 # CPU (# cores) 4   8   16  32
 # Memory (GB)   32  64  128 256
 #----------------------------------------
-variable "wp_instance_types" {
+variable "sfwp_instance_types" {
   type        = map(string)
-  description = "TIBCO Spotfire Web Player VM predefined sizes"
+  description = "Spotfire Web Player VM predefined sizes"
   default = {
     "XS" = "t3.large"
     "S"  = "m5.2xlarge"
@@ -71,7 +71,7 @@ variable "wp_instance_types" {
     "XL" = "m4.16xlarge"
   }
 }
-variable "wp_size" {
-  description = "TIBCO Spotfire Web Player VM size"
+variable "sfwp_size" {
+  description = "Spotfire Web Player VM size"
   default     = "XS"
 }

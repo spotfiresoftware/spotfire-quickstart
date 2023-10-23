@@ -158,7 +158,7 @@ deploy: ## Install and configure Spotfire software on infra hosts using Ansible 
 			--extra-vars ${INFRA_EXTRA_VARS} \
 			$(ANSIBLE_EXTRA_ARGS) \
 			site.yml
-#  			--limit wp_servers \
+#  			--limit sfwp_servers \
 #	  		 -vvv
 
 #### other AWS specific #####

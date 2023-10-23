@@ -6,7 +6,7 @@ Follow these instructions if you want to install the following applications in y
 
 - Terraform
 - Ansible
-- Azure CLI
+- AWS CLI
 
 For easy reference, the official vendor procedures for a Debian/Ubuntu distribution are compiled in this page. 
 For other operating systems, please check the specific vendor documentation.
