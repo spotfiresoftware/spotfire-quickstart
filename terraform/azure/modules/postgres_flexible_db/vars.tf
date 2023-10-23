@@ -32,7 +32,7 @@ variable "db_subnet_address_prefixes" {
 #----------------------------------------
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_server
 
-# specific (this: tssdb)
+# specific (this: sfdb)
 variable "postgresql_db_version" {
   default = "15"
 }
@@ -53,4 +53,8 @@ variable "spotfire_db_admin_username" {
 
 variable "spotfire_db_admin_password" {
   //  default = "d3f4ult!"
+}
+
+variable "spotfire_db_name" {
+  default = "spotfiredb"
 }

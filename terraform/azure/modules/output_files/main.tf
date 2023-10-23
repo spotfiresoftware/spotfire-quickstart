@@ -19,8 +19,8 @@ resource "local_file" "ansible-inventory-tmpl-file" {
     username            = var.jumphost_admin_username,
     jumphost_public_ips = local.jumphost_public_ips,
     jumphost_hostnames  = local.jumphost_hostnames,
-    tss_hostnames       = local.tss_hostnames,
-    wp_hostnames        = local.wp_hostnames
+    sfs_hostnames       = local.sfs_hostnames,
+    sfwp_hostnames        = local.sfwp_hostnames
     }
   )
   filename             = "${var.workspace_dir}/${terraform.workspace}/ansible_config/hosts"
@@ -34,9 +34,9 @@ resource "local_file" "ansible-inventory-tmpl-yml-file" {
     username            = var.jumphost_admin_username,
     jumphost_public_ips = local.jumphost_public_ips,
     jumphost_hostnames  = local.jumphost_hostnames,
-    tss_public_ips      = var.tss_public_ips,
-    tss_hostnames       = local.tss_hostnames,
-    wp_hostnames        = local.wp_hostnames
+    sfs_public_ips      = var.sfs_public_ips,
+    sfs_hostnames       = local.sfs_hostnames,
+    sfwp_hostnames        = local.sfwp_hostnames
     }
   )
   filename             = "${var.workspace_dir}/${terraform.workspace}/ansible_config/hosts.yml"
@@ -49,15 +49,15 @@ resource "local_file" "ansible-config-infra" {
     ssh_priv_key_file = var.ssh_private_key_file
     jumphost_user     = var.jumphost_admin_username,
     jumphost_password = var.jumphost_admin_password,
-    tss_user          = var.tss_admin_username,
-    tss_password      = var.tss_admin_password,
-    wp_user           = var.wp_admin_username,
-    wp_password       = var.wp_admin_password,
+    sfs_user          = var.sfs_admin_username,
+    sfs_password      = var.sfs_admin_password,
+    sfwp_user           = var.sfwp_admin_username,
+    sfwp_password       = var.sfwp_admin_password,
     db_admin_user     = var.spotfire_db_admin_username,
     db_admin_password = var.spotfire_db_admin_password,
     db_server         = var.spotfire_db_server_name,
     db_name           = var.spotfire_db_name,
-    tss_version       = var.tss_version,
+    spotfire_version       = var.spotfire_version,
     ui_admin_user     = var.spotfire_ui_admin_username,
     ui_admin_password = var.spotfire_ui_admin_password
     }

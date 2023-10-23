@@ -42,32 +42,35 @@ List popular images (this query takes very long time, see below for more specifi
 az vm image list --output table > build/az-vm-image-list.txt
 ```
 
-List publishers in a location:
-```bash
-export LOCATION=northeurope
-az vm image list-publishers --location northeurope --output table > build/az-vm-image-list-publishers--location-${LOCATION}.txt
-```
+## How to find out what you are looking for
 
-## Find out what you are looking for
+A top-down approach:
 
-List offers from `Debian` in North Europe:
-```bash
-export PUBLISHER=Debian
-az vm image list-offers --location ${LOCATION} --publisher ${PUBLISHER} --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}.txt
-```  
+1. List publishers in a location:
+    ```bash
+    export LOCATION=northeurope
+    az vm image list-publishers --location northeurope --output table > build/az-vm-image-list-publishers--location-${LOCATION}.txt
+    ```
 
-Finding out the available skus for `debian-10`:
-```bash
-export OFFER=debian-11
-az vm image list-skus --location ${LOCATION} --publisher ${PUBLISHER} --offer ${OFFER} --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}--offer-${OFFER}.txt
-```   
+2. List offers from that publisher (Debian) in the specified location (North Europe):
+    ```bash
+    export PUBLISHER=Debian
+    az vm image list-offers --location ${LOCATION} --publisher ${PUBLISHER} --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}.txt
+    ```  
 
-Querying after as specific Debian version:
-```bash
-az vm image list --location northeurope --publisher OpenLogic --offer CentOS --sku 11 --all --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}--offer-${OFFER}--sku-11.txt
-```
+3. Finding out the available SKUs (versions) for `debian-12`:
+    ```bash
+    export OFFER=debian-12
+    az vm image list-skus --location ${LOCATION} --publisher ${PUBLISHER} --offer ${OFFER} --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}--offer-${OFFER}.txt
+    ```   
 
-Generic queries for CentOS, RHEL, SUSE, openSUSE, Debian images.
+4. Querying after as specific SKU:
+   ```bash
+   export SKU=12
+   az vm image list --location northeurope --publisher ${PUBLISHER} --offer ${OFFER} --sku ${SKU} --all --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}--offer-${OFFER}--sku-11.txt
+   ```
+
+As a generic approach, theses are generic queries for CentOS, RHEL, SUSE, openSUSE, Debian images:
 ```bash
 export PUBLISHER=Debian    && az vm image list --location ${LOCATION} --publisher ${PUBLISHER} --all --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}.txt
 export PUBLISHER=Ubuntu    && az vm image list --location ${LOCATION} --publisher ${PUBLISHER} --all --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}.txt
@@ -76,8 +79,9 @@ export PUBLISHER=RedHat    && az vm image list --location ${LOCATION} --publishe
 export PUBLISHER=SUSE      && az vm image list --location ${LOCATION} --publisher ${PUBLISHER} --all --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}.txt
 ```
 
-Querying after Windows offers.
+And, for querying after Microsoft Windows Server offers:
 ```bash
-az vm image list-offers --location northeurope --publisher MicrosoftWindowsServer --output table > build/az-vm-image-list-offers--location-northeurope--publisher-MicrosoftWindowsServer.txt
-az vm image list-skus --location northeurope --publisher MicrosoftWindowsServer --offer WindowsServer --output table > build/az-vm-image-list-skus--location-northeurope--publisher-MicrosoftWindowsServer--offer-WindowsServer.txt
+export PUBLISHER=MicrosoftWindowsServer
+az vm image list-offers --location ${LOCATION} --publisher ${PUBLISHER} --output table > build/az-vm-image-list-offers--location-${LOCATION}--publisher-${PUBLISHER}.txt
+az vm image list-skus   --location ${LOCATION} --publisher ${PUBLISHER} --offer WindowsServer --output table > build/az-vm-image-list-skus--location-${LOCATION}--publisher-${PUBLISHER}--offer-WindowsServer.txt
 ```

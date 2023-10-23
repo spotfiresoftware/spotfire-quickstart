@@ -118,6 +118,6 @@ resource "azurerm_application_gateway" "network" {
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface_application_gateway_backend_address_pool_association
 #resource "azurerm_network_interface_application_gateway_backend_address_pool_association" "this" {
 #  network_interface_id    = var.vm_nic_ip_addresses
-#  ip_configuration_name   = "tss-backend-pool"
+#  ip_configuration_name   = "sfs-backend-pool"
 #  backend_address_pool_id = azurerm_application_gateway.network.backend_address_pool[0].id
 #}

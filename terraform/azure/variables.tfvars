@@ -14,11 +14,11 @@ region   = "Norway East"
 #----------------------------------------
 # You may want to limit the allowed addresses to reach your environment for
 # admin (ssh jumphost) and web access (application)
-admin_address_prefixes = ["12.34.0.0/16"]
-web_address_prefixes   = ["12.0.0.0/8"]
+#admin_address_prefixes = ["12.34.0.0/16"]
+#web_address_prefixes   = ["14.0.0.0/8"]
 
 #----------------------------------------
-# TIBCO Spotfire Database (tssdb)
+# Spotfire Database (sfdb)
 #----------------------------------------
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_server
 # https://docs.microsoft.com/en-us/azure/postgresql/
@@ -61,11 +61,11 @@ spotfire_db_name="spotfiredb"
 ssh_public_key_file  = "~/.ssh/id_rsa_azure.pub"
 ssh_private_key_file = "~/.ssh/id_rsa_azure"
 
-# --- Debian 11
+# --- Debian 12
 os_publisher = "Debian"
-os_offer     = "debian-11"
-os_sku       = "11"
-os_version   = "0.20221108.1193"
+os_offer     = "debian-12"
+os_sku       = "12"
+os_version   = "0.20231013.1532"
 
 #----------------------------------------
 # jumphost
@@ -88,15 +88,15 @@ jumphost_admin_username = "spotfire"
 jumphost_admin_password = "s3cr3t0!"
 
 #----------------------------------------
-# TIBCO Spotfire Server (tss)
+# Spotfire Server (sfs)
 #----------------------------------------
 # VM instances number
-#tss_instances = 2
+#sfs_instances = 2
 # VM size
-#tss_vm_size = "XS"
+#sfs_vm_size = "XS"
 # VM login credentials
 # NOTE:  The username cannot be admin/root in Azure
-tss_admin_username = "spotfire"
+sfs_admin_username = "spotfire"
 
 # NOTE: The supplied password must be between 8-123 characters long
 # and must satisfy at least 3 of password complexity requirements from the following:
@@ -105,30 +105,25 @@ tss_admin_username = "spotfire"
 #    3) Contains a numeric digit
 #    4) Contains a special character
 #    5) Control characters are not allowed
-tss_admin_password = "s3cr3t0!"
+sfs_admin_password = "s3cr3t0!"
 
 #----------------------------------------
-# TIBCO Spotfire Web Player (wp) - Windows
+# Spotfire Web Player (wp) - Windows
 #----------------------------------------
 # VM instances number
-#wp_instances = 2
+#sfwp_instances = 2
 # VM size
-#wp_vm_size = "XS"
+#sfwp_vm_size = "XS"
 # VM Operating System
-# --- Windows Server 2019
-#wp_os_publisher = "MicrosoftWindowsServer"
-#wp_os_offer     = "WindowsServer"
-#wp_os_sku       = "2019-Datacenter"
-#wp_os_version   = "latest"
-# --- Debian 11
-wp_os_publisher = "Debian"
-wp_os_offer    = "debian-11"
-wp_os_sku       = "11"
-wp_os_version   = "0.20231004.1523"
+# --- Debian 12
+sfwp_os_publisher = "Debian"
+sfwp_os_offer    = "debian-12"
+sfwp_os_sku       = "12"
+sfwp_os_version   = "0.20231013.1532"
 
 # VM login credentials
 # NOTE: The username cannot be admin/root in Azure
-wp_admin_username = "spotfire"
+sfwp_admin_username = "spotfire"
 
 # NOTE: The supplied password must be between 8-123 characters long
 # and must satisfy at least 3 of password complexity requirements from the following:
@@ -137,4 +132,4 @@ wp_admin_username = "spotfire"
 #    3) Contains a numeric digit
 #    4) Contains a special character
 #    5) Control characters are not allowed
-wp_admin_password = "s3cr3t0!"
+sfwp_admin_password = "s3cr3t0!"

@@ -58,24 +58,15 @@ resource "azurerm_postgresql_flexible_server" "this" {
   administrator_login    = var.spotfire_db_admin_username
   administrator_password = var.spotfire_db_admin_password
 
-  //  sku_name   = "GP_Gen5_4"
   version    = var.postgresql_db_version
   sku_name   = var.spotfire_db_instance_class
   storage_mb = var.spotfire_db_size
 
   backup_retention_days        = 7
   geo_redundant_backup_enabled = false
-#  auto_grow_enabled            = true
-#
-#  public_network_access_enabled = false
-#
-#  # https://learn.microsoft.com/en-us/azure/governance/policy/samples/built-in-policies
-#  #  ssl_enforcement_enabled         = false
-#  #  ssl_minimal_tls_version_enforced = "TLSEnforcementDisabled"
-#  # Needs to comply with policy: "Azure SQL Database should be running TLS version 1.2 or newer" (Error: 'Enable encryption')
-#  ssl_enforcement_enabled          = true
-#  ssl_minimal_tls_version_enforced = "TLS1_2"
+  auto_grow_enabled            = false
 
+#  public_network_access_enabled = false
 #  infrastructure_encryption_enabled = false // This property is currently still in development and not supported by Microsoft.
 
   tags = var.tags
@@ -98,7 +89,8 @@ resource "azurerm_postgresql_flexible_server" "this" {
 # NOTE: This is not longer required. We use create-db to create spotfire_database
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_flexible_server_database
 #resource "azurerm_postgresql_flexible_server_database" "this" {
-#  name                = "${var.prefix}-spotfire-db"
+##  name                = "${var.prefix}-spotfire-db"
+#  name                = var.spotfire_db_name
 #  server_id           = azurerm_postgresql_flexible_server.this.id
 #  charset             = "UTF8"
 #  collation           = "en_US.utf8"

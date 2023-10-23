@@ -24,8 +24,8 @@ auth_source: auto
 # places a host in the named group if the associated condition evaluates to true
 conditional_groups:
   jumphost_servers: "'jumphost' in name"
-  tss_servers: "'tss' in name"
-  wp_servers: "'wp' in name"
+  sfs_servers: "'sfs' in name"
+  sfwp_servers: "'wp' in name"
 
 # adds variables to each host found by this inventory plugin, whose values are the result of the associated expression
 hostvar_expressions:

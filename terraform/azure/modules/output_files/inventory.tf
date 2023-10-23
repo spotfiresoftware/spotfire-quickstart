@@ -8,8 +8,8 @@ resource "local_file" "ansible-inventory" {
     username            = var.jumphost_admin_username,
     jumphost_public_ips = local.jumphost_public_ips,
     jumphost_hostnames  = local.jumphost_hostnames,
-    tss_hostnames       = local.tss_hostnames,
-    wp_hostnames        = local.wp_hostnames
+    sfs_hostnames       = local.sfs_hostnames,
+    sfwp_hostnames        = local.sfwp_hostnames
     }
   )
   filename             = "terraform.tfstate.d/${terraform.workspace}/ansible_config_files/hosts"
@@ -23,9 +23,9 @@ resource "local_file" "ansible-inventory-yml" {
     username            = var.jumphost_admin_username,
     jumphost_public_ips = local.jumphost_public_ips,
     jumphost_hostnames  = local.jumphost_hostnames,
-    tss_public_ips      = var.tss_public_ips,
-    tss_hostnames       = local.tss_hostnames,
-    wp_hostnames        = local.wp_hostnames
+    sfs_public_ips      = var.sfs_public_ips,
+    sfs_hostnames       = local.sfs_hostnames,
+    sfwp_hostnames        = local.sfwp_hostnames
     }
   )
   filename             = "terraform.tfstate.d/${terraform.workspace}/ansible_config_files/hosts.yml"

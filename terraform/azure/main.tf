@@ -75,8 +75,8 @@ module "bastion" {
   bastion_subnet_address_prefixes = var.bastion_subnet_address_prefixes
 }
 
-# Setup tssdb
-module "tssdb" {
+# Setup sfdb
+module "sfdb" {
   // conditional module execution
   count = var.create_spotfire_db ? 1 : 0
 
@@ -130,29 +130,29 @@ module "jumphost" {
   subnet_id           = module.networking.public_subnet_id
 }
 
-# Setup tss
-module "tss" {
+# Setup sfs
+module "sfs" {
   source   = "./modules/vm_linux"
   location = var.location
   prefix   = var.prefix
   tags     = var.tags
 
   # specific
-  role = "tss"
+  role = "sfs"
 
-  vm_instances = var.tss_instances
-  vm_size      = lookup(var.tss_instance_types, var.tss_size)
+  vm_instances = var.sfs_instances
+  vm_size      = lookup(var.sfs_instance_types, var.sfs_size)
 
   os_publisher = var.os_publisher
   os_offer     = var.os_offer
   os_sku       = var.os_sku
   os_version   = var.os_version
 
-  vm_admin_username   = var.tss_admin_username
-  vm_admin_password   = var.tss_admin_password
+  vm_admin_username   = var.sfs_admin_username
+  vm_admin_password   = var.sfs_admin_password
   ssh_public_key_file = var.ssh_public_key_file
 
-  create_public_ip = var.create_tss_public_ip
+  create_public_ip = var.create_sfs_public_ip
 
   # dependencies
   resource_group_name = module.base.rg_name
@@ -161,9 +161,9 @@ module "tss" {
 }
 
 # Setup wp
-module "wp" {
+module "sfwp" {
   // conditional module execution
-  //  count = var.create_wp_linux ? 1 : 0
+  //  count = var.create_sfwp_linux ? 1 : 0
 
   source   = "./modules/vm_linux"
   location = var.location
@@ -171,19 +171,19 @@ module "wp" {
   tags     = var.tags
 
   # specific
-  role = "wp"
+  role = "sfwp"
 
-  //  vm_instances      = var.wp_instances
-  vm_instances = var.create_wp_linux ? var.wp_instances : 0
-  vm_size      = lookup(var.wp_instance_types, var.wp_size)
+  //  vm_instances      = var.sfwp_instances
+  vm_instances = var.create_sfwp_linux ? var.sfwp_instances : 0
+  vm_size      = lookup(var.sfwp_instance_types, var.sfwp_size)
 
-  os_publisher = var.wp_os_publisher
-  os_offer     = var.wp_os_offer
-  os_sku       = var.wp_os_sku
-  os_version   = var.wp_os_version
+  os_publisher = var.sfwp_os_publisher
+  os_offer     = var.sfwp_os_offer
+  os_sku       = var.sfwp_os_sku
+  os_version   = var.sfwp_os_version
 
-  vm_admin_username   = var.wp_admin_username
-  vm_admin_password   = var.wp_admin_password
+  vm_admin_username   = var.sfwp_admin_username
+  vm_admin_password   = var.sfwp_admin_password
   ssh_public_key_file = var.ssh_public_key_file
 
   create_public_ip = false
@@ -195,9 +195,9 @@ module "wp" {
 }
 
 # Setup wp
-module "wp_windows" {
+module "sfwp_windows" {
   // conditional module execution
-  count = var.create_wp_linux ? 0 : 1
+  count = var.create_sfwp_linux ? 0 : 1
 
   source   = "./modules/vm_windows"
   location = var.location
@@ -207,17 +207,17 @@ module "wp_windows" {
   # specific
   role = "wp"
 
-  //  vm_instances = var.wp_instances
-  vm_instances = var.create_wp_linux ? 0 : var.wp_instances
-  vm_size      = lookup(var.wp_instance_types, var.wp_size)
+  //  vm_instances = var.sfwp_instances
+  vm_instances = var.create_sfwp_linux ? 0 : var.sfwp_instances
+  vm_size      = lookup(var.sfwp_instance_types, var.sfwp_size)
 
-  os_publisher = var.wp_os_publisher
-  os_offer     = var.wp_os_offer
-  os_sku       = var.wp_os_sku
-  os_version   = var.wp_os_version
+  os_publisher = var.sfwp_os_publisher
+  os_offer     = var.sfwp_os_offer
+  os_sku       = var.sfwp_os_sku
+  os_version   = var.sfwp_os_version
 
-  vm_admin_username = var.wp_admin_username
-  vm_admin_password = var.wp_admin_password
+  vm_admin_username = var.sfwp_admin_username
+  vm_admin_password = var.sfwp_admin_password
   //  ssh_public_key_file  = var.ssh_public_key_file
 
   # dependencies
@@ -230,9 +230,9 @@ module "wp_windows" {
   key_vault_key  = module.certificates.key_vault_key
 
   # storage is only required for Windows init scripts, not required for Linux services
-  storage_account   = var.create_wp_linux ? 0 : module.storage.storage_account
-  storage_share     = var.create_wp_linux ? 0 : module.storage.storage_share
-  storage_container = var.create_wp_linux ? 0 : module.storage.storage_container
+  storage_account   = var.create_sfwp_linux ? 0 : module.storage.storage_account
+  storage_share     = var.create_sfwp_linux ? 0 : module.storage.storage_share
+  storage_container = var.create_sfwp_linux ? 0 : module.storage.storage_container
   //  win_script_ssh_setup = module.storage.win_script_ssh_setup
 }
 
@@ -251,7 +251,7 @@ module "appgw" {
 
   # specific
   vnet_name           = module.networking.vnet_name
-  vm_nic_ip_addresses = module.tss.vm_nic_ip_addresses
+  vm_nic_ip_addresses = module.sfs.vm_nic_ip_addresses
 }
 
 # Generate output files
@@ -269,19 +269,19 @@ module "output_files" {
   jumphost_public_ips = module.jumphost.vm_public_ips
   jumphost_hostnames  = module.jumphost.vm_hostnames
 
-  tss_public_ips = module.tss.vm_public_ips
-  tss_hostnames  = module.tss.vm_hostnames
+  sfs_public_ips = module.sfs.vm_public_ips
+  sfs_hostnames  = module.sfs.vm_hostnames
 
-  //  wp_hostnames = module.wp.vm_hostnames
-  wp_hostnames = var.create_wp_linux ? module.wp.vm_hostnames : module.wp_windows.vm_hostnames
+  //  sfwp_hostnames = module.wp.vm_hostnames
+  sfwp_hostnames = var.create_sfwp_linux ? module.sfwp.vm_hostnames : module.sfwp_windows.vm_hostnames
 
   // vm credentials
   jumphost_admin_username = var.jumphost_admin_username
   jumphost_admin_password = var.jumphost_admin_password
-  tss_admin_username      = var.tss_admin_username
-  tss_admin_password      = var.tss_admin_password
-  wp_admin_username       = var.wp_admin_username
-  wp_admin_password       = var.wp_admin_password
+  sfs_admin_username      = var.sfs_admin_username
+  sfs_admin_password      = var.sfs_admin_password
+  sfwp_admin_username       = var.sfwp_admin_username
+  sfwp_admin_password       = var.sfwp_admin_password
 
   // db credentials
   spotfire_db_admin_username = var.spotfire_db_admin_username
@@ -292,7 +292,7 @@ module "output_files" {
   spotfire_ui_admin_password = var.spotfire_ui_admin_password
 
   // conditional output (must indicate the first and only item from the count list)
-  spotfire_db_server_name = var.create_spotfire_db ? module.tssdb[0].db_server.name : var.spotfire_db_server_name
-  #spotfire_db_name        = var.create_spotfire_db ? module.tssdb[0].db_name : var.spotfire_db_name
+  spotfire_db_server_name = var.create_spotfire_db ? module.sfdb[0].db_server.name : var.spotfire_db_server_name
+  #spotfire_db_name        = var.create_spotfire_db ? module.sfdb[0].db_name : var.spotfire_db_name
   spotfire_db_name        = var.spotfire_db_name
 }

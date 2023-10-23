@@ -30,7 +30,7 @@ variable "subnet_id" {
 #----------------------------------------
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_server
 
-# specific (this: tssdb)
+# specific (this: sfdb)
 variable "postgresql_db_version" {
   default = "11"
 }

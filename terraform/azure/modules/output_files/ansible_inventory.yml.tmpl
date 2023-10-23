@@ -10,18 +10,18 @@ all:
           ansible_user:       "${username}"
 %{~ endfor }
 
-    tss_servers:
+    sfs_servers:
       hosts:
-%{~ for index,tss_hostname in tss_hostnames }
-        ${tss_hostname}:
+%{~ for index,sfs_hostname in sfs_hostnames }
+        ${sfs_hostname}:
           ansible_connection: "ssh"
           ansible_user:       "${username}"
 %{~ endfor }
 
-    wp_servers:
+    sfwp_servers:
       hosts:
-%{~ for wp_hostname in wp_hostnames }
-        ${wp_hostname}:
+%{~ for sfwp_hostname in sfwp_hostnames }
+        ${sfwp_hostname}:
           ansible_connection: "ssh"
           ansible_user:       "${username}"
 %{~ endfor }

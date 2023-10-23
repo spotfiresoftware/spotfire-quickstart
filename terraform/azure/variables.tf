@@ -7,17 +7,17 @@ variable "create_spotfire_db" {
 }
 
 variable "create_appgw" {
-  description = "Create Azure Application Gateway for HTTP access to TIBCO Spotfire Server instances (recommended if using Spotfire Server cluster)"
+  description = "Create Azure Application Gateway for HTTP access to Spotfire Server instances (recommended if using Spotfire Server cluster)"
   default     = true
 }
 
-variable "create_tss_public_ip" {
-  description = "Create Public IP for direct access to TIBCO Spotfire Server instances (only for testing)"
+variable "create_sfs_public_ip" {
+  description = "Create Public IP for direct access to Spotfire Server instances (only for testing)"
   default     = false
 }
 
 # NOTE: See documentation for differences when running Web Player on Linux
-variable "create_wp_linux" {
+variable "create_sfwp_linux" {
   description = "Use Linux for Web Player services"
   default     = true
 }
@@ -42,9 +42,9 @@ variable "tags" {
     # specific tags
     description   = "Spotfire Quickstart: Basic install"
     app           = "Spotfire"
-    app_version   = "12.0.0"
+    app_version   = "14.0.0"
     environment   = "dev"
-    infra_version = "0.3"
+    infra_version = "0.4"
   }
 }
 
@@ -121,7 +121,7 @@ variable "db_subnet_address_prefixes" {
 }
 
 #----------------------------------------
-# Spotfire Database (tssdb)
+# Spotfire Database (sfdb)
 #----------------------------------------
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/postgresql_server
 # https://docs.microsoft.com/en-us/azure/postgresql/
@@ -199,19 +199,19 @@ variable "ssh_private_key_file" {
 # VM Operating System
 variable "os_publisher" {
   description = "Spotfire VM operating system publisher"
-  default     = "OpenLogic"
+  default     = "Debian"
 }
 variable "os_offer" {
   description = "Spotfire VM operating system distribution"
-  default     = "Centos"
+  default     = "debian-12"
 }
 variable "os_sku" {
   description = "Spotfire VM operating system SKU"
-  default     = "8_2"
+  default     = "12"
 }
 variable "os_version" {
   description = "Spotfire VM operating system version"
-  default     = "8.2.2020111800"
+  default     = " 0.20231004.1523"
 }
 
 #----------------------------------------
@@ -237,11 +237,11 @@ variable "jumphost_admin_password" {
 }
 
 #----------------------------------------
-# Spotfire Server (tss)
+# Spotfire Server (sfs)
 #----------------------------------------
 # VM login credentials
-variable "tss_admin_username" {
-  description = "TIBCO Spotfire Server VM admin username"
+variable "sfs_admin_username" {
+  description = "Spotfire Server VM admin username"
   # WARN: cannot be admin/root in Azure
   default = "spotfire"
 }
@@ -252,8 +252,8 @@ variable "tss_admin_username" {
 #    3) Contains a numeric digit
 #    4) Contains a special character
 #    5) Control characters are not allowed" Target="adminPassword"
-variable "tss_admin_password" {
-  description = "TIBCO Spotfire Server VM admin password"
+variable "sfs_admin_password" {
+  description = "Spotfire Server VM admin password"
   default     = "d3f4ult!"
   sensitive   = true
 }
@@ -262,26 +262,26 @@ variable "tss_admin_password" {
 # Web Player (wp)
 #----------------------------------------
 # VM Operating System
-variable "wp_os_publisher" {
-  description = "TIBCO Spotfire Web Player VM operating system publisher"
+variable "sfwp_os_publisher" {
+  description = "Spotfire Web Player VM operating system publisher"
   default     = "MicrosoftWindowsServer"
 }
-variable "wp_os_offer" {
-  description = "TIBCO Spotfire Web Player VM operating system offer"
+variable "sfwp_os_offer" {
+  description = "Spotfire Web Player VM operating system offer"
   default     = "WindowsServer"
 }
-variable "wp_os_sku" {
-  description = "TIBCO Spotfire Web Player VM operating system SKU"
+variable "sfwp_os_sku" {
+  description = "Spotfire Web Player VM operating system SKU"
   default     = "2019-Datacenter"
 }
-variable "wp_os_version" {
-  description = "TIBCO Spotfire Web Player VM operating system version"
+variable "sfwp_os_version" {
+  description = "Spotfire Web Player VM operating system version"
   default     = "latest"
 }
 
 # VM login credentials
-variable "wp_admin_username" {
-  description = "TIBCO Spotfire Web Player VM admin username"
+variable "sfwp_admin_username" {
+  description = "Spotfire Web Player VM admin username"
   # WARN: cannot be admin/root in Azure
   default = "spotfire"
 }
@@ -292,8 +292,8 @@ variable "wp_admin_username" {
 #    3) Contains a numeric digit
 #    4) Contains a special character
 #    5) Control characters are not allowed" Target="adminPassword"
-variable "wp_admin_password" {
-  description = "TIBCO Spotfire Web Player VM admin password"
+variable "sfwp_admin_password" {
+  description = "Spotfire Web Player VM admin password"
   default     = "d3f4ult!"
   sensitive   = true
 }
@@ -305,11 +305,11 @@ variable "jumphost_instances" {
   description = "Number of jumphost instances"
   default     = 1
 }
-variable "tss_instances" {
-  description = "Number of TIBCO Spotfire Server instances"
+variable "sfs_instances" {
+  description = "Number of Spotfire Server instances"
   default     = 2
 }
-variable "wp_instances" {
-  description = "Number of TIBCO Spotfire Web Player instances"
+variable "sfwp_instances" {
+  description = "Number of Spotfire Web Player instances"
   default     = 2
 }
