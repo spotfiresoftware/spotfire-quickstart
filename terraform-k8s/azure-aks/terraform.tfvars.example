@@ -1,0 +1,15 @@
+appId    = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
+password = "********-****-****-****-************"
+
+prefix   = "sandbox-codename"
+
+# Azure AKS number of working nodes
+# NOTE: This is the total number of working nodes, accounting for all the availability zone
+aks_num_nodes = 3
+
+# For Azure Cloud machine types, see https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-general
+#
+aks_machine_type = "Standard_D2_v2"
+
+# You need to create the service principal manually first. Use ./az_create_sp.sh
+#aks_service_principal_object_id = "11AA22BB-33CC-44DD-55EE-ABCDEFGHIJK"
