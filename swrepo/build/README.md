@@ -1,18 +1,18 @@
-# Spotfire software repository
+# Spotfire local software repository
 
-By default, the Ansible playbooks expect your Spotfire software in this location.
+By default, the provided `Makefile`, templates and configuration variables within the Ansible playbook and the Spotfire CDK quickstart, 
+expect your Spotfire software components in this location: `<this_repo_root>/swrepo/build/<spotfire_version>` 
 
-This is an and example of the required contents for version 12.5.0:
+This is an example of the Spotfire software components for Spotfire version 14.0.0:
 
 ```
-swrepo/build $ find 12.5.0/
-12.5.0/
-12.5.0/SPOT_sfire_server_12.5.0_languagepack-multi.zip
-12.5.0/Spotfire.Dxp.PythonServiceLinux.sdn
-12.5.0/Spotfire.Dxp.RServiceLinux.sdn
-12.5.0/Spotfire.Dxp.TerrServiceLinux.sdn
-12.5.0/Spotfire.Dxp.netcore-linux.sdn
-12.5.0/Spotfire.Dxp.sdn
-12.5.0/tsnm-12.5.0.x86_64.tar.gz
-12.5.0/tss-12.5.0.x86_64.tar.gz
+swrepo/build $ ls -1 14.0.0/
+Spotfire.Dxp.netcore-linux.sdn
+Spotfire.Dxp.PythonServiceLinux.sdn
+Spotfire.Dxp.RServiceLinux.sdn
+Spotfire.Dxp.sdn
+Spotfire.Dxp.TerrServiceLinux.sdn
+spotfirenodemanager-14.0.0.x86_64.tar.gz
+spotfireserver-14.0.0.x86_64.tar.gz
+SPOT_sfire_server_14.0.0_languagepack-multi.zip
 ```
