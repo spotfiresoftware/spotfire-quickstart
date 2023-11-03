@@ -23,6 +23,7 @@ Quickstarts:
   - [Spotfire quickstart on Google Cloud using Terraform and Ansible](terraform/gcp/README.md)
 
 - Using containers:
+  - [Spotfire quickstart on AWS Elastic Kubernetes Service (EKS) using Spotfire containers images and Helm charts](./terraform-k8s/aws-eks/README.md)
   - [Spotfire quickstart on Azure Kubernetes Service (AKS) using Spotfire containers images and Helm charts](./terraform-k8s/azure-aks/README.md)
   - [Spotfire quickstart on Google Kubernetes Engine (GKE) using Spotfire containers images and Helm charts](./terraform-k8s/google-gke/README.md)
 
