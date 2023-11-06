@@ -6,11 +6,11 @@ variable "tags" {
 
   default = {
     # specific tags
-    description   = "Spotfire quickstart: basic install"
+    description   = "Spotfire quickstart: K8s install"
     app           = "Spotfire"
-    app_version   = "12.5.0"
+    app_version   = "14.0.0"
     environment   = "dev"
-    infra_version = "0.3"
+    infra_version = "0.4"
   }
 }
 
@@ -94,7 +94,7 @@ variable "aks_num_nodes" {
 }
 
 variable "aks_machine_type" {
-  default     = "Standard_D2_v2"
+  default     = "Standard_D3_v2"
   description = "Type of machine for AKS nodes"
 }
 

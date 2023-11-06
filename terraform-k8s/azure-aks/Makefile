@@ -72,7 +72,7 @@ az-aks-show-dashboard: ## Show AKS dashboard url
 	az aks browse --resource-group $(shell terraform output -raw resource_group_name) --name $(shell terraform output -raw kubernetes_cluster_name)
 
 #### Azure specific (OCI registry) #####
-az-registry-show: ## Show your OCI registry
+az-acr-show: ## Show your OCI registry
 	$(eval REGISTRY=$(shell terraform output -raw registry_url))
 	@echo -n "To set your REGISTRY, run:\nexport REGISTRY=$(REGISTRY)\n\n"
 
@@ -80,23 +80,21 @@ az-acr-list: ## Show ACR (Azure Container Registry) list
 	az acr list --resource-group $(shell terraform output -raw resource_group_name) --output table
 	$(eval REGISTRY_NAME=$(shell terraform output -raw registry_name))
 	az acr repository list --name $(REGISTRY_NAME) --output table
-	az acr repository show-tags --name $(REGISTRY_NAME) --output table --repository tibco/spotfire-server
+	az acr repository show-tags --name $(REGISTRY_NAME) --output table --repository spotfire/spotfire-server
 
 az-acr-login: ## Log in to ACR (Azure Container Registry)
 	az acr login --name $(shell az acr list --resource-group $(shell terraform output -raw resource_group_name) --query "[].[loginServer]" --output tsv)
 
 az-acr-verify: ## Verify ACR (Azure Container Registry) connectivity
 	$(eval REGISTRY_NAME=$(shell terraform output -raw registry_name))
+	$(eval RESOURCE_GROUP_NAME=$(shell terraform output -raw resource_group_name))
+	$(eval VNET_NAME=$(shell terraform output -raw vnet_name))
 	# https://aka.ms/acr/health-check
 	@echo -n "\nHealth check"
-	az acr check-health --name $(REGISTRY_NAME) --vnet sandbox-peach-vnet -y
+	az acr check-health --name $(REGISTRY_NAME) --vnet $(VNET_NAME) -y
 	# https://learn.microsoft.com/en-us/troubleshoot/azure/azure-kubernetes/cannot-pull-image-from-acr-to-aks-cluster
 	@echo -n "\nCheck ACR"
-	az aks check-acr --name $(shell terraform output -raw kubernetes_cluster_name) --resource-group $(shell terraform output -raw resource_group_name) --acr $(REGISTRY_NAME)
-	#az role assignment list --scope /subscriptions/<subscriptionID>/resourceGroups/$(shell terraform output -raw resource_group_name)/providers/Microsoft.ContainerRegistry/registries/$(REGISTRY_NAME) -o table
-	#@echo -n "\nRoles"
-	#$(eval ARM_SUBSCRIPTION_ID=00112233-4455-6677-8899-ABCDEFGHIJK)
-	#az role assignment list --scope /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(shell terraform output -raw resource_group_name)/providers/Microsoft.ContainerRegistry/registries/$(REGISTRY_NAME) -o table
-
-az-id:
-	terraform output -raw arm_subscription_id
+	az aks check-acr --name $(shell terraform output -raw kubernetes_cluster_name) --resource-group $(RESOURCE_GROUP_NAME) --acr $(REGISTRY_NAME)
+	@echo -n "\nList ACR Roles"
+	$(eval ARM_SUBSCRIPTION_ID=$(shell az account show --query id | tr -d '"'))
+	az role assignment list --scope /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(RESOURCE_GROUP_NAME)/providers/Microsoft.ContainerRegistry/registries/$(REGISTRY_NAME) -o table

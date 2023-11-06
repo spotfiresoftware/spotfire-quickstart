@@ -1,7 +1,6 @@
 #----------------------------------------
 # Networking
 #----------------------------------------
-
 resource "azurerm_resource_group" "this" {
   #  name     = "${random_pet.prefix.id}-rg"
   name     = "${var.prefix}-rg"
@@ -9,7 +8,6 @@ resource "azurerm_resource_group" "this" {
 
   tags = var.tags
 }
-
 
 # Create a virtual network within the resource group
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/virtual_network
@@ -33,4 +31,3 @@ resource "azurerm_subnet" "k8s_subnet" {
   private_endpoint_network_policies_enabled = true
   service_endpoints = ["Microsoft.ContainerRegistry"]
 }
-

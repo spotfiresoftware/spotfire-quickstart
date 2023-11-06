@@ -1,15 +1,38 @@
+#----------------------------------------
+# Credentials
+#----------------------------------------
 appId    = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
 password = "********-****-****-****-************"
 
-prefix   = "sandbox-codename"
+# NOTE: You need to create the service principal manually. Use ./az_create_sp.sh
+#aks_service_principal_object_id = "11AA22BB-33CC-44DD-55EE-ABCDEFGHIJK"
+
+#----------------------------------------
+# Prefix
+#----------------------------------------
+prefix = "sandbox-peach"
+
+#----------------------------------------
+# Location: regions & zones
+#----------------------------------------
+#location = "northeurope"
+#region   = "northeurope"
+
+#----------------------------------------
+# Networking
+#----------------------------------------
+#admin_address_prefixes = ["43.21.0.0/16"]
+#web_address_prefixes   = ["43.0.0.0/8"]
+
+#----------------------------------------
+# Kubernetes
+#----------------------------------------
+# https://learn.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli
+#aks_cluster_version = 1.28
 
 # Azure AKS number of working nodes
 # NOTE: This is the total number of working nodes, accounting for all the availability zone
-aks_num_nodes = 3
+#aks_num_nodes = 3
 
 # For Azure Cloud machine types, see https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-general
-#
-aks_machine_type = "Standard_D2_v2"
-
-# You need to create the service principal manually first. Use ./az_create_sp.sh
-#aks_service_principal_object_id = "11AA22BB-33CC-44DD-55EE-ABCDEFGHIJK"
+#aks_machine_type = "Standard_D3_v2"

@@ -3,6 +3,11 @@ output "resource_group_name" {
   description = "AKS resource group name"
 }
 
+output "vnet_name" {
+  value       = azurerm_virtual_network.this.name
+  description = "AKS Virtual Network name"
+}
+
 output "kubernetes_cluster_name" {
   value       = azurerm_kubernetes_cluster.this.name
   description = "AKS cluster name"
@@ -46,9 +51,9 @@ output "num_cluster_nodes" {
 
 output "registry_url" {
   value       = azurerm_container_registry.this.login_server
-  description = "Azure Container Registry (ACR)"
+  description = "Azure Container Registry (ACR) URL"
 }
 output "registry_name" {
   value       = azurerm_container_registry.this.name
-  description = "Azure Container Registry (ACR)"
+  description = "Azure Container Registry (ACR) name"
 }
