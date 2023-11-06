@@ -46,7 +46,7 @@ helm-pkg-spotfire: ## Package Spotfire Helm charts
 helm-deploy-spotfire: ## Deploy Spotfire using custom Helm umbrella chart
 	kubectl create namespace $(NAMESPACE) || true
 	cd $(SPOTFIRE_CDK_REPO_DIR)/helm/ \
-       && time helm upgrade --install --namespace $(NAMESPACE) $(RELEASE)-spotty examples/spotfire-umbrella-example \
+       && time helm upgrade --install --namespace $(NAMESPACE) $(RELEASE) examples/spotfire-umbrella-example \
          --set global.spotfire.acceptEUA=true \
          --set global.spotfire.image.registry=$(REGISTRY) \
          --set global.spotfire.image.pullPolicy="Always" \
@@ -62,18 +62,26 @@ kubectl-ls-namespace: ## Show deployed Helm charts in configured namespace
 	cd $(SPOTFIRE_CDK_REPO_DIR)/helm \
 	  && time kubectl --namespace $(NAMESPACE) get all
 
-kubectl-terminate-pods: ## Show deployed Helm charts in configured namespace
-	for p in $(kubectl -n $(NAMESPACE) get pods | grep Terminating | awk '{print $1}'); do kubectl delete pod $p --grace-period=0 --force;done
-
+kubectl-terminate-pods: # Kill all "terminating" pods
+	$(shell for p in $(shell kubectl -n $(NAMESPACE) get pods | grep Terminating | awk '{print $1}'); do kubectl delete pod $p --grace-period=0 --force;done)
 
 show-spotfire-credentials: ## Show the automatically generated Spotfire admin password
-	$(eval SPOTFIREADMIN_PASSWORD=$(shell kubectl get secrets --namespace $(NAMESPACE) $(RELEASE)-spotty-spotfire-server -o jsonpath="{.data.SPOTFIREADMIN_PASSWORD}" | base64 --decode))
+	$(eval SPOTFIREADMIN_PASSWORD=$(shell kubectl get secrets --namespace $(NAMESPACE) $(RELEASE)-spotfire-server -o jsonpath="{.data.SPOTFIREADMIN_PASSWORD}" | base64 --decode))
 	@echo "SPOTFIREADMIN_PASSWORD=$(SPOTFIREADMIN_PASSWORD)"
 
-#show-spotfire-lb:
-#	$(eval LB_IP_ADDRESS=kubectl --namespace $(NAMESPACE) get service/$(RELEASE)-spotty-haproxy --output json  | jq -r '.status[].ingress[].ip' )
+show-lb: ## Show Load Balancer
+#	$(eval LB_IP_ADDRESS=$(shell kubectl --namespace $(NAMESPACE) get service/$(RELEASE)-haproxy --output json  | jq -r '.status[].ingress[].ip' ))
+#	$(eval SPOTFIRE_LB_PIP=$(shell kubectl --namespace $(NAMESPACE) get service/$(RELEASE)-haproxy -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'))
+	$(eval SPOTFIRE_LB_PIP=$(shell kubectl -n chocolate get svc vanilla-haproxy -o json | jq -r '.status.loadBalancer.ingress[0] | if .ip then .ip else .hostname end'))
+	@echo "SPOTFIRE_LB_PIP=$(SPOTFIRE_LB_PIP)"
 
+verify-lb: ## Verify connection to Spotfire via Load Balancer
+#	$(eval SPOTFIRE_LB_PIP=$(shell kubectl --namespace $(NAMESPACE) get service/$(RELEASE)-haproxy -o=jsonpath='{.status.loadBalancer.ingress[0].ip}'))
+	$(eval SPOTFIRE_LB_PIP=$(shell kubectl -n chocolate get svc vanilla-haproxy -o json | jq -r '.status.loadBalancer.ingress[0] | if .ip then .ip else .hostname end'))
+	echo "Verify Spotfire response from: $(SPOTFIRE_LB_PIP)"
+	curl $(SPOTFIRE_LB_PIP) -v -H "Host: spotfire.local" -L
+
+docker-build-push-images: git-clone-spotfire-cdk docker-build-images docker-push-images # Clone/pull Spotfire CDK repo AND build Spotfire images AND push Spotfire images to the configured OCI registry
+helm-pkg-deploy-charts: helm-pkg-spotfire helm-deploy-spotfire show-spotfire-credentials # Package Spotfire Helm charts AND deploy Spotfire to the default configured K8s cluster in kubectl
 show-namespace: helm-ls-namespace kubectl-ls-namespace
-docker-build-push-images: git-clone-spotfire-cdk docker-build-images docker-push-images ## Build and push the Spotfire container images to the configured OCI registry
-helm-pkg-deploy-charts: helm-pkg-spotfire helm-deploy-spotfire show-spotfire-credentials ## Package Spotfire Helm charts and deploy Spotfire to the default configured K8s cluster in kubectl
-all: docker-build-push-images helm-pkg-deploy-charts show-spotfire-credentials ## All in one command
+all: docker-build-push-images helm-pkg-deploy-charts show-namespace show-spotfire-credentials show-lb verify-lb ## All in one command
