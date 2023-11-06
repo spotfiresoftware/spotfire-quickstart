@@ -3,17 +3,17 @@
 
 variable "container_images" {
   default = [
-    "tibco/spotfire-config",
-    "tibco/spotfire-pythonservice",
-    "tibco/spotfire-terrservice",
-    "tibco/spotfire-automationservices",
-    "tibco/spotfire-deployment",
-    "tibco/spotfire-rservice",
-    "tibco/spotfire-webplayer",
-    "tibco/spotfire-base",
-    "tibco/spotfire-node-manager",
-    "tibco/spotfire-server",
-    "tibco/spotfire-workerhost"
+    "spotfire/spotfire-config",
+    "spotfire/spotfire-pythonservice",
+    "spotfire/spotfire-terrservice",
+    "spotfire/spotfire-automationservices",
+    "spotfire/spotfire-deployment",
+    "spotfire/spotfire-rservice",
+    "spotfire/spotfire-webplayer",
+    "spotfire/spotfire-base",
+    "spotfire/spotfire-nodemanager",
+    "spotfire/spotfire-server",
+    "spotfire/spotfire-workerhost"
   ]
   description = "Spotfire container images"
 }

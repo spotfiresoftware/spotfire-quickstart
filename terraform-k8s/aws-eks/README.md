@@ -1,49 +1,64 @@
-# Automatic Deployment of Spotfire Platform on AWS Elastic Kubernetes Service (EKS) using Spotfire containers images and Helm charts
+# Spotfire Quickstart on Amazon Elastic Kubernetes Service (EKS)
 
 ## Overview
 
-This **Spotfire QuickStart in Amazon EKS** shows how to automatically deploy the [Spotfire platform](https://www.spotfire.com/) on Amazon Elastic Kubernetes Service (EKS) using container images and Helm charts.
+This **Spotfire QuickStart on Amazon EKS** shows how to automatically deploy the [Spotfire platform](https://www.spotfire.com/) on [Amazon Elastic Kubernetes Service (EKS)](https://aws.amazon.com/eks/) using container images and Helm charts.
 
-**Note**: The purpose of this quickstart example is to provide a starting point for automatic deployment of Spotfire. This quickstart is not for production usage. This quickstart example can be easily extended and customized for production usage.
+**Note**: The purpose of this quickstart example is to provide a starting point for automatic deployment of Spotfire.
+This quickstart is not for production usage.
+This quickstart example can be easily extended and customized for production usage.
 
-**Note**: This quickstart example has been verified with Spotfire 12.5 release, but it may work for other Spotfire versions with minimal modifications.
+**Note**: This quickstart example has been verified with Spotfire 14.0 release, but it may work for other Spotfire versions with minimal modifications.
 
 ### Which kind of Spotfire environment is deployed by this quickstart example?
 
 This quickstart has 2 main parts:
 
-1. Deploy the required infrastructure components (using Terraform templates):
-   - Virtual Private Cloud: AWS VPC.
-   - Kubernetes cluster: AWS Elastic Kubernetes Service (EKS).
-   - OCI registry: AWS Elastic Container Registry (ECR).
+1. Create the required infrastructure components using [Terraform](https://www.terraform.io/) templates:
+   - Virtual Private Cloud: Amazon VPC.
+   - Kubernetes cluster: Amazon Elastic Kubernetes Service (EKS).
+   - OCI registry: Amazon Elastic Container Registry (ECR).
 
-2. Deploy the Spotfire environment (using the Spotfire CDK) in the created infrastructure:
+2. Deploy the Spotfire environment using the [Spotfire Cloud Deployment Kit (CDK)](https://github.com/spotfiresoftware/spotfire-cloud-deployment-kit/tree/main) in the created infrastructure:
    - All typical services in a Spotfire platform environment, using the Spotfire container images and Helm charts
 
-The following diagram shows the deployed environment by this **Quickstart for Spotfire in EKS**:
+The following diagram shows the deployed environment by this **Quickstart for Spotfire on EKS**:
 
-![Spotfire architecture (quickstart) in EKS](./images/spotfire-arch-aws-eks.png)
+![Spotfire architecture (quickstart) on EKS](./images/spotfire-arch-aws-eks.png)
 
 **Note**: This quickstart uses the [Spotfire Cloud Deployment Kit](https://github.com/spotfiresoftware/spotfire-cloud-deployment-kit/tree/main) to build and deploy the Spotfire container images and Helm charts.
 For more information, see the project's documentation and examples.
 
-**Note**: This quickstart has been customized and extended from [Provision an EKS Cluster learn guide](https://learn.hashicorp.com/terraform/kubernetes/provision-eks-cluster).
-For more information and extending the example, see [https://registry.terraform.io/providers/hashicorp/aws/latest].
+**Note**: This quickstart has been customized and extended from the tutorial: [Provision an EKS Cluster (AWS)](https://learn.hashicorp.com/terraform/kubernetes/provision-eks-cluster).
+For more information and extending the example, see the [Terraform AWS provider documentation](https://registry.terraform.io/providers/hashicorp/aws/latest).
 
 ## Prerequisites
 
-- Required **Spotfire** installation packages.
-- A **Linux host** with admin permissions to build and execute the containers.
+- Required **Spotfire** installation packages. You can download them from [eDelivery](https://edelivery.tibco.com/storefront/index.ep).
+- A **Linux host** with admin permissions to install and use the tools.
     You can use a bare metal installed server, a virtual machine, or WSL on Windows.
     In this quickstart we will refer to it as "_the launcher_".
-    All the examples are using an Ubuntu server.
 - You have the following installed command tools in your launcher: `make`, `terraform`, `docker`, `kubectl`, `helm`, `jq`.
-- You have installed AWS CLI.
+- You have installed the AWS CLI.
 - A valid **AWS account and access credentials**.
+
+**Note**: All the examples and scripts in this quickstart use a Debian/Ubuntu host as the launcher, but you can use any Linux distro.
+See the corresponding vendor instructions and adapt the quickstart as required for using other operating systems.
+
+## Launcher setup
+
+1. Clone this repo into a folder in your launcher host:
+    ```bash
+    git clone https://github.com/spotfiresoftware/spotfire-quickstart
+    ```
+
+2. Download the Spotfire software and copy the files into `<this_repo_root>/swrepo/build/<spotfire_version>`.
+
+   **Note**: See the [Spotfire software repository](../../swrepo/build/README.md) for more information.
 
 ## Usage
 
-### Deploy an EKS cluster in AWS
+### Deploy an EKS cluster on AWS
 
 For easier setup we provide a `Makefile` with commands for the  common steps.
 You can read the `Makefile` for more info on the specific commands.
@@ -115,7 +130,7 @@ Steps:
     export REGISTRY=11112222233333.dkr.ecr.eu-north-1.amazonaws.com
     ```
 
-### Deploy Spotfire in the created EKS cluster
+### Deploy Spotfire on the created EKS cluster
 
 Now we use the Spotfire CDK to build the Spotfire container images and Helm charts and deploy Spotfire in the created K8s cluster.
 
@@ -135,7 +150,7 @@ make destroy
 
 ### Other
 
-See other useful commands included in the provided 'Makefile':
+See other useful commands included in the provided `Makefile`:
 ```bash
 make
 ```

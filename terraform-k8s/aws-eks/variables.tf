@@ -32,9 +32,9 @@ variable "admin_address_prefixes" {
 #----------------------------------------
 # Kubernetes
 #----------------------------------------
-variable "cluster_version" {
+variable "eks_cluster_version" {
   default = "1.28"
-  description = "Kubernetes cluster version"
+  description = "EKS cluster version"
 }
 
 variable "eks_num_nodes" {
@@ -59,16 +59,12 @@ variable "iam_eks_node_role_arn" {
   description = "Existing IAM role ARN for the EKS nodes"
 }
 
-variable "k8s_cluster_service_cidr_block" {
+variable "eks_cluster_service_cidr_block" {
   default     = "172.20.0.0/16"
   description = "EKS cidr block"
 }
 
-variable "eks_subnet_list" {
-  default = ""
-}
-
-# Nodes were running in a private subnets and I haven't configured a private endpoint under API server endpoint access.
+# https://docs.aws.amazon.com/eks/latest/userguide/troubleshooting.html
 variable "cluster_endpoint_private_access" {
   default = "true"
 }

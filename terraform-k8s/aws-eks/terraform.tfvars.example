@@ -1,9 +1,4 @@
 #----------------------------------------
-# Prefix
-#----------------------------------------
-prefix = "sandbox-kong"
-
-#----------------------------------------
 # IAM roles
 #----------------------------------------
 # https://docs.aws.amazon.com/eks/latest/userguide/service_IAM_role.html
@@ -13,7 +8,12 @@ prefix = "sandbox-kong"
 #iam_eks_node_role_arn    = "arn:aws:iam::11112222233333:role/AmazonEKSNodeRole"
 
 #----------------------------------------
-# AWS Location: regions & zones
+# Prefix
+#----------------------------------------
+prefix = "sandbox-kong"
+
+#----------------------------------------
+# Location: regions & zones
 #----------------------------------------
 #region = "eu-north-1"
 
@@ -23,11 +23,14 @@ prefix = "sandbox-kong"
 #admin_address_prefixes = ["43.21.0.0/16"]
 #web_address_prefixes   = ["43.0.0.0/8"]
 
+#----------------------------------------
+# Kubernetes
+#----------------------------------------
 # https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html
 #eks_cluster_version = "1.28"
 
 # AWS EKS number of working nodes
-eks_num_nodes = 2
+#eks_num_nodes = 2
 
 # https://aws.amazon.com/ec2/instance-types/t3/
 #eks_instance_type = [ "t3.xlarge" ]
