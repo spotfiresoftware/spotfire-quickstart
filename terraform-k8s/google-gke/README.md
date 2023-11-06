@@ -1,46 +1,61 @@
-# Automatic Deployment of Spotfire Platform on Google Kubernetes Engine (GKE) using Spotfire containers images and Helm charts
+# Spotfire Quickstart on Google Kubernetes Engine (GKE)
 
 ## Overview
 
-This **Spotfire QuickStart in Google GKE** shows how to automatically deploy the [Spotfire platform](https://www.spotfire.com/) on Google Kubernetes Engine (GKE) using container images and Helm charts.
+This **Spotfire QuickStart on Google GKE** shows how to automatically deploy the [Spotfire platform](https://www.spotfire.com/) on [Google Kubernetes Engine (GKE)](https://cloud.google.com/kubernetes-engine?hl=en) using container images and Helm charts.
 
-**Note**: The purpose of this quickstart example is to provide a starting point for automatic deployment of Spotfire. This quickstart is not for production usage. This quickstart example can be easily extended and customized for production usage.
+**Note**: The purpose of this quickstart example is to provide a starting point for automatic deployment of Spotfire.
+This quickstart is not for production usage.
+This quickstart example can be easily extended and customized for production usage.
 
-**Note**: This quickstart example has been verified with Spotfire 12.5 release, but it may work for other Spotfire versions with minimal modifications.
+**Note**: This quickstart example has been verified with Spotfire 14.0 release, but it may work for other Spotfire versions with minimal modifications.
 
 ### Which kind of Spotfire environment is deployed by this quickstart example?
 
 This quickstart has 2 main parts:
 
-1. Deploy the required infrastructure components (using Terraform templates):
+1. Create the required infrastructure components using [Terraform](https://www.terraform.io/) templates:
    - Virtual Private Cloud: Google Cloud VPC.
    - Kubernetes cluster: Google Kubernetes Engine (GKE).
    - OCI registry: Google Cloud Artifact Registry.
    - Load balancer: Google Cloud Load Balancing (optional).
 
-2. Deploy the Spotfire environment (using the Spotfire CDK) in the created infrastructure:
+2. Deploy the Spotfire environment using the [Spotfire Cloud Deployment Kit (CDK)](https://github.com/spotfiresoftware/spotfire-cloud-deployment-kit/tree/main) in the created infrastructure:
    - All typical services in a Spotfire platform environment, using the Spotfire container images and Helm charts
 
-The following diagram shows the deployed environment by this **Quickstart for Spotfire in GKE**:
+The following diagram shows the deployed environment by this **Quickstart for Spotfire on GKE**:
 
 ![Spotfire architecture (quickstart) in GKE](./images/spotfire-arch-gcp-gke.png)
 
 **Note**: This quickstart uses the [Spotfire Cloud Deployment Kit](https://github.com/spotfiresoftware/spotfire-cloud-deployment-kit/tree/main) to build and deploy the Spotfire container images and Helm charts.
 For more information, see the project's documentation and examples.
 
-**Note**: This quickstart has been customized and extended from [Provision a GKE Cluster learn guide](https://learn.hashicorp.com/terraform/kubernetes/provision-gke-cluster).
-For more information and extending the example, see [https://registry.terraform.io/providers/hashicorp/google/latest].
+**Note**: This quickstart has been customized and extended from the tutorial: [Provision a GKE Cluster (Google)](https://learn.hashicorp.com/terraform/kubernetes/provision-gke-cluster).
+For more information and extending the example, see the [Terraform Google provider documentation](https://registry.terraform.io/providers/hashicorp/google/latest).
 
 ## Prerequisites
 
-- Required **Spotfire** installation packages.
-- A **Linux host** with admin permissions to build and execute the containers.
+- Required **Spotfire** installation packages. You can download them from [eDelivery](https://edelivery.tibco.com/storefront/index.ep).
+- A **Linux host** with admin permissions to install and use the tools.
     You can use a bare metal installed server, a virtual machine, or WSL on Windows.
     In this quickstart we will refer to it as "_the launcher_".
-    All the examples are using an Ubuntu server.
 - You have the following installed command tools in your launcher: `make`, `terraform`, `docker`, `kubectl`, `helm`, `jq`.
-- You have installed Google CLI.
+- You have installed the Google CLI.
 - A valid **GCP account and access credentials**.
+
+**Note**: All the examples and scripts in this quickstart use a Debian/Ubuntu host as the launcher, but you can use any Linux distro.
+See the corresponding vendor instructions and adapt the quickstart as required for using other operating systems.
+
+## Launcher setup
+
+1. Clone this repo into a folder in your launcher host:
+    ```bash
+    git clone https://github.com/spotfiresoftware/spotfire-quickstart
+    ```
+
+2. Download the Spotfire software and copy the files into `<this_repo_root>/swrepo/build/<spotfire_version>`.
+
+   **Note**: See the [Spotfire software repository](../../swrepo/build/README.md) for more information.
 
 ## Usage
 
@@ -53,7 +68,7 @@ gcloud config get-value project
 From the Google Cloud management web UI:
 https://console.cloud.google.com/home/dashboard?project=my-project-id
 
-### Deploy a GKE cluster in GCP
+### Deploy a GKE cluster on GCP
 
 For easier setup we provide a `Makefile` with commands for the  common steps.
 You can read the `Makefile` for more info on the specific commands.
@@ -115,7 +130,7 @@ Steps:
     export REGISTRY=europe-north1-docker.pkg.dev/my-project-id/spotfire-quickstart
     ```
 
-### Deploy Spotfire in the created GKE cluster
+### Deploy Spotfire on the created GKE cluster
 
 Now we use the Spotfire CDK to build the Spotfire container images and Helm charts and deploy Spotfire in the created K8s cluster.
 
@@ -156,7 +171,7 @@ make destroy
 
 ### Other
 
-See other useful commands included in the provided 'Makefile':
+See other useful commands included in the provided `Makefile`:
 ```bash
 make
 ```

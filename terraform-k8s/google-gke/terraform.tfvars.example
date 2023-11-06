@@ -1,13 +1,35 @@
+#----------------------------------------
+# Credentials
+#----------------------------------------
 project_id = "my-project-id-name"
 
-region = "europe-north1"
-zone   = "europe-north1-a"
+#----------------------------------------
+# Prefix
+#----------------------------------------
+prefix = "sandbox-k8s-yoshi"
 
-prefix = "sandbox-codename"
+#----------------------------------------
+# Location: regions & zones
+#----------------------------------------
+#region = "europe-north1"
+#zone   = "europe-north1-a"
+
+#----------------------------------------
+# Networking
+#----------------------------------------
+#admin_address_prefixes = ["43.21.0.0/16"]
+#web_address_prefixes   = ["43.0.0.0/8"]
+
+#----------------------------------------
+# Kubernetes
+#----------------------------------------
+# https://cloud.google.com/kubernetes-engine/docs/concepts/types-of-clusters#version-choices
+# https://cloud.google.com/kubernetes-engine/docs/release-notes
+#gke_cluster_version = "1.27"
 
 # GKE number of working nodes (per availability zone)
 # NOTE: This creates initial_node_count nodes per zone the cluster has nodes in, typically 1 zone if the cluster location is a zone, and 3 if it's a region.
-gke_num_nodes = 1 # the total number of nodes will be x3
+#gke_num_nodes = 1 # the total number of nodes will be x3
 
 # For Google Cloud machine types, see https://cloud.google.com/compute/docs/machine-types
 #
@@ -21,4 +43,4 @@ gke_num_nodes = 1 # the total number of nodes will be x3
 # n2-standard-2	2	8	128	257	Yes	10	N/A
 # n2-standard-4	4	16	128	257	Yes	10	N/A
 # n2-standard-8	8	32	128	257	Yes	16	N/A
-gke_machine_type = "n2-standard-4"
+#gke_machine_type = "n2-standard-4"
