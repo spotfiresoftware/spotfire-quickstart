@@ -20,6 +20,7 @@ include_vm_resource_groups:
 # presence of 'ANSIBLE_AZURE_RM_X' environment variables from overriding CLI auth)
 auth_source: auto
 #auth_source: cli
+#auth_source: credential_file
 
 # places a host in the named group if the associated condition evaluates to true
 conditional_groups:
@@ -36,7 +37,7 @@ hostvar_expressions:
   some_statically_valued_var: "'staticvalue'"
   # overrides the default ansible_host value with a custom Jinja2 expression, in this case, the first DNS hostname, or
   # if none are found, the first public IP address.
-  ansible_host: public_ipv4_addresses|default(private_ipv4_addresses, true) | first
+  ansible_host: public_ipv4_address | default(private_ipv4_addresses, true) | first
 
 # change how inventory_hostname is generated. Each item is a jinja2 expression similar to hostvar_expressions.
 #hostnames:

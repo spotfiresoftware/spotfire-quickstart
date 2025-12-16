@@ -65,8 +65,7 @@ resource "azurerm_postgresql_flexible_server" "this" {
   backup_retention_days        = 7
   geo_redundant_backup_enabled = false
   auto_grow_enabled            = false
-
-#  public_network_access_enabled = false
+  public_network_access_enabled = false
 #  infrastructure_encryption_enabled = false // This property is currently still in development and not supported by Microsoft.
 
   tags = var.tags

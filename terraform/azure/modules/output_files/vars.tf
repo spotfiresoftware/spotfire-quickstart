@@ -8,7 +8,7 @@ variable "workspace_dir" { default = "./terraform.tfstate.d" }
 
 # Generates the Ansible Config file (credentials)
 variable "spotfire_version" {
-  default = "14.0.0"
+  default = "14.6.0"
 }
 
 // credentials

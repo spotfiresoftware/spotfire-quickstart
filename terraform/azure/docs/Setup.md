@@ -43,6 +43,9 @@ For your convenience, these are the steps:
    sudo apt install -y terraform
    ```
 
+For more info on different cloud providers see:
+- [Terraform on Azure](https://learn.microsoft.com/en-us/azure/developer/terraform/overview)
+
 ## Install Ansible
 
 For installing Ansible, we follow Ansible's official procedure: [Installing Ansible with pip](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html#installing-and-upgrading-ansible-with-pip).
@@ -70,6 +73,11 @@ For your convenience, these are the steps:
    ansible-galaxy collection install azure.azcollection
    ```
 
+5. Upgrade all installed Ansible collections to the latest version:
+    ```bash
+    ansible-galaxy collection list | awk '/^[a-z]/ {print $1}' |xargs -r ansible-galaxy collection install --upgrade
+    ```
+
 For more details, see the [Ansible Azure guide](https://docs.ansible.com/ansible/latest/scenario_guides/guide_azure.html).
 
 ## Install Azure CLI
@@ -81,13 +89,7 @@ For installing Azure CLI, we follow Azure's official procedure: [Install the Azu
     curl -sL https://aka.ms/InstallAzureCLIDeb | sudo bash
     ```
 
-2. Sign in to Azure with the Azure CLI:
-    ```bash
-    az login
-    ```
-   If the CLI can open your default browser, it will do so and load an Azure sign-in page.
-
-   To force a device code flow use:
+2. Sign in to Azure with the Azure CLI, using a device code:
     ```bash
     az login --use-device-code
     ```
@@ -115,3 +117,5 @@ See [Azure Provider: Authenticating using a Service Principal with a Client Secr
 
 **Note**: To provide Terraform with the credentials' information, you can copy your subscription details into the `provider.tf` file respective fields.
 Nevertheless, we recommend not defining these variables into the `provider.tf` file since they could easily be checked into your version control system by mistake.
+
+For more info, see the [Azure CLI cheatsheet](https://learn.microsoft.com/en-us/cli/azure/cheat-sheet-onboarding)

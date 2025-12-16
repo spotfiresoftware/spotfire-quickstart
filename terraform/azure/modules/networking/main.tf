@@ -25,7 +25,6 @@ resource "azurerm_subnet" "public" {
   # NOTE: Service endpoint is only required for (deprecated) PostgreSQL Single server
   //service_endpoints = ["Microsoft.Sql"] //, "Microsoft.Storage"]
   //enforce_private_link_endpoint_network_policies = false
-  private_endpoint_network_policies_enabled = false
 }
 
 # https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/subnet
@@ -39,7 +38,6 @@ resource "azurerm_subnet" "private" {
   # NOTE: Service endpoint is only required for (deprecated) PostgreSQL Single server
   //service_endpoints = ["Microsoft.Sql"] //, "Microsoft.Storage"]
   //enforce_private_link_endpoint_network_policies = false
-  private_endpoint_network_policies_enabled = false
 }
 
 # Create Network Security Group and SSH rule for public subnet
@@ -92,6 +90,7 @@ resource "azurerm_network_security_group" "private" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_ranges    = [22, 3389]
+    #source_address_prefixes    = var.jumphost_public_ips
     source_address_prefixes    = var.admin_address_prefixes
     destination_address_prefix = "*"
   }
@@ -104,7 +103,7 @@ resource "azurerm_network_security_group" "private" {
     protocol                   = "Tcp"
     source_port_range          = "*"
     destination_port_ranges    = [22, 3389]
-    source_address_prefixes    = var.jumphost_public_ips
+    source_address_prefixes    = var.admin_address_prefixes
     destination_address_prefix = "*"
   }
   security_rule {

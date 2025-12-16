@@ -280,8 +280,8 @@ module "output_files" {
   jumphost_admin_password = var.jumphost_admin_password
   sfs_admin_username      = var.sfs_admin_username
   sfs_admin_password      = var.sfs_admin_password
-  sfwp_admin_username       = var.sfwp_admin_username
-  sfwp_admin_password       = var.sfwp_admin_password
+  sfwp_admin_username     = var.sfwp_admin_username
+  sfwp_admin_password     = var.sfwp_admin_password
 
   // db credentials
   spotfire_db_admin_username = var.spotfire_db_admin_username
@@ -295,4 +295,6 @@ module "output_files" {
   spotfire_db_server_name = var.create_spotfire_db ? module.sfdb[0].db_server.name : var.spotfire_db_server_name
   #spotfire_db_name        = var.create_spotfire_db ? module.sfdb[0].db_name : var.spotfire_db_name
   spotfire_db_name        = var.spotfire_db_name
+
+  spotfire_version  = var.spotfire_version
 }

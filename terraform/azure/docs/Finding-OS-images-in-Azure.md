@@ -34,54 +34,51 @@ You have logged in. Now let us find all the subscriptions to which you have acce
 
 List locations:
 ```bash
-$ az account list-locations > build/azure.locations.txt
+$ az account list-locations > printouts/azure.locations.txt
 ```
 
 List popular images (this query takes very long time, see below for more specific searches):
 ```bash
-az vm image list --output table > build/az-vm-image-list.txt
+az vm image list --output table > printouts/az-vm-image-list.txt
 ```
 
-## How to find out what you are looking for
-
-A top-down approach:
-
-1. List publishers in a location:
-    ```bash
-    export LOCATION=northeurope
-    az vm image list-publishers --location northeurope --output table > build/az-vm-image-list-publishers--location-${LOCATION}.txt
-    ```
-
-2. List offers from that publisher (Debian) in the specified location (North Europe):
-    ```bash
-    export PUBLISHER=Debian
-    az vm image list-offers --location ${LOCATION} --publisher ${PUBLISHER} --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}.txt
-    ```  
-
-3. Finding out the available SKUs (versions) for `debian-12`:
-    ```bash
-    export OFFER=debian-12
-    az vm image list-skus --location ${LOCATION} --publisher ${PUBLISHER} --offer ${OFFER} --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}--offer-${OFFER}.txt
-    ```   
-
-4. Querying after as specific SKU:
-   ```bash
-   export SKU=12
-   az vm image list --location northeurope --publisher ${PUBLISHER} --offer ${OFFER} --sku ${SKU} --all --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}--offer-${OFFER}--sku-11.txt
-   ```
-
-As a generic approach, theses are generic queries for CentOS, RHEL, SUSE, openSUSE, Debian images:
+List publishers in a location:
 ```bash
-export PUBLISHER=Debian    && az vm image list --location ${LOCATION} --publisher ${PUBLISHER} --all --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}.txt
-export PUBLISHER=Ubuntu    && az vm image list --location ${LOCATION} --publisher ${PUBLISHER} --all --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}.txt
-export PUBLISHER=OpenLogic && az vm image list --location ${LOCATION} --publisher ${PUBLISHER} --all --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}.txt
-export PUBLISHER=RedHat    && az vm image list --location ${LOCATION} --publisher ${PUBLISHER} --all --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}.txt
-export PUBLISHER=SUSE      && az vm image list --location ${LOCATION} --publisher ${PUBLISHER} --all --output table > build/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}.txt
+export LOCATION=northeurope
+az vm image list-publishers --location northeurope --output table > printouts/az-vm-image-list-publishers--location-${LOCATION}.txt
 ```
 
-And, for querying after Microsoft Windows Server offers:
+## Find out what you are looking for
+
+List offers from `Debian` in North Europe:
 ```bash
-export PUBLISHER=MicrosoftWindowsServer
-az vm image list-offers --location ${LOCATION} --publisher ${PUBLISHER} --output table > build/az-vm-image-list-offers--location-${LOCATION}--publisher-${PUBLISHER}.txt
-az vm image list-skus   --location ${LOCATION} --publisher ${PUBLISHER} --offer WindowsServer --output table > build/az-vm-image-list-skus--location-${LOCATION}--publisher-${PUBLISHER}--offer-WindowsServer.txt
+export PUBLISHER=Debian
+az vm image list-offers --location ${LOCATION} --publisher ${PUBLISHER} --output table > printouts/az-vm-image-list-offers--location-${LOCATION}--publisher-${PUBLISHER}.txt
+```  
+
+Finding out the available skus for `debian-12`:
+```bash
+export OFFER=debian-12
+az vm image list-skus --location ${LOCATION} --publisher ${PUBLISHER} --offer ${OFFER} --output table > printouts/az-vm-image-list-skus--location-${LOCATION}--publisher-${PUBLISHER}--offer-${OFFER}.txt
+```   
+
+Querying after as specific Debian version:
+```bash
+export SKU=12
+az vm image list --location ${LOCATION} --publisher ${PUBLISHER} --offer ${OFFER} --sku ${SKU} --all --output table > printouts/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}--offer-${OFFER}--sku-${SKU}.txt
+```
+
+Examples of generic queries for CentOS, RHEL, SUSE, openSUSE, Debian images:
+```bash
+export PUBLISHER=Debian    && az vm image list --location ${LOCATION} --publisher ${PUBLISHER} --all --output table > printouts/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}.txt
+export PUBLISHER=Ubuntu    && az vm image list --location ${LOCATION} --publisher ${PUBLISHER} --all --output table > printouts/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}.txt
+export PUBLISHER=OpenLogic && az vm image list --location ${LOCATION} --publisher ${PUBLISHER} --all --output table > printouts/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}.txt
+export PUBLISHER=RedHat    && az vm image list --location ${LOCATION} --publisher ${PUBLISHER} --all --output table > printouts/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}.txt
+export PUBLISHER=SUSE      && az vm image list --location ${LOCATION} --publisher ${PUBLISHER} --all --output table > printouts/az-vm-image-list--location-${LOCATION}--publisher-${PUBLISHER}.txt
+```
+
+Querying after Windows offers:
+```bash
+az vm image list-offers --location northeurope --publisher MicrosoftWindowsServer --output table > printouts/az-vm-image-list-offers--location-northeurope--publisher-MicrosoftWindowsServer.txt
+az vm image list-skus --location northeurope --publisher MicrosoftWindowsServer --offer WindowsServer --output table > printouts/az-vm-image-list-skus--location-northeurope--publisher-MicrosoftWindowsServer--offer-WindowsServer.txt
 ```

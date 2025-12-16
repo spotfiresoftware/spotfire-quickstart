@@ -49,16 +49,16 @@ variable "vm_size" {
 
 # VM Operating System
 variable "os_publisher" {
-  default = "OpenLogic"
+  default = "Debian"
 }
 variable "os_offer" {
-  default = "Centos"
+  default = "debian-12"
 }
 variable "os_sku" {
-  default = "8_2"
+  default = "12"
 }
 variable "os_version" {
-  default = "8.2.2020111800"
+  default = "0.20251112.2294"
 }
 
 # VM login credentials

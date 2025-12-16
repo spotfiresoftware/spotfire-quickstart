@@ -1,35 +1,10 @@
 #----------------------------------------
-# Conditional resources creation
+# Azure account
 #----------------------------------------
-variable "create_spotfire_db" {
-  description = "Create Azure Database for PostgreSQL service for usage as Spotfire database"
-  default     = true
-}
 
-variable "create_appgw" {
-  description = "Create Azure Application Gateway for HTTP access to Spotfire Server instances (recommended if using Spotfire Server cluster)"
-  default     = true
-}
-
-variable "create_sfs_public_ip" {
-  description = "Create Public IP for direct access to Spotfire Server instances (only for testing)"
-  default     = false
-}
-
-# NOTE: See documentation for differences when running Web Player on Linux
-variable "create_sfwp_linux" {
-  description = "Use Linux for Web Player services"
-  default     = true
-}
-
-variable "create_bastion" {
-  description = "Create Bastion host for easier management of Windows VMs (not required)"
-  default     = false
-}
-
-variable "create_storage" {
-  description = "Create Storage (only required for saving Windows init scripts)"
-  default     = false
+# credentials
+variable subscription_id {
+  description = "Azure Subscription ID"
 }
 
 #----------------------------------------
@@ -42,9 +17,9 @@ variable "tags" {
     # specific tags
     description   = "Spotfire Quickstart: Basic install"
     app           = "Spotfire"
-    app_version   = "14.0.0"
+    app_version   = "14.6.0"
     environment   = "dev"
-    infra_version = "0.4"
+    infra_version = "0.5"
   }
 }
 
@@ -120,6 +95,41 @@ variable "db_subnet_address_prefixes" {
   default     = ["10.0.5.0/24"]
 }
 
+
+#----------------------------------------
+# Conditional resources creation
+#----------------------------------------
+variable "create_spotfire_db" {
+  description = "Create Azure Database for PostgreSQL service for usage as Spotfire database"
+  default     = true
+}
+
+variable "create_appgw" {
+  description = "Create Azure Application Gateway for HTTP access to Spotfire Server instances (recommended if using Spotfire Server cluster)"
+  default     = true
+}
+
+variable "create_sfs_public_ip" {
+  description = "Create Public IP for direct access to Spotfire Server instances (only for testing)"
+  default     = false
+}
+
+# NOTE: See documentation for differences when running Web Player on Linux
+variable "create_sfwp_linux" {
+  description = "Use Linux for Web Player services"
+  default     = true
+}
+
+variable "create_bastion" {
+  description = "Create Bastion host for easier management of Windows VMs (not required)"
+  default     = false
+}
+
+variable "create_storage" {
+  description = "Create Storage (only required for saving Windows init scripts)"
+  default     = false
+}
+
 #----------------------------------------
 # Spotfire Database (sfdb)
 #----------------------------------------
@@ -130,7 +140,7 @@ variable "postgresql_db_version" {
   description = "PostgreSQL data server version"
   # https://docs.microsoft.com/en-us/azure/postgresql/concepts-supported-versions
   # https://learn.microsoft.com/en-us/azure/postgresql/flexible-server/concepts-supported-versions
-  default = "15"
+  default = "17"
 }
 
 variable "spotfire_db_instance_class" {
@@ -211,7 +221,7 @@ variable "os_sku" {
 }
 variable "os_version" {
   description = "Spotfire VM operating system version"
-  default     = " 0.20231004.1523"
+  default     = "0.20251112.2294"
 }
 
 #----------------------------------------
@@ -312,4 +322,12 @@ variable "sfs_instances" {
 variable "sfwp_instances" {
   description = "Number of Spotfire Web Player instances"
   default     = 2
+}
+
+#----------------------------------------
+# Spotfire Server version
+#----------------------------------------
+variable "spotfire_version" {
+  description = "Spotfire version"
+  default     = "14.6.0"
 }
