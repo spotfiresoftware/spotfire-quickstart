@@ -1,9 +1,13 @@
-# terraform
-.terraform
-.terraform.lock.hcl
-.terraform.tfstate.lock.info
+# terraform directories
+**/.terraform/*
+
+# lock and state files
+.terraform.lock*
+.terraform.tfstate.*
 terraform.tfstate*
-terraform-inventory
+
+# NOTE: Very useful to have a local custom terraform.tfvars to override defaults without adding it to git
+terraform.tfvars
 
 *.log
 
