@@ -39,9 +39,9 @@ variable "tags" {
     # specific tags
     description   = "Spotfire Quickstart: Basic install"
     app           = "Spotfire"
-    app_version   = "14.0.0"
+    app_version   = "14.6.0"
     environment   = "dev"
-    infra_version = "0.4"
+    infra_version = "0.5"
   }
 }
 
@@ -83,11 +83,11 @@ variable "web_address_prefixes" {
 }
 
 #----------------------------------------
-# Spotfire Server (sfs)
+# Spotfire Server version
 #----------------------------------------
 variable "spotfire_version" {
   description = "Spotfire Server version"
-  default     = "14.0.0"
+  default     = "14.6.0"
 }
 
 #----------------------------------------
@@ -97,12 +97,12 @@ variable "spotfire_version" {
 # https://registry.terraform.io/providers/hashicorp/google/latest/docs/resources/sql_database_instance
 variable "postgresql_db_version" {
   description = "PostgreSQL data server version"
-  default     = "POSTGRES_15"
+  default     = "POSTGRES_17"
 }
 
 variable "spotfire_db_instance_class" {
   description = "Spotfire database instance class"
-  default     = "db-f1-micro"
+  default     = "db-custom-2-4"
 }
 
 variable "spotfire_db_size" {

@@ -55,7 +55,7 @@ For your convenience, these are the steps:
    ```
 2. Install Ansible: 
    ```bash
-   python3 -m pip install ansible
+   python3 -m pip install --upgrade ansible
    ```
    **Note**: You need at least Ansible 2.8 version for running Ansible Galaxy. 
    Check your version with `ansible --version`.

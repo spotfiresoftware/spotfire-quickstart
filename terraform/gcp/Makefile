@@ -45,6 +45,12 @@ export INVENTORY_FILE
 INFRA_EXTRA_VARS=@../terraform/gcp/terraform.tfstate.d/${TF_WORKSPACE}/ansible_config/infra.yml
 export INFRA_EXTRA_VARS
 
+ANSIBLE_PRE_ARGS=ANSIBLE_PERSISTENT_COMMAND_TIMEOUT=10 ANSIBLE_TIMEOUT=10 ANSIBLE_DISPLAY_SKIPPED_HOSTS=false ANSIBLE_HOST_KEY_CHECKING=False
+export ANSIBLE_PRE_ARGS
+
+#ANSIBLE_EXTRA_ARGS="-vv"
+#export ANSIBLE_EXTRA_ARGS
+
 # all our targets are phony (no files to check)
 .PHONY: help init plan apply destroy reapply deploy
 
@@ -55,10 +61,13 @@ help: ## show help
 .DEFAULT_GOAL := help
 
 #### common Terraform #####
-lint: ## Validate the Terraform configuration files in a directory
+lint: ## Validate the Terraform configuration files
 	terraform validate
 
-init: ## Initialize a Terraform working directory. Required to apply new modules or provider upgrades.
+format: ## Format the Terraform configuration files
+	terraform fmt
+
+init: ## Initialize the Terraform working directory. Required to apply new modules or provider upgrades.
 	terraform init --upgrade
 
 plan: ## Generate and show the Terraform execution plan
@@ -111,35 +120,37 @@ show-inventory-list: ## List hosts inventory (sw deployment targets) using Ansib
 
 show-os: ## List hosts distributions (sw deployment targets) using Ansible facts
 	cd ../../ansible && \
-		ANSIBLE_HOST_KEY_CHECKING=False ansible \
+		${ANSIBLE_PRE_ARGS} \
+		ansible \
 		    -i ${INVENTORY_FILE} \
    		    -i ${INVENTORY_FILE_GOG} \
 		 	--extra-vars ${INFRA_EXTRA_VARS} \
 			all -m ansible.builtin.setup \
-			$(ANSIBLE_EXTRA_ARGS) \
+	  		${ANSIBLE_EXTRA_ARGS} \
 			-a "filter=ansible_distribution*"
 
 show-facts: ## Show hosts inventory facts using Ansible facts
 	cd ../../ansible && \
-		ANSIBLE_HOST_KEY_CHECKING=False ansible \
+		${ANSIBLE_PRE_ARGS} \
+		ansible \
 		    -i ${INVENTORY_FILE} \
 		    -i ${INVENTORY_FILE_GOG} \
 		 	--extra-vars ${INFRA_EXTRA_VARS} \
 			all -m ansible.builtin.setup \
-	  		$(ANSIBLE_EXTRA_ARGS) \
+	  		${ANSIBLE_EXTRA_ARGS} \
 			--tree build/facts
 
 deploy: ## Install and configure Spotfire software on infra hosts using Ansible playbooks
 	cd ../../ansible && \
 #		export ANSIBLE_CONFIG=./ansible.cfg && \
 #		ANSIBLE_SSH_ARGS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=120" \
-		ANSIBLE_PERSISTENT_COMMAND_TIMEOUT=120 ANSIBLE_TIMEOUT=120 ANSIBLE_DISPLAY_SKIPPED_HOSTS=false ANSIBLE_HOST_KEY_CHECKING=False \
+		${ANSIBLE_PRE_ARGS} \
 		ansible-playbook \
 			-i ${INVENTORY_FILE} \
 			-i ${INVENTORY_FILE_GOG} \
 			--extra-vars @config/vars.yml \
 			--extra-vars ${INFRA_EXTRA_VARS} \
-			$(ANSIBLE_EXTRA_ARGS) \
+	  		${ANSIBLE_EXTRA_ARGS} \
 			site.yml
 #  			--limit sfwp_servers \
 #	  		 -vvv
