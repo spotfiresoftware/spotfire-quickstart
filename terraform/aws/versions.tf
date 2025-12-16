@@ -1,27 +1,13 @@
 terraform {
-  # lock version up to 1.5.x, to avoid any possible impact due new Terraform license
+  # Lock Terraform version to 1.5.x, to avoid any possible impact due new Terraform license
   # https://www.hashicorp.com/license-faq
+  # Set the corresponding version if you own a Terraform license or,
+  # alternatively, configure OpenTofu (a fork of Terraform) https://opentofu.org/
   required_version = "< 1.6.0"
   required_providers {
     aws = {
       source  = "hashicorp/aws"
-      version = ">= 3.20.0"
-    }
-    random = {
-      source  = "hashicorp/random"
-      version = ">=3.0.0"
-    }
-    local = {
-      source  = "hashicorp/local"
-      version = ">=2.0.0"
-    }
-    null = {
-      source  = "hashicorp/null"
-      version = ">=3.0.0"
-    }
-    template = {
-      source  = "hashicorp/template"
-      version = ">=2.2.0"
+      version = ">= 6.26.0"
     }
   }
 }

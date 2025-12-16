@@ -4,7 +4,7 @@
 #----------------------------------------
 
 resource "aws_security_group" "web-alb" {
-  name        = "${var.prefix}-spotfire-web-alb-sg"
+  name        = "${var.prefix}-spot-web-alb-sg" # "name" cannot be longer than 32 characters
   description = "Spotfire web LB security group"
   vpc_id      = aws_vpc.this.id
 
@@ -37,7 +37,7 @@ resource "aws_security_group" "web-alb" {
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb
 resource "aws_alb" "web" {
-  name            = "${var.prefix}-spotfire-web-alb"
+  name            = "${var.prefix}-alb" # "name" cannot be longer than 32 characters:
   security_groups = [aws_security_group.web-alb.id]
   subnets         = aws_subnet.public.*.id
 
@@ -48,7 +48,7 @@ resource "aws_alb" "web" {
 
 # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/lb_target_group
 resource "aws_alb_target_group" "web" {
-  name     = "${var.prefix}-spot-web-alb-group"
+  name     = "${var.prefix}-alb" # "name" cannot be longer than 32 characters:
   port     = 80
   protocol = "HTTP"
   vpc_id   = aws_vpc.this.id

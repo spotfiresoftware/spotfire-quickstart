@@ -8,39 +8,46 @@
 #----------------------------------------
 
 # https://registry.terraform.io/providers/hashicorp/tls/latest/docs/resources/private_key
-resource "tls_private_key" "privkey" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-# https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/key_pair
-resource "aws_key_pair" "keypair" {
-  key_name   = var.key_name
-  public_key = tls_private_key.privkey.public_key_openssh
-}
-output "private_key" {
-  value     = tls_private_key.privkey.private_key_pem
-  sensitive = true
-}
+# resource "tls_private_key" "privkey" {
+#   algorithm = "RSA"
+#   rsa_bits  = 4096
+# }
+# # https://registry.terraform.io/providers/hashicorp/aws/latest/docs/resources/key_pair
+# resource "aws_key_pair" "autogen" {
+#   key_name   = var.key_name
+#   public_key = tls_private_key.privkey.public_key_openssh
+# }
+# output "private_key" {
+#   value     = tls_private_key.privkey.private_key_pem
+#   sensitive = true
+# }
 
-# Writes the AWS generated private key to a local file for usage from Ansible
+# For writing local files for usage from Ansible
 variable "workspace_dir" {
   default = "./terraform.tfstate.d/"
 }
 
 #locals {
-#  #ssh_priv_key_file = "${var.workspace_dir}/${terraform.workspace}/ansible_config/private_key.pem"
-#  ssh_priv_key_file = "~/.ssh/aws_private_key.pem"
+#  ssh_priv_key_file = "${var.workspace_dir}/${terraform.workspace}/ansible_config/private_key.pem"
+#  #ssh_priv_key_file = "~/.ssh/aws_private_key.pem"
 #}
 
-resource "local_file" "this" {
-  content = templatefile("${path.module}/private_key.pem.tmpl", {
-    private_key = tls_private_key.privkey.private_key_pem
-    }
-  )
-  #filename             = local.ssh_priv_key_file
-  filename             = var.ssh_private_key_file
-  file_permission      = "0600"
-  directory_permission = "0700"
+# resource "local_file" "this" {
+#   content = templatefile("${path.module}/private_key.pem.tmpl", {
+#     private_key = tls_private_key.privkey.private_key_pem
+#     }
+#   )
+#   #filename             = local.ssh_priv_key_file
+#   filename             = var.ssh_private_key_file
+#   file_permission      = "0600"
+#   directory_permission = "0700"
+# }
+
+# Using an existing key pair
+resource "aws_key_pair" "existing" {
+  key_name   = "my-aws-key"
+  //public_key = file("~/.ssh/id_rsa_aws.pub")
+  public_key = file("${var.ssh_private_key_file}.pub")
 }
 
 #----------------------------------------
@@ -60,7 +67,8 @@ resource "aws_instance" "jumphost" {
     aws_security_group.mgt.id
   ]
 
-  key_name = aws_key_pair.keypair.key_name
+  # key_name = aws_key_pair.autogen.key_name
+  key_name = aws_key_pair.existing.key_name
 
   associate_public_ip_address = true
 
@@ -82,7 +90,8 @@ resource "aws_instance" "sfs" {
   vpc_security_group_ids = [aws_security_group.mgt.id, aws_security_group.sfs-web.id,
   aws_security_group.sfs-be.id, aws_security_group.sfs-cluster.id]
 
-  key_name = aws_key_pair.keypair.key_name
+  # key_name = aws_key_pair.keypair.key_name
+  key_name = aws_key_pair.existing.key_name
 
   associate_public_ip_address = var.create_sfs_public_ip
 
@@ -129,7 +138,9 @@ resource "aws_instance" "sfwp" {
 
   associate_public_ip_address = "false"
 
-  key_name  = aws_key_pair.keypair.key_name
+  # key_name = aws_key_pair.keypair.key_name
+  key_name = aws_key_pair.existing.key_name
+
   user_data = var.create_sfwp_linux ? null : data.template_file.windows_configure_ssh.rendered
 
   tags = merge(var.tags, tomap({
@@ -425,7 +436,8 @@ resource "local_file" "ansible-config-infra" {
     db_admin_password = var.spotfire_db_admin_password,
     db_name           = var.spotfire_db_name,
     ui_admin_user     = var.spotfire_ui_admin_username,
-    ui_admin_password = var.spotfire_ui_admin_password
+    ui_admin_password = var.spotfire_ui_admin_password,
+    spotfire_version  = var.spotfire_version
     }
   )
   filename             = "${var.workspace_dir}/${terraform.workspace}/ansible_config/infra.yml"

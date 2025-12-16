@@ -13,10 +13,10 @@
 jumphost_instances = 1
 
 # Spotfire Server instances number
-sfs_instances = 3
+sfs_instances = 1
 
 # Spotfire Web Player instances number
-sfwp_instances = 3
+sfwp_instances = 1
 
 #----------------------------------------
 # instances size

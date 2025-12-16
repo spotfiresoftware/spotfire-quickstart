@@ -48,6 +48,12 @@ export INVENTORY_FILE
 INFRA_EXTRA_VARS=@../terraform/aws/terraform.tfstate.d/${TF_WORKSPACE}/ansible_config/infra.yml
 export INFRA_EXTRA_VARS
 
+ANSIBLE_PRE_ARGS=ANSIBLE_PERSISTENT_COMMAND_TIMEOUT=10 ANSIBLE_TIMEOUT=10 ANSIBLE_DISPLAY_SKIPPED_HOSTS=false ANSIBLE_HOST_KEY_CHECKING=False
+export ANSIBLE_PRE_ARGS
+
+#ANSIBLE_EXTRA_ARGS="-vv"
+#export ANSIBLE_EXTRA_ARGS
+
 # all our targets are phony (no files to check)
 .PHONY: help init plan apply destroy reapply deploy
 
@@ -58,10 +64,13 @@ help: ## show help
 .DEFAULT_GOAL := help
 
 #### common Terraform #####
-lint: ## Validate the Terraform configuration files in a directory
+lint: ## Validate the Terraform configuration files
 	terraform validate
 
-init: ## Initialize a Terraform working directory. Required to apply new modules or provider upgrades.
+format: ## Format the Terraform configuration files
+	terraform fmt
+
+init: ## Initialize the Terraform working directory. Required to apply new modules or provider upgrades.
 	terraform init --upgrade
 
 plan: ## Generate and show the Terraform execution plan
@@ -74,6 +83,8 @@ destroy: ## Destroy the Terraform managed infrastructure
 	time terraform destroy --auto-approve
 
 reapply: destroy apply
+
+infra: init plan apply ## init plan & apply
 
 terraform-graph:
 	terraform graph | dot -Tsvg > terraform.tfstate.d/terraform_graph.svg
@@ -120,21 +131,22 @@ show-os: ## List hosts distributions (sw deployment targets) using Ansible facts
 	cd ../../ansible && \
 		#ANSIBLE_SSH_ARGS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=120" \
 		#ANSIBLE_SSH_ARGS=" -F ../terraform/aws/ssh-aws.cfg -o ForwardX11=no -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=120" \
-		ANSIBLE_HOST_KEY_CHECKING=False ANSIBLE_STDOUT_CALLBACK=yaml ANSIBLE_STDOUT_CALLBACK=debug \
+		${ANSIBLE_PRE_ARGS} \
 		ansible \
 		    -i ${INVENTORY_FILE} \
 		 	--extra-vars ${INFRA_EXTRA_VARS} \
 			all -m ansible.builtin.setup \
-			$(ANSIBLE_EXTRA_ARGS) \
+	  		${ANSIBLE_EXTRA_ARGS} \
 			-a "filter=ansible_distribution*"
 
 show-facts: ## Show hosts inventory facts using Ansible facts
 	cd ../../ansible && \
-		ANSIBLE_HOST_KEY_CHECKING=False ansible \
+		${ANSIBLE_PRE_ARGS} \
+		ansible \
 		    -i ${INVENTORY_FILE} \
 		 	--extra-vars ${INFRA_EXTRA_VARS} \
 			all -m ansible.builtin.setup \
-	  		$(ANSIBLE_EXTRA_ARGS) \
+	  		${ANSIBLE_EXTRA_ARGS} \
 			--tree build/facts
 
 debug:
@@ -151,19 +163,34 @@ deploy: ## Install and configure Spotfire software on infra hosts using Ansible 
 	cd ../../ansible && \
 #		export ANSIBLE_CONFIG=./ansible.cfg && \
 #		ANSIBLE_SSH_ARGS="-o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=120" \
-		#ANSIBLE_PERSISTENT_COMMAND_TIMEOUT=120 ANSIBLE_TIMEOUT=120 ANSIBLE_DISPLAY_SKIPPED_HOSTS=false ANSIBLE_HOST_KEY_CHECKING=False \
+		${ANSIBLE_PRE_ARGS} \
 		ansible-playbook \
 			-i ${INVENTORY_FILE} \
 			--extra-vars @config/vars.yml \
 			--extra-vars ${INFRA_EXTRA_VARS} \
-			$(ANSIBLE_EXTRA_ARGS) \
+	  		${ANSIBLE_EXTRA_ARGS} \
 			site.yml
 #  			--limit sfwp_servers \
 #	  		 -vvv
 
 #### other AWS specific #####
-aws-assume-role-env: ## Fetch assume role info for AWS cli
-	# aws configure
-# source <(aws sts assume-role --role-arn arn:aws:iam::987537861642:role/SpotfirePowerUser --profile SpotfirePMRole --role-session-name SpotfirePowerUser | jq -r  '.Credentials | @sh "export AWS_ACCESS_KEY_ID=\(.AccessKeyId)\nexport AWS_SECRET_ACCESS_KEY=\(.SecretAccessKey)\nexport AWS_SESSION_TOKEN=\(.SessionToken)\n "')
-	@aws sts assume-role --role-arn arn:aws:iam::987537861642:role/SpotfirePowerUser --profile SpotfirePMRole --role-session-name SpotfirePowerUser \
+aws-config: ## Configure AWS CLI (first time)
+	aws configure
+
+aws-login: ## Login into AWS using AWS cli
+#	PROFILE="view-PM"
+	@if [ -z "$(PROFILE)" ]; then \
+		echo "ERROR: PROFILE is not set. Please set PROFILE."; \
+		exit 1; \
+	fi
+	aws sso login --profile $(PROFILE)
+	aws sts get-caller-identity --profile $(PROFILE)
+
+aws-assume-role: ## Assume an AWS IAM Role and set temporary credentials in your environment
+#	ROLE_ARN="aws:iam::987537861642:role/SpotfirePowerUser"
+	@if [ -z "$(ROLE_ARN)" ]; then \
+		echo "ERROR: ROLE_ARN is not set. Please set ROLE_ARN to the target role ARN."; \
+		exit 1; \
+	fi
+	@aws sts assume-role --role-arn $(ROLE_ARN) --role-session-name PowerUser \
 		| jq -r  '.Credentials | "\nSet the following variables in your environment:\n\nexport AWS_ACCESS_KEY_ID=\(.AccessKeyId)\nexport AWS_SECRET_ACCESS_KEY=\(.SecretAccessKey)\nexport AWS_SESSION_TOKEN=\(.SessionToken)\n"'

@@ -1,7 +1,7 @@
 #----------------------------------------
 # Resources prefix
 #----------------------------------------
-prefix = "sandbox-mario"
+prefix = "sandbox-wario"
 
 #----------------------------------------
 # AWS region
@@ -13,8 +13,15 @@ region = "eu-north-1"
 #----------------------------------------
 # You may want to limit the allowed addresses to reach your environment for
 # admin (ssh jumphost) and web access (application)
-#admin_address_prefixes = ["12.34.0.0/16"]
-#web_address_prefixes   = ["14.0.0.0/8"]
+#admin_address_prefixes = ["43.21.0.0/16"]
+#web_address_prefixes   = ["43.21.0.0/16"]
+admin_address_prefixes = ["43.21.0.0/16", "158.174.208.0/24", "212.183.218.0/24"]
+web_address_prefixes = ["43.21.0.0/16", "158.174.208.0/24", "212.183.218.0/24"]
+
+#----------------------------------------
+# Spotfire Server version
+#----------------------------------------
+spotfire_version = "14.6.0"
 
 #----------------------------------------
 # Spotfire Database (sfdb)
@@ -22,7 +29,7 @@ region = "eu-north-1"
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_BestPractices.html
 # https://docs.aws.amazon.com/AmazonRDS/latest/UserGuide/CHAP_PostgreSQL.html
 # https://learn.hashicorp.com/tutorials/terraform/aws-rds?in=terraform/aws
-postgresql_db_version = "15"
+postgresql_db_version = "17"
 # database size in gibibytes (GiB)
 spotfire_db_size = "5"
 
@@ -41,7 +48,7 @@ spotfire_db_name="spotfiredb"
 #----------------------------------------
 
 # ssh key file
-#ssh_private_key_file = "/home/myuser/.ssh/id_rsa_aws.pub"
+ssh_private_key_file="~/.ssh/id_rsa_aws"
 
 #----------------------------------------
 # jumphost
@@ -87,3 +94,4 @@ spotfire_db_name="spotfiredb"
 #sfwp_vm_os = "Debian11"
 # VM login credentials
 #sfwp_admin_username = "admin" # Debian
+

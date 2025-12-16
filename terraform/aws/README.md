@@ -28,7 +28,7 @@ This quickstart has 2 main parts:
 2. Deploy the Spotfire environment using [Ansible](https://github.com/ansible/ansible) playbooks.
 
    **Note**: The included playbooks follow the [Basic installation process for Spotfire](https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/basic_installation_process_for_spotfire.html)
-   from the [Spotfire® Server and Environment - Installation and Administration](https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/getting_started.html).
+   from the [Spotfire® Server and Environment - Installation and Administration](https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/basic_installation_process_for_spotfire.html).
 
 **Note**: This deployment has been verified with Amazon EC2 Linux Virtual Machine instances with Debian 12.
 
@@ -38,7 +38,7 @@ The following diagram shows the deployed environment by this _Spotfire QuickStar
 
 ## Prerequisites
 
-- Required **Spotfire** installation packages. You can download them from [eDelivery](https://edelivery.tibco.com/storefront/index.ep):
+- Required **Spotfire** installation packages. You can download them from the [Spotfire Download site](https://www.spotfire.com/downloads):
     - Spotfire Server: Linux tar.gz package:
         - `spotfireserver-<version>.x86_64.tar.gz`
     - Spotfire node manager: Linux tar.gz package:
@@ -51,7 +51,7 @@ The following diagram shows the deployed environment by this _Spotfire QuickStar
   In this quickstart we will refer to it as "_the launcher_".
 - A valid **AWS account and access credentials**.
 
-**Note**: All the examples and scripts in this quickstart use a Ubuntu host as the launcher.
+**Note**: All the examples and scripts in this quickstart use a Debian/Ubuntu host as the launcher.
 If you want to use any other Linux distro as your launcher, 
 see the corresponding vendor instructions and adapt this quickstart as required.
 
@@ -74,12 +74,6 @@ see the corresponding vendor instructions and adapt this quickstart as required.
    For your convenience, there is a `Makefile` that enables you to use `terraform` and `ansible` commands via the `make` command from the Terraform templates folder (`<this_repo_root>/terraform/aws`).
    This way, you do not need to memorize the syntax, and the commands are much simpler.
 
-   **Note**: You can create an alias to execute `make` with this `Makefile` from any directory:
-    ```bash
-    cd <this_repo_root>/terraform/aws
-    alias make-sf-aws="make --directory $PWD"
-    ```
-
    **Note**: If you want to know about the details and understand what is going under the hood,
    you can check the [Detailed instructions](docs/Detailed-instructions.md).
 
@@ -90,38 +84,48 @@ see the corresponding vendor instructions and adapt this quickstart as required.
 
 ## Usage
 
-The deployment life cycle consists of these steps:
+The deployment life cycle consists of these main steps:
 
-- Prepare your launcher host
-- Configure the target environment
+- Install requirements
+- Configure your cloud account and the target infrastructure sizing
 - Create the required infrastructure (with Terraform)
 - Deploy the Spotfire software (with Ansible)
 - Resize or reconfigure the created environment
 - Destroy the created environment
 
-### Prepare your launcher host
+### Install requirements
 
-1. Initiate your environment (it installs and upgrades all required Terraform modules):
+First, you need to install `terraform`, `ansible` and the AWS CLI in your launcher.
+ 
+For a quick reference, see [Install the applications](docs/Setup.md).
+
+### Configure your cloud account and the target infrastructure sizing
+
+**Note**: The specific method to access your cloud account and roles might change depending on your company policy. 
+Make sure you understand how identity management works in AWS.
+The steps below are an example:
+
+1. If not already done, sign in into AWS with the AWS CLI:
     ```bash
-    make init
+    make aws-login
     ```
+   **Note**: This make command wraps a call to `aws sts assume-role`.
+   For more details or other alternative authentication methods, see [AWS Sign in methods](https://docs.aws.amazon.com/signin/latest/userguide/how-to-sign-in.html).
 
-2. If not already done, configure the credentials for the AWS CLI:
+2. Typically, you need to change role, depending on your AWS setup:
     ```bash
     make aws-assume-role-env
     ```
-    **Note**: For more details, see [Install the applications](docs/Setup.md).
-
     **Note**: The AWS token expires in some minutes-hours depending on your AWS account configuration. 
     In that case, apply again to continue the AWS session.
 
 ### Configure the target environment
 
-3. You can customize the **deployment environment** by editing the file `terraform.env`.
+1. You can customize the **deployment environment** by editing the file `terraform.env`.
 
    **Note**: You need to use a different `TF_WORKSPACE` for applying different environments for the same location.
 
-4. You can customize the **infrastructure settings** like number of instances or sizing, by modifying the `terraform.env`, `variables.tfvars` and `vars-size-XS.tfvars`.
+2. You can customize the **infrastructure settings** like number of instances or sizing, by modifying the `terraform.env`, `variables.tfvars` and `vars-size-XS.tfvars`.
    Open the files for listing the existing configuration variables, description and documentation links.
 
    **Note**: Using a different `prefix` string in the `variables.tfvars` per environment, you can create multiple environments using the same account.
@@ -132,18 +136,23 @@ The deployment life cycle consists of these steps:
 
    **Note**: The `vars-size-XS.tfvars` settings overrides `variables.tfvars` settings.
 
-5. If you want to change the **Spotfire application settings** (like the Spotfire version, config-tool and web admin credentials,...), review and edit the file `ansible/config/vars.yml`.
+3. If you want to change the **Spotfire application settings** (like the Spotfire version, config-tool and web admin credentials,...), review and edit the file `ansible/config/vars.yml`.
 
    **Note**: The variables in `ansible/config/vars.yml` are used as defaults and may be overriden by previous configuration files.
 
 ### Create the required infrastructure (using Terraform)
 
-6. Verify the planed infrastructure changes before applying them:
+1. Initiate your environment (it installs and upgrades all required Terraform modules):
+    ```bash
+    make init
+    ```
+
+2. Verify the planed infrastructure changes before applying them:
     ```bash
     make plan
     ```
 
-7. If you agree with the planned changes, apply them to create the infrastructure:
+3. If you agree with the planned changes, apply them to create the infrastructure:
     ```bash
     make apply
     ```
@@ -151,7 +160,7 @@ The deployment life cycle consists of these steps:
 
 ### Deploy the Spotfire software (using Ansible)
 
-8. Once the infrastructure is in place, you can deploy the Spotfire software:
+4. Once the infrastructure is in place, you can deploy the Spotfire software:
     ```bash
     make deploy
     ```
@@ -159,7 +168,7 @@ The deployment life cycle consists of these steps:
 
 ### Resize or reconfigure the created environment
 
-9. You can resize or change your system's configuration by editing again the named configuration files and repeating steps 4-8_:
+5. You can resize or change your system's configuration by editing again the named configuration files and repeating steps 4-8_:
     ```bash
     make plan
     make apply
@@ -171,21 +180,11 @@ The deployment life cycle consists of these steps:
     ```bash
     make deploy ANSIBLE_EXTRA_ARGS="--limit sfwp_servers"
     ```
-    For more details on how to limit and filter the Ansible playbook execution, see the [Ansible documentation](https://docs.ansible.com/.
+    For more details on how to limit and filter the Ansible playbook execution, see the [Ansible documentation](https://docs.ansible.com/).
 
-### Destroy the created environment
+### Use your environment
 
-10. Remember to destroy the environment when you are not going to use it to avoid unneeded costs:
-    ```bash
-    make destroy
-    ```
-
-    **Note**: You may need to execute this command a couple of times to destroy all the resources.
-    This happens sometimes if the resources are being accessed or due resources dependency resolution.
-
-## Use your environment
-
-1. You can find details for the created environment using:
+6. You can find details for the created environment using:
     ```bash
     make show-hosts
     make show-lb
@@ -194,9 +193,19 @@ The deployment life cycle consists of these steps:
    There are more `show-*` command aliases preconfigured to retrieve basic information on your created environment.
    Run `make` without arguments to see the `Makefile` operations help.
 
-2. Open the Spotfire server web UI, accessible via the Amazon Load Balancer address: `http://<your-aws-elb-ip-address>`.
+7. Open the Spotfire server web UI, accessible via the Amazon Load Balancer address: `http://<your-aws-elb-ip-address>`.
 
    **Note**: The Spotfire server and services can take 1-5 minutes to bootstrap and be ready.
+
+### Destroy the created environment
+
+8. Remember to destroy the environment when you are not going to use it to avoid unneeded costs:
+    ```bash
+    make destroy
+    ```
+
+   **Note**: You may need to execute this command a couple of times to destroy all the resources.
+   This happens sometimes if the resources are being accessed or due resources dependency resolution.
 
 ## What to do next
 
@@ -206,8 +215,8 @@ There are further ways to customize this quickstart:
 - Add other Spotfire services (e.g. Python service, TERR service, R service, Automations Services)
 - Add external user authorization and authentication
 - Add a Spotfire action log database
-- Use multiple regions
 - Add AWS S3 object storage for the Spotfire library items storage
+- Use multiple regions
 - etc.
 
-Please, see the [Spotfire® Server and Environment - Installation and Administration](https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/getting_started.html) documentation for details on specific administration procedures.
+Please, see the [Spotfire® Server and Environment - Installation and Administration](https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/basic_installation_process_for_spotfire.html) documentation for details on specific administration procedures.
