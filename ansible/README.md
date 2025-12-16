@@ -11,7 +11,7 @@ This **Spotfire QuickStart** example shows how to automatically deploy the Spotf
 ### Which kind of Spotfire deployment is deployed by this quickstart example?
 
 This example follows the [Basic installation process for Spotfire
-](https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/basic_installation_process_for_spotfire.html) from the [Spotfire® Server and Environment - Installation and Administration](https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/getting_started.html).
+](https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/basic_installation_process_for_spotfire.html) from the [Spotfire® Server and Environment - Installation and Administration](https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/basic_installation_process_for_spotfire.html).
 
 This basic installation will deploy the following components:
 - Spotfire Server(s) (using Azure Linux virtual machine(s))

@@ -14,7 +14,7 @@ force_sdn_deploy: true
 sfnm_service_reinstall: true
 
 # sfs version
-spotfire_version: '14.0.0'
+spotfire_version: '14.6.0'
 sfs_home: '/opt/spotfire/spotfireserver/{{ spotfire_version }}'
 
 # NOTE: This is an internal fix for getting the Windows service name (variable) using lookup.ini based on the {{ spotfire_version }}
