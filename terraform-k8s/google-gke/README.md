@@ -35,7 +35,7 @@ For more information and extending the example, see the [Terraform Google provid
 
 ## Prerequisites
 
-- Required **Spotfire** installation packages. You can download them from [eDelivery](https://edelivery.tibco.com/storefront/index.ep).
+- Required **Spotfire** installation packages. You can download them from the [Spotfire Download site](https://www.spotfire.com/downloads).
 - A **Linux host** with admin permissions to install and use the tools.
     You can use a bare metal installed server, a virtual machine, or WSL on Windows.
     In this quickstart we will refer to it as "_the launcher_".
@@ -59,21 +59,29 @@ See the corresponding vendor instructions and adapt the quickstart as required f
 
 ## Usage
 
-### Get your current Google Cloud projects
+The deployment life cycle consists of these main steps:
 
-From the gcloud cli:
-```bash
-gcloud config get-value project
-```
-From the Google Cloud management web UI:
-https://console.cloud.google.com/home/dashboard?project=my-project-id
-
-### Deploy a GKE cluster on GCP
+- Install requirements
+- Configure your cloud account and the target infrastructure sizing
+- Create the required infrastructure (with Terraform)
+- Deploy Spotfire on the created cluster
+- (Optional) Prepare the container registry
+- Destroy the created infrastructure
 
 For easier setup we provide a `Makefile` with commands for the  common steps.
 You can read the `Makefile` for more info on the specific commands.
 
-Steps:
+### Install requirements
+
+First, you need to install `terraform`, `ansible` and the GCP CLI in your launcher.
+
+For a quick reference, see [Install the applications](../../terraform/gcp/docs/Setup.md).
+
+### Configure your cloud account and the target infrastructure sizing
+
+**Note**: The specific method to access your cloud account and roles might change depending on your company policy.
+Make sure you understand how identity management works in Google Cloud.
+The steps below are an example:
 
 1. Log in to GCP:
     ```bash
@@ -87,82 +95,78 @@ Steps:
     Read the file `variables.tf` and the other template files (`*.tf`) for more variables and usage.
     Remember that you can (and should) modify the templates included in this quickstart to adapt them to your needs.
 
-3. Init your Terraform workspace (fetch/update Terraform plugins and modules):
+### Create the required infrastructure (using Terraform)
+
+1. Init your Terraform workspace (fetch/update Terraform plugins and modules):
     ```bash
     make init
     ```
 
-4. Plan (preview the changes Terraform will make before you apply):
+2. Plan (preview the changes Terraform will make before you apply):
     ```bash
     make plan
     ```
 
-5. Apply (makes the changes defined by your plan to create, update, or destroy resources):
+3. Apply (makes the changes defined by your plan to create, update, or destroy resources):
     ```bash
     make apply
     ```
    **Note**: The Terraform deployment takes around 10 min.
    Note that the resources may take some more minutes to be ready.
 
-6. Add the GKE configuration to your kubectl config:
+4. Add the created K8s configuration to your kubectl config:
     ```bash
     make gcp-gke-cfg-kubectl
     ```
 
-7. Show the created K8s cluster configuration:
+5. Show the created K8s cluster configuration:
     ```bash
     make gcp-gke-show
     ```
 
-8. Enable required GCP service APIs and log in to the created Google Artifact Registry to be able to push images:
+### Optional: Prepare the container registry
+
+Follow these steps if you want to use the Spotfire CDK to build the images and need a container registry to host these images.
+Otherwise, if you have access to a registry with the prebuilt Spotfire images, jump to the next header.
+
+1. Enable required GCP service APIs and log in to the created Google Artifact Registry to be able to push images:
     ```bash
     make gcp-enable-apis
     make gcp-gke-login
     ```
 
-9. Set REGISTRY variable to point to the created registry:
+2. Show the created registry:
     ```bash
     make gcp-registry-show
     ```
-   Set the REGISTRY variable in your environment as indicated from the previous output.
+
+3. Set the `REGISTRY_SERVER` variable in your environment as indicated from the previous output.
    For example:
     ```bash
-    export REGISTRY=europe-north1-docker.pkg.dev/my-project-id/spotfire-quickstart
+    export REGISTRY_SERVER=europe-north1-docker.pkg.dev/my-project-id/spotfire-quickstart
     ```
 
-### Deploy Spotfire on the created GKE cluster
+### Deploy Spotfire on the created cluster
 
-Now we use the Spotfire CDK to build the Spotfire container images and Helm charts and deploy Spotfire in the created K8s cluster.
+Now you must choose between:
 
-1. Change to the directory:
+A. To build the Spotfire images and charts, follow the steps in [Deploy Spotfire on a Kubernetes cluster using the Spotfire CDK](../../spotfire-cdk-quickstart/README.md).
+
+   Change to the directory and follow the `README.md` steps:
     ```bash
-    cd ../spotfire-cdk-quickstart
+    cd ../../spotfire-cdk-quickstart
     ```
 
-2. Follow the steps in [Deploy Spotfire on a kubernetes cluster using the Spotfire CDK](../spotfire-cdk-quickstart/README.md).
+B. To use the pre-built Spotfire images and charts, follow the steps in [Deploy Spotfire on a Kubernetes cluster using pre-built Spotfire images and Helm charts](../../spotfire-sok-quickstart/README.md).
 
-### Setup K8s dashboard in GKE (optional)
-
-1. Deploy and access k8s dashboard:
+   Change to the directory and follow the `README.md` steps:
     ```bash
-    make k8s-deploy-dashboard
-    ```
-   Kubectl will make the K8s Dashboard available at http://localhost:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/.
-   **Note**: For more information, see https://kubernetes.io/docs/tasks/access-application-cluster/web-ui-dashboard/
-
-2. Create the ClusterRoleBinding resource and generate the authorization token to access the k8s dashboard:
-    ```bash
-    make k8s-get-token
-    ```
-   
-3. Login into your k8s dashboard [here](http://127.0.0.1:8001/api/v1/namespaces/kubernetes-dashboard/services/https:kubernetes-dashboard:/proxy/).
- 
-4. Show your cluster info:
-    ```bash
-    make k8s-info
+    cd ../../spotfire-sok-quickstart
     ```
 
-### Clean up
+   **Note**: To understand the differences between both options, see [Spotfire on Kubernetes](https://spotfi.re/sok).
+
+### Destroy the created infrastructure
 
 When you are done, remember to destroy the created resources to avoid unneeded costs.
 ```bash
@@ -183,8 +187,9 @@ There are further ways to customize this quickstart:
 - Enable SSL connections
 - Add external user authorization and authentication
 - Use Google SQL as the Spotfire database
+- Add Google Object storage for the Spotfire library items storage
 - Add a Spotfire action log database
 - Use multiple regions
 - etc.
 
-Please, see the [Spotfire® Server and Environment - Installation and Administration](https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/getting_started.html) documentation for details on specific Spotfire administration and configuration procedures.
+Please, see the [Spotfire® Server and Environment - Installation and Administration](https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/basic_installation_process_for_spotfire.html) documentation for details on specific Spotfire administration and configuration procedures.

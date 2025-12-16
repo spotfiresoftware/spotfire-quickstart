@@ -1,6 +1,6 @@
-variable "project_id" {
-  description = "project id"
-}
+# variable "project_id" {
+#   description = "project id"
+# }
 
 provider "google" {
   project = var.project_id

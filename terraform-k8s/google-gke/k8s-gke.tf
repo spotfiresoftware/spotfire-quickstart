@@ -14,18 +14,28 @@ variable "gke_password" {
   description = "GKE password"
 }
 
-variable "gke_num_nodes" {
-  default     = 1
+variable "gke_num_nodes_default_pool" {
+  default = 1
   description = "Number of GKE nodes (per region)"
 }
 
-variable "gke_machine_type" {
-  default     = "n2-standard-4"
-  description = "Type of machine for k8s GKE nodes"
+variable "gke_num_nodes_extra_pool" {
+  default     = 0
+  description = "Number of GKE nodes (per region)"
+}
+
+variable "gke_machine_type_default_pool" {
+  default     = "e2-medium"
+  description = "Type of machine for k8s GKE nodes in default pool"
+}
+
+variable "gke_machine_type_extra_pool" {
+  default     = "e2-medium"
+  description = "Type of machine for k8s GKE nodes in defined pool"
 }
 
 variable "gke_cluster_version" {
-  default = "1.28"
+  default     = "1.33"
   description = "GKE Kubernetes minimum version"
 }
 
@@ -35,7 +45,6 @@ variable "gke_cluster_version" {
 # NOTE: It is recommended that node pools be created and managed as separate resources as in the example above.
 # This allows node pools to be added and removed without recreating the cluster.
 # Node pools defined directly in the google_container_cluster resource cannot be removed without re-creating the cluster.
-
 resource "google_container_cluster" "primary" {
   name     = "${var.prefix}-gke"
   location = var.region
@@ -47,7 +56,7 @@ resource "google_container_cluster" "primary" {
   # separately managed node pools. So we create the smallest possible default
   # node pool and immediately delete it.
   remove_default_node_pool = false
-  initial_node_count       = 1
+  initial_node_count       = var.gke_num_nodes_default_pool
   deletion_protection      = false # set to true if not testing
 
 #  min_master_version = var.gke_cluster_version
@@ -55,13 +64,19 @@ resource "google_container_cluster" "primary" {
   network    = google_compute_network.vpc.name
   subnetwork = google_compute_subnetwork.subnet.name
 
+  node_config {
+   machine_type = var.gke_machine_type_default_pool
+  }
   ip_allocation_policy {
     cluster_secondary_range_name  = "services-range"
     services_secondary_range_name = google_compute_subnetwork.subnet.secondary_ip_range.1.range_name
   }
   master_authorized_networks_config {
-    cidr_blocks {
-      cidr_block = var.admin_address_prefixes[0]
+    dynamic "cidr_blocks" {
+      for_each = var.admin_address_prefixes
+      content {
+        cidr_block = cidr_blocks.value
+      }
     }
   }
 }
@@ -74,7 +89,7 @@ resource "google_container_node_pool" "primary_nodes" {
   name       = "${google_container_cluster.primary.name}-node-pool"
   location   = var.region
   cluster    = google_container_cluster.primary.name
-  node_count = var.gke_num_nodes
+  node_count = var.gke_num_nodes_extra_pool
 
   node_config {
     # Google recommends custom service accounts that have cloud-platform scope and permissions granted via IAM Roles.
@@ -86,12 +101,14 @@ resource "google_container_node_pool" "primary_nodes" {
       "https://www.googleapis.com/auth/cloud-platform"
     ]
 
-    labels = {
-      env = var.project_id
-    }
+    labels = merge(var.labels, tomap({
+      prefix = var.prefix,
+      pool = "${google_container_cluster.primary.name}-node-pool",
+      k8s   = "${var.prefix}-gke"
+    }))
 
     # preemptible  = true
-    machine_type = var.gke_machine_type
+    machine_type = var.gke_machine_type_extra_pool
     tags         = ["gke-node", "${var.prefix}-gke"]
     metadata = {
       disable-legacy-endpoints = "true"

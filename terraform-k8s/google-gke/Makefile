@@ -2,7 +2,7 @@
 # Simple Terraform Makefile.
 # --------------------------------------------------------------------
 
-# Change Makefile default shell is /bin/sh which does not implement source
+# Change Makefile default shell (/bin/sh does not implement source)
 #SHELL := /bin/bash
 
 # import terraform.env vars
@@ -79,6 +79,9 @@ gcp-gke-cfg-kubectl: ## Retrieve the access credentials for your cluster and aut
 gcp-registry-show: ## Show your OCI registry
 	$(eval REGISTRY=$(shell terraform output -raw google_artifact_registry_repository))
 	@echo -n "To set your REGISTRY, run:\nexport REGISTRY=$(REGISTRY)\n\n"
+
+gcp-registry-auth: ## Authenticate Docker to your Google Artifact Registry
+	gcloud auth configure-docker $(shell terraform output -raw region)-docker.pkg.dev
 
 #### k8s common #####
 k8s-deploy-dashboard: ## Deploy the Kubernetes dashboard
