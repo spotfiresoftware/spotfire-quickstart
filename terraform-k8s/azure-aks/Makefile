@@ -23,7 +23,7 @@ PWD ?= pwd_unknown
 
 #### generic #####
 help: ## show help
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST) | sort
+	@awk 'BEGIN {FS = ":.*?## "} /^[0-9a-zA-Z_-]+:.*?## / {printf "\033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
 .DEFAULT_GOAL := help
 
@@ -73,8 +73,8 @@ az-aks-show-dashboard: ## Show AKS dashboard url
 
 #### Azure specific (OCI registry) #####
 az-acr-show: ## Show your OCI registry
-	$(eval REGISTRY=$(shell terraform output -raw registry_url))
-	@echo -n "To set your REGISTRY, run:\nexport REGISTRY=$(REGISTRY)\n\n"
+	$(eval REGISTRY_SERVER=$(shell terraform output -raw registry_url))
+	@echo -n "To set your REGISTRY, run:\nexport REGISTRY_SERVER=$(REGISTRY_SERVER)\n\n"
 
 az-acr-list: ## Show ACR (Azure Container Registry) list
 	az acr list --resource-group $(shell terraform output -raw resource_group_name) --output table
@@ -90,11 +90,11 @@ az-acr-verify: ## Verify ACR (Azure Container Registry) connectivity
 	$(eval RESOURCE_GROUP_NAME=$(shell terraform output -raw resource_group_name))
 	$(eval VNET_NAME=$(shell terraform output -raw vnet_name))
 	# https://aka.ms/acr/health-check
-	@echo -n "\nHealth check"
-	az acr check-health --name $(REGISTRY_NAME) --vnet $(VNET_NAME) -y
+	@echo "\n[INFO] Health check...\n"
+	az acr check-health --name $(REGISTRY_NAME) --vnet $(VNET_NAME) -y || true
 	# https://learn.microsoft.com/en-us/troubleshoot/azure/azure-kubernetes/cannot-pull-image-from-acr-to-aks-cluster
-	@echo -n "\nCheck ACR"
-	az aks check-acr --name $(shell terraform output -raw kubernetes_cluster_name) --resource-group $(RESOURCE_GROUP_NAME) --acr $(REGISTRY_NAME)
-	@echo -n "\nList ACR Roles"
+	@echo -n "\n[INFO] Check ACR...\n"
+	az aks check-acr --name $(shell terraform output -raw kubernetes_cluster_name) --resource-group $(RESOURCE_GROUP_NAME) --acr $(REGISTRY_NAME) --namespace kube-system || true
+	@echo -n "\n[INFO] List ACR Roles..."
 	$(eval ARM_SUBSCRIPTION_ID=$(shell az account show --query id | tr -d '"'))
-	az role assignment list --scope /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(RESOURCE_GROUP_NAME)/providers/Microsoft.ContainerRegistry/registries/$(REGISTRY_NAME) -o table
+	az role assignment list --scope /subscriptions/$(ARM_SUBSCRIPTION_ID)/resourceGroups/$(RESOURCE_GROUP_NAME)/providers/Microsoft.ContainerRegistry/registries/$(REGISTRY_NAME) -o table || true

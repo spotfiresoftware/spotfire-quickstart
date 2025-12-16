@@ -1,9 +1,5 @@
 #resource "random_pet" "prefix" {}
 
-provider "azurerm" {
-  features {}
-}
-
 #----------------------------------------
 # Kubernetes cluster
 #----------------------------------------
@@ -25,6 +21,12 @@ resource "azurerm_kubernetes_cluster" "this" {
     vm_size         = var.aks_machine_type
     os_disk_size_gb = var.aks_machine_disk_size
     vnet_subnet_id  = azurerm_subnet.k8s_subnet.id
+
+    upgrade_settings {
+      drain_timeout_in_minutes = "0"
+      max_surge = "10%"
+      node_soak_duration_in_minutes = "0"
+    }
   }
 
   ingress_application_gateway {
@@ -46,9 +48,9 @@ resource "azurerm_kubernetes_cluster" "this" {
   role_based_access_control_enabled = false
 
   #network_profile {
-    #network_plugin     = "azure"
-    #dns_service_ip     = var.aks_dns_service_ip
-    #service_cidr       = var.aks_service_cidr
+  # network_plugin     = "azure"
+  # dns_service_ip     = var.aks_dns_service_ip
+  # service_cidr       = var.aks_service_cidr
   #}
 
   api_server_access_profile {
@@ -58,13 +60,10 @@ resource "azurerm_kubernetes_cluster" "this" {
 
   azure_policy_enabled = true
 
-  tags = {
-    environment = "dev"
-    codename    = var.prefix
-  }
-
   depends_on = [
     azurerm_virtual_network.this,
     azurerm_application_gateway.network,
   ]
+
+  tags = var.tags
 }

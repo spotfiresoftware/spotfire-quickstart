@@ -50,10 +50,10 @@ output "num_cluster_nodes" {
 # }
 
 output "registry_url" {
-  value       = azurerm_container_registry.this.login_server
+  value       = var.create_acr ? azurerm_container_registry.this[0].login_server : ""
   description = "Azure Container Registry (ACR) URL"
 }
 output "registry_name" {
-  value       = azurerm_container_registry.this.name
+  value       = var.create_acr ? azurerm_container_registry.this[0].name : ""
   description = "Azure Container Registry (ACR) name"
 }

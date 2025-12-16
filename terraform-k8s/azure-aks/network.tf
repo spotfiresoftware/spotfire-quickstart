@@ -2,7 +2,6 @@
 # Networking
 #----------------------------------------
 resource "azurerm_resource_group" "this" {
-  #  name     = "${random_pet.prefix.id}-rg"
   name     = "${var.prefix}-rg"
   location = var.region
 
@@ -28,6 +27,5 @@ resource "azurerm_subnet" "k8s_subnet" {
   virtual_network_name = azurerm_virtual_network.this.name
   address_prefixes     = var.k8s_subnet_address_prefixes
 
-  private_endpoint_network_policies_enabled = true
   service_endpoints = ["Microsoft.ContainerRegistry"]
 }

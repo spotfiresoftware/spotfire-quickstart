@@ -1,4 +1,13 @@
 #----------------------------------------
+# Azure account
+#----------------------------------------
+
+# credentials
+variable subscription_id {
+  description = "Azure Subscription ID"
+}
+
+#----------------------------------------
 # Resources prefix & tags
 #----------------------------------------
 variable "tags" {
@@ -6,11 +15,11 @@ variable "tags" {
 
   default = {
     # specific tags
-    description   = "Spotfire quickstart: K8s install"
+    description   = "Spotfire quickstart: k8s install"
     app           = "Spotfire"
-    app_version   = "14.0.0"
+    app_version   = "14.6.0"
     environment   = "dev"
-    infra_version = "0.4"
+    infra_version = "0.5"
   }
 }
 
@@ -30,15 +39,6 @@ variable "location" {
 variable "region" {
   default     = "northeurope"
   description = "Azure region"
-}
-
-# credentials
-variable "appId" {
-  description = "Azure Kubernetes Service Cluster service principal"
-}
-
-variable "password" {
-  description = "Azure Kubernetes Service Cluster password"
 }
 
 #----------------------------------------
@@ -84,7 +84,7 @@ variable "appgw_subnet_address_prefixes" {
 # Kubernetes
 #----------------------------------------
 variable "aks_cluster_version" {
-  default = "1.28"
+  default = "1.33"
   description = "Kubernetes cluster version"
 }
 

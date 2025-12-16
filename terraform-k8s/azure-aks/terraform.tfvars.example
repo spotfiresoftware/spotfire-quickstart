@@ -1,8 +1,8 @@
 #----------------------------------------
 # Credentials
 #----------------------------------------
-appId    = "aaaaaaaa-aaaa-aaaa-aaaa-aaaaaaaaaaaa"
-password = "********-****-****-****-************"
+# Your Azure Subscription ID
+subscription_id = "00112233-aa44-bb55-cc66-dd7788eeff99"
 
 # NOTE: You need to create the service principal manually. Use ./az_create_sp.sh
 #aks_service_principal_object_id = "11AA22BB-33CC-44DD-55EE-ABCDEFGHIJK"
@@ -21,18 +21,31 @@ prefix = "sandbox-peach"
 #----------------------------------------
 # Networking
 #----------------------------------------
-#admin_address_prefixes = ["43.21.0.0/16"]
-#web_address_prefixes   = ["43.0.0.0/8"]
+admin_address_prefixes = ["43.21.0.0/16"]
+#web_address_prefixes   = ["43.21.0.0/16"]
 
 #----------------------------------------
 # Kubernetes
 #----------------------------------------
+# Azure AKS version
 # https://learn.microsoft.com/en-us/azure/aks/supported-kubernetes-versions?tabs=azure-cli
-#aks_cluster_version = 1.28
+#aks_cluster_version = "1.33"
 
 # Azure AKS number of working nodes
 # NOTE: This is the total number of working nodes, accounting for all the availability zone
 #aks_num_nodes = 3
 
 # For Azure Cloud machine types, see https://docs.microsoft.com/en-us/azure/virtual-machines/sizes-general
+# Size Name	vCPUs (Qty.)	Memory (GB)
+# Standard_A1_v2	1	2
+# Standard_A2_v2	2	4
+# Standard_A4_v2	4	8
+# Standard_A8_v2	8	16
 #aks_machine_type = "Standard_D3_v2"
+aks_machine_type = "Standard_A4_v2"
+
+#----------------------------------------
+# Container Registry
+#----------------------------------------
+# Whether to create the Azure Container Registry (ACR)
+create_acr = true

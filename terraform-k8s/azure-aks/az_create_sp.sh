@@ -5,6 +5,7 @@ aksadminrole_with_id=${aksadminrole//\$\{subscriptionId\}/$subscriptionId}
 
 #tenantId=$(az account show --query tenantId)
 
+# define custom role
 FS='' export subscriptionId && read -r -d '' aksadminrole <<"EOF"
 {
   "Name": "AKS Admin",
@@ -27,5 +28,9 @@ EOF
 aksadminrole_with_id=${aksadminrole//\$\{subscriptionId\}/$subscriptionId}
 echo "$aksadminrole_with_id"
 
+# create custom role and service principal
 az role definition create --verbose --role-definition "$aksadminrole_with_id"
 az ad sp create-for-rbac --name "AKSAdminSP" --role "AKS Admin"
+
+# show created service principal
+az ad sp list --display-name "AKSAdminSP"
