@@ -3,30 +3,36 @@
 
 variable "container_images" {
   default = [
+    "spotfire/spotfire-base",
     "spotfire/spotfire-config",
-    "spotfire/spotfire-pythonservice",
-    "spotfire/spotfire-terrservice",
+    "spotfire/spotfire-server",
+    "spotfire/spotfire-nodemanager",
+    "spotfire/spotfire-workerhost",
+    "spotfire/spotfire-webplayer",
     "spotfire/spotfire-automationservices",
     "spotfire/spotfire-deployment",
+    "spotfire/spotfire-pythonservice",
     "spotfire/spotfire-rservice",
-    "spotfire/spotfire-webplayer",
-    "spotfire/spotfire-base",
-    "spotfire/spotfire-nodemanager",
-    "spotfire/spotfire-server",
-    "spotfire/spotfire-workerhost"
+    "spotfire/spotfire-terrservice"
   ]
   description = "Spotfire container images"
 }
 
 ## Setup networking
+variable "create_registry" {
+  description = "Whether to create the Azure Container Registry"
+  type        = bool
+  default     = true
+}
+
 module "registry" {
   source = "./modules/registry"
   #  location = var.location
   #  prefix   = var.prefix
   #  tags     = var.tags
 
-  # loop through the list
-  for_each        = toset(var.container_images)
+  # loop through the list (if create_registy = true)
+  for_each        = var.create_registry ? toset(var.container_images) : []
   container_image = each.key
 
   registry_principal_ids = [var.iam_eks_cluster_role_arn]

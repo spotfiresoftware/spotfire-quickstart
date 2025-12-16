@@ -1,8 +1,8 @@
 # --------------------------------------------------------------------
-# Simple Terraform+Ansible Makefile.
+# Simple Terraform Makefile.
 # --------------------------------------------------------------------
 
-# Change Makefile default shell is /bin/sh which does not implement source
+# Change Makefile default shell (/bin/sh does not implement source)
 #SHELL := /bin/bash
 
 # import terraform.env vars
@@ -56,10 +56,20 @@ terraform-graph:
 	terraform graph -draw-cycles | dot -Tsvg > terraform.tfstate.d/terraform_graph_cycles.svg
 
 #### AWS specific #####
-aws-login: ## login into AWS using AWS cli
-	# aws configure
-	# source <(aws sts assume-role --role-arn arn:aws:iam::987537861642:role/SpotfirePowerUser --profile SpotfirePMRole --role-session-name SpotfirePowerUser | jq -r  '.Credentials | @sh "export AWS_ACCESS_KEY_ID=\(.AccessKeyId)\nexport AWS_SECRET_ACCESS_KEY=\(.SecretAccessKey)\nexport AWS_SESSION_TOKEN=\(.SessionToken)\n "')
-	@aws sts assume-role --role-arn arn:aws:iam::987537861642:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_use_f578f20054c0baf1 --profile SpotfirePMuse --role-session-name SpotfirePMuse \
+aws-config: ## Configure AWS CLI
+	aws configure
+
+aws-login: ## Login into AWS using AWS cli
+	aws sso login --profile view-PM
+	aws sts get-caller-identity --profile view-PM
+	aws sts get-caller-identity
+
+aws-assume-role: ## Assume an AWS IAM Role and set temporary credentials in your environment
+	@if [ -z "$(ROLE_ARN)" ]; then \
+		echo "ERROR: ROLE_ARN is not set. Please set ROLE_ARN to the target role ARN."; \
+		exit 1; \
+	fi
+	@aws sts assume-role --role-arn $(ROLE_ARN) --role-session-name PowerUser \
 		| jq -r  '.Credentials | "\nSet the following variables in your environment:\n\nexport AWS_ACCESS_KEY_ID=\(.AccessKeyId)\nexport AWS_SECRET_ACCESS_KEY=\(.SecretAccessKey)\nexport AWS_SESSION_TOKEN=\(.SessionToken)\n"'
 
 aws-create-eks-roles: ## Create the needed EKS cluster and node roles, and attach IAM managed policies
@@ -68,7 +78,6 @@ aws-create-eks-roles: ## Create the needed EKS cluster and node roles, and attac
 
 aws-eks-cfg-kubectl: ## Retrieve the access credentials for your cluster and automatically configure kubectl
 	aws eks --region $(shell terraform output -raw region) update-kubeconfig --name $(shell terraform output -raw cluster_name)
-	#aws eks update-kubeconfig --name $(shell terraform output -raw cluster_name)  --profile use-987537861642 --role-arn arn:aws:iam::987537861642:role/aws-reserved/sso.amazonaws.com/us-west-2/AWSReservedSSO_use_f578f20054c0baf1
 
 aws-eks-show: ## Show your cluster
 	aws eks describe-cluster --name $(shell terraform output -raw cluster_name)

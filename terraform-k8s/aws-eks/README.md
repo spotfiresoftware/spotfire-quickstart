@@ -34,7 +34,7 @@ For more information and extending the example, see the [Terraform AWS provider 
 
 ## Prerequisites
 
-- Required **Spotfire** installation packages. You can download them from [eDelivery](https://edelivery.tibco.com/storefront/index.ep).
+- Required **Spotfire** installation packages. You can download them from the [Spotfire Download site](https://www.spotfire.com/downloads).
 - A **Linux host** with admin permissions to install and use the tools.
     You can use a bare metal installed server, a virtual machine, or WSL on Windows.
     In this quickstart we will refer to it as "_the launcher_".
@@ -58,12 +58,29 @@ See the corresponding vendor instructions and adapt the quickstart as required f
 
 ## Usage
 
-### Deploy an EKS cluster on AWS
+The deployment life cycle consists of these main steps:
+
+- Install requirements
+- Configure your cloud account and the target infrastructure sizing
+- Create the required infrastructure (with Terraform)
+- Deploy Spotfire on the created cluster
+- (Optional) Prepare the container registry
+- Destroy the created infrastructure
 
 For easier setup we provide a `Makefile` with commands for the  common steps.
 You can read the `Makefile` for more info on the specific commands.
 
-Steps:
+### Install requirements
+
+First, you need to install `terraform`, `ansible` and the AWS CLI in your launcher.
+
+For a quick reference, see [Install the applications](../../terraform/aws/docs/Setup.md).
+
+### Configure your cloud account and the target infrastructure sizing
+
+**Note**: The specific method to access your cloud account and roles might change depending on your company policy.
+Make sure you understand how identity management works in AWS.
+The steps below are an example:
 
 1. Log in to AWS:
     ```bash
@@ -72,76 +89,93 @@ Steps:
     **Note**: This make command wraps a call to `aws sts assume-role`.
     For more details or other alternative authentication methods, see [AWS Sign in methods](https://docs.aws.amazon.com/signin/latest/userguide/how-to-sign-in.html).
 
-2. Copy the provided example `terraform.tfvars.example` to a new file, for example `terraform.tfvars`.
-    Read and modify as needed the deployment configuration variables in the `terraform.tfvars` file.
-    Read the file `variables.tf` and the other template files (`*.tf`) for more variables and usage.
-    Remember that you can (and should) modify the templates included in this quickstart to adapt them to your needs.
-
-   **Note**: In the configuration files, you need to provide with valid EKS cluster and node IAM roles.
-   Check for already existing EKS cluster and node roles or create new ones.
+2. In the configuration files, you will need to provide with valid EKS cluster and EKS node IAM roles.
+   Check for an already existing EKS cluster and EKS node roles or create new ones.
    For that, follow the steps in [Amazon EKS cluster IAM role](https://docs.aws.amazon.com/eks/latest/userguide/service_IAM_role.html)
    and [Amazon EKS node IAM role](https://docs.aws.amazon.com/eks/latest/userguide/create-node-role.html)
    or execute:
     ```bash
     make aws-create-eks-roles
     ```
-   This step not part of the main infrastructure template, since you only require to do it once.
-   For production systems, you may want to create different roles for different clusters.
+   **Note**: This step not part of the main infrastructure template, since you only require to do it once.
+   **Note**: For production systems, you may want to create different roles for different clusters.
 
-3. Init your Terraform workspace (fetch/update Terraform plugins and modules):
+3. Copy the provided example `terraform.tfvars.example` to a new file, for example `terraform.tfvars`.
+   Read and modify as needed the deployment configuration variables in the `terraform.tfvars` file.
+   Read the file `variables.tf` and the other template files (`*.tf`) for more variables and usage.
+   Remember that you can (and should) modify the templates included in this quickstart to adapt them to your needs.
+
+### Create the required infrastructure (using Terraform)
+
+1. Init your Terraform workspace (fetch/update Terraform plugins and modules):
     ```bash
     make init
     ```
 
-4. Plan (preview the changes Terraform will make before you apply):
+2. Plan (preview the changes Terraform will make before you apply):
     ```bash
     make plan
     ```
 
-5. Apply (makes the changes defined by your plan to create, update, or destroy resources):
+3. Apply (makes the changes defined by your plan to create, update, or destroy resources):
     ```bash
     make apply
     ```
    **Note**: The Terraform deployment takes around 10 min.
    Note that the resources may take some more minutes to be ready.
 
-6. Add the EKS configuration to your kubectl config:
+4. Add the created K8s configuration to your kubectl config:
     ```bash
     make aws-eks-cfg-kubectl
     ```
 
-7. Show the created K8s cluster configuration:
+5. Show the created K8s cluster configuration:
     ```bash
     make aws-eks-show
     ```
 
-8. Log in to the created Amazon Elastic Container Registry (ECR) to be able to push images:
+### Optional: Prepare the container registry
+
+Follow these steps if you want to use the Spotfire CDK to build the images and need a container registry to host these images.
+Otherwise, if you have access to a registry with the prebuilt Spotfire images, jump to the next header.
+
+1. Log in to the created Amazon Elastic Container Registry (ECR) to be able to push images:
     ```bash
     make aws-ecr-login
     ```
 
-9. Set REGISTRY variable to point to the created registry:
+2. Show the created registry:
     ```bash
     make aws-ecr-show
     ```
-   Set the REGISTRY variable in your environment as indicated from the previous output.
+
+3. Set the `REGISTRY_SERVER` variable in your environment as indicated from the previous output.
    For example:
     ```bash
-    export REGISTRY=11112222233333.dkr.ecr.eu-north-1.amazonaws.com
+    export REGISTRY_SERVER=11112222233333.dkr.ecr.eu-north-1.amazonaws.com
     ```
 
-### Deploy Spotfire on the created EKS cluster
+### Deploy Spotfire on the created cluster
 
-Now we use the Spotfire CDK to build the Spotfire container images and Helm charts and deploy Spotfire in the created K8s cluster.
+Now you must choose between:
 
-1. Change to the directory:
+A. To build the Spotfire images and charts, follow the steps in [Deploy Spotfire on a Kubernetes cluster using the Spotfire CDK](../../spotfire-cdk-quickstart/README.md).
+
+   Change to the directory and follow the `README.md` steps:
     ```bash
-    cd ../spotfire-cdk-quickstart
+    cd ../../spotfire-cdk-quickstart
     ```
 
-2. Follow the steps in [Deploy Spotfire on a kubernetes cluster using the Spotfire CDK](../spotfire-cdk-quickstart/README.md).
+B. To use the pre-built Spotfire images and charts, follow the steps in [Deploy Spotfire on a Kubernetes cluster using pre-built Spotfire images and Helm charts](../../spotfire-sok-quickstart/README.md).
 
-### Clean up
+   Change to the directory and follow the `README.md` steps:
+    ```bash
+    cd ../../spotfire-sok-quickstart
+    ```
+
+   **Note**: To understand the differences between both options, see [Spotfire on Kubernetes](https://spotfi.re/sok).
+
+### Destroy the created infrastructure
 
 When you are done, remember to destroy the created resources to avoid unneeded costs.
 ```bash
@@ -162,8 +196,9 @@ There are further ways to customize this quickstart:
 - Enable SSL connections
 - Add external user authorization and authentication
 - Use AWS RDS as the Spotfire database
+- Add AWS S3 object storage for the Spotfire library items storage
 - Add a Spotfire action log database
 - Use multiple regions
 - etc.
 
-Please, see the [Spotfire® Server and Environment - Installation and Administration](https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/getting_started.html) documentation for details on specific Spotfire administration and configuration procedures.
+Please, see the [Spotfire® Server and Environment - Installation and Administration](https://docs.tibco.com/pub/spotfire_server/latest/doc/html/TIB_sfire_server_tsas_admin_help/server/topics/basic_installation_process_for_spotfire.html) documentation for details on specific Spotfire administration and configuration procedures.

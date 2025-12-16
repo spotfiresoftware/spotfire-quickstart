@@ -1,5 +1,5 @@
 #----------------------------------------
-# IAM roles
+# Credentials
 #----------------------------------------
 # https://docs.aws.amazon.com/eks/latest/userguide/service_IAM_role.html
 #iam_eks_cluster_role_arn = "arn:aws:iam::11112222233333:role/AmazonEKSClusterRole"
@@ -26,11 +26,20 @@ prefix = "sandbox-kong"
 #----------------------------------------
 # Kubernetes
 #----------------------------------------
+# AWS EKS version
 # https://docs.aws.amazon.com/eks/latest/userguide/kubernetes-versions.html
-#eks_cluster_version = "1.28"
+#eks_cluster_version = "1.33"
 
-# AWS EKS number of working nodes
+# AWS EKS number of working nodes (per region)
+# Note that, with 3 regions, the total number of nodes will be x3
 #eks_num_nodes = 2
 
-# https://aws.amazon.com/ec2/instance-types/t3/
+# AWS machine type
+# https://aws.amazon.com/ec2/instance-types/
 #eks_instance_type = [ "t3.xlarge" ]
+
+#----------------------------------------
+# Container Registry
+#----------------------------------------
+# Whether to create the Amazon Elastic Container Registry (ECR)
+create_registry = true

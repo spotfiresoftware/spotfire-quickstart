@@ -33,7 +33,7 @@ variable "admin_address_prefixes" {
 # Kubernetes
 #----------------------------------------
 variable "eks_cluster_version" {
-  default = "1.28"
+  default = "1.33"
   description = "EKS cluster version"
 }
 
